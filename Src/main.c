@@ -39,11 +39,15 @@
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
-SPI_HandleTypeDef hspi1;
+SPI_HandleTypeDef hspi2;
+
+TIM_HandleTypeDef htim3;
 
 UART_HandleTypeDef huart2;
 
 osThreadId defaultTaskHandle;
+osThreadId sendMessageTaskHandle;
+osThreadId speedTaskHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -53,9 +57,15 @@ osThreadId defaultTaskHandle;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_SPI1_Init(void);
+static void MX_SPI2_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_TIM3_Init(void);
 void StartDefaultTask(void const * argument);
+void sendMessageTaskFunction(void const * argument);
+void speedTaskFunction(void const * argument);
+
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+                
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -63,15 +73,6 @@ void StartDefaultTask(void const * argument);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-volatile int i = 0;
-
-void vRefBlinkLed( void * pvParameters){
-	HAL_GPIO_WritePin(GPIOD, LD4_Pin|LD3_Pin|LD5_Pin|LD6_Pin, GPIO_PIN_SET);
-	int *pI = (int *)pvParameters;
-	while(1){
-		(*pI)++;
-	}
-}
 
 /* USER CODE END 0 */
 
@@ -92,10 +93,18 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_SPI1_Init();
+  MX_SPI2_Init();
   MX_USART2_UART_Init();
+  MX_TIM3_Init();
 
   /* USER CODE BEGIN 2 */
+
+  HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
+  	HAL_TIM_Base_Start(&htim3);
+  	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_1);
+  	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
+  	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_3);
+  	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_4);
 
   /* USER CODE END 2 */
 
@@ -116,11 +125,16 @@ int main(void)
   osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
+  /* definition and creation of sendMessageTask */
+  osThreadDef(sendMessageTask, sendMessageTaskFunction, osPriorityNormal, 0, 128);
+  sendMessageTaskHandle = osThreadCreate(osThread(sendMessageTask), NULL);
+
+  /* definition and creation of speedTask */
+  osThreadDef(speedTask, speedTaskFunction, osPriorityIdle, 0, 128);
+  speedTaskHandle = osThreadCreate(osThread(speedTask), NULL);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
-
-
-	xTaskCreate( vRefBlinkLed, "LedStuff", configMINIMAL_STACK_SIZE, &i, 1, NULL );
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
@@ -185,23 +199,66 @@ void SystemClock_Config(void)
   HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
 }
 
-/* SPI1 init function */
-void MX_SPI1_Init(void)
+/* SPI2 init function */
+void MX_SPI2_Init(void)
 {
 
-  hspi1.Instance = SPI1;
-  hspi1.Init.Mode = SPI_MODE_MASTER;
-  hspi1.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
-  hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
-  hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
-  hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
-  hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
-  hspi1.Init.TIMode = SPI_TIMODE_DISABLED;
-  hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLED;
-  hspi1.Init.CRCPolynomial = 10;
-  HAL_SPI_Init(&hspi1);
+  hspi2.Instance = SPI2;
+  hspi2.Init.Mode = SPI_MODE_MASTER;
+  hspi2.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi2.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi2.Init.NSS = SPI_NSS_SOFT;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
+  hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi2.Init.TIMode = SPI_TIMODE_DISABLED;
+  hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLED;
+  hspi2.Init.CRCPolynomial = 10;
+  HAL_SPI_Init(&hspi2);
+
+}
+
+/* TIM3 init function */
+void MX_TIM3_Init(void)
+{
+
+  TIM_ClockConfigTypeDef sClockSourceConfig;
+  TIM_MasterConfigTypeDef sMasterConfig;
+  TIM_OC_InitTypeDef sConfigOC;
+
+  htim3.Instance = TIM3;
+  htim3.Init.Prescaler = 0;
+  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim3.Init.Period = 65535;
+  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  HAL_TIM_Base_Init(&htim3);
+
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig);
+
+  HAL_TIM_PWM_Init(&htim3);
+
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig);
+
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 800;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1);
+
+  sConfigOC.Pulse = 5000;
+  HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_2);
+
+  sConfigOC.Pulse = 60000;
+  HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_3);
+
+  sConfigOC.Pulse = 8000;
+  HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_4);
+
+  HAL_TIM_MspPostInit(&htim3);
 
 }
 
@@ -229,6 +286,9 @@ void MX_USART2_UART_Init(void)
         * EXTI
      PC3   ------> I2S2_SD
      PA4   ------> I2S3_WS
+     PA5   ------> SPI1_SCK
+     PA6   ------> SPI1_MISO
+     PA7   ------> SPI1_MOSI
      PB10   ------> I2S2_CK
      PC7   ------> I2S3_MCK
      PA9   ------> USB_OTG_FS_VBUS
@@ -297,6 +357,14 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
   GPIO_InitStruct.Alternate = GPIO_AF6_SPI3;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PA5 PA6 PA7 */
+  GPIO_InitStruct.Pin = GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF5_SPI1;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pin : BOOT1_Pin */
@@ -381,6 +449,47 @@ void StartDefaultTask(void const * argument)
     osDelay(1);
   }
   /* USER CODE END 5 */ 
+}
+
+/* sendMessageTaskFunction function */
+void sendMessageTaskFunction(void const * argument)
+{
+  /* USER CODE BEGIN sendMessageTaskFunction */
+  /* Infinite loop */
+  for(;;)
+  {
+	  osDelay(1900);
+	  		HAL_GPIO_WritePin(GPIOE, LD4_Pin, GPIO_PIN_SET);
+	  		HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
+	  		HAL_SPI_Transmit_IT(&hspi2,(uint8_t *)"Hello World!",12);
+	  		osDelay(100);
+	  		HAL_UART_Transmit_IT(&huart2,(uint8_t *)"\n\r",2);
+	  		HAL_GPIO_WritePin(GPIOE, LD4_Pin, GPIO_PIN_RESET);
+  }
+  /* USER CODE END sendMessageTaskFunction */
+}
+
+/* speedTaskFunction function */
+void speedTaskFunction(void const * argument)
+{
+  /* USER CODE BEGIN speedTaskFunction */
+  /* Infinite loop */
+	uint32_t Pulse;
+  for(;;)
+  {
+	  Pulse+=100;
+	      //osDelay(5);
+	  		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, Pulse);
+	  		HAL_Delay(10);
+	  		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_2, Pulse+100);
+	  		HAL_Delay(10);
+	  		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_3, Pulse+200);
+	  		HAL_Delay(10);
+	  		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, Pulse+300);
+	  		//osDelay(5);
+	  		Pulse = Pulse>60000 ? 0:Pulse;
+  }
+  /* USER CODE END speedTaskFunction */
 }
 
 #ifdef USE_FULL_ASSERT
