@@ -459,12 +459,12 @@ void sendMessageTaskFunction(void const * argument)
   for(;;)
   {
 	  osDelay(1900);
-	  		HAL_GPIO_WritePin(GPIOE, LD4_Pin, GPIO_PIN_SET);
+	  		HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_SET);
 	  		HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
 	  		HAL_SPI_Transmit_IT(&hspi2,(uint8_t *)"Hello World!",12);
 	  		osDelay(100);
 	  		HAL_UART_Transmit_IT(&huart2,(uint8_t *)"\n\r",2);
-	  		HAL_GPIO_WritePin(GPIOE, LD4_Pin, GPIO_PIN_RESET);
+	  		HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_RESET);
   }
   /* USER CODE END sendMessageTaskFunction */
 }
