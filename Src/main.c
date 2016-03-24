@@ -48,6 +48,7 @@ UART_HandleTypeDef huart2;
 osThreadId defaultTaskHandle;
 osThreadId sendMessageTaskHandle;
 osThreadId speedTaskHandle;
+osThreadId controlLoopHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -63,6 +64,7 @@ static void MX_TIM3_Init(void);
 void StartDefaultTask(void const * argument);
 void sendMessageTaskFunction(void const * argument);
 void speedTaskFunction(void const * argument);
+void controlLoopTaskFunction(void const * argument);
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
                 
@@ -132,6 +134,10 @@ int main(void)
   /* definition and creation of speedTask */
   osThreadDef(speedTask, speedTaskFunction, osPriorityIdle, 0, 128);
   speedTaskHandle = osThreadCreate(osThread(speedTask), NULL);
+
+  /* definition and creation of controlLoop */
+  osThreadDef(controlLoop, controlLoopTaskFunction, osPriorityNormal, 0, 128);
+  controlLoopHandle = osThreadCreate(osThread(controlLoop), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -210,7 +216,7 @@ void MX_SPI2_Init(void)
   hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi2.Init.NSS = SPI_NSS_SOFT;
-  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
   hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi2.Init.TIMode = SPI_TIMODE_DISABLED;
   hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLED;
@@ -314,7 +320,7 @@ void MX_GPIO_Init(void)
   __GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(CS_I2C_SPI_GPIO_Port, CS_I2C_SPI_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, CS_I2C_SPI_Pin|GPIO_PIN_4|GPIO_PIN_5, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(OTG_FS_PowerSwitchOn_GPIO_Port, OTG_FS_PowerSwitchOn_Pin, GPIO_PIN_RESET);
@@ -323,12 +329,12 @@ void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOD, LD4_Pin|LD3_Pin|LD5_Pin|LD6_Pin 
                           |Audio_RST_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : CS_I2C_SPI_Pin */
-  GPIO_InitStruct.Pin = CS_I2C_SPI_Pin;
+  /*Configure GPIO pins : CS_I2C_SPI_Pin PE4 PE5 */
+  GPIO_InitStruct.Pin = CS_I2C_SPI_Pin|GPIO_PIN_4|GPIO_PIN_5;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-  HAL_GPIO_Init(CS_I2C_SPI_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /*Configure GPIO pin : OTG_FS_PowerSwitchOn_Pin */
   GPIO_InitStruct.Pin = OTG_FS_PowerSwitchOn_Pin;
@@ -458,13 +464,13 @@ void sendMessageTaskFunction(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-	  osDelay(1900);
-	  		HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_SET);
-	  		HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
-	  		HAL_SPI_Transmit_IT(&hspi2,(uint8_t *)"Hello World!",12);
-	  		osDelay(100);
-	  		HAL_UART_Transmit_IT(&huart2,(uint8_t *)"\n\r",2);
-	  		HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_RESET);
+	osDelay(1900);
+	HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_SET);
+	HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
+	//HAL_SPI_Transmit_IT(&hspi2,(uint8_t *)"Hello World!",12);
+	osDelay(100);
+	HAL_UART_Transmit_IT(&huart2,(uint8_t *)"\n\r",2);
+	HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_RESET);
   }
   /* USER CODE END sendMessageTaskFunction */
 }
@@ -490,6 +496,19 @@ void speedTaskFunction(void const * argument)
 	  		Pulse = Pulse>60000 ? 0:Pulse;
   }
   /* USER CODE END speedTaskFunction */
+}
+
+/* controlLoopTaskFunction function */
+void controlLoopTaskFunction(void const * argument)
+{
+  /* USER CODE BEGIN controlLoopTaskFunction */
+  /* Infinite loop */
+  for(;;)
+  {
+	  HAL_SPI_Transmit_IT(&hspi2, (uint8_t *)"\xaa", 1);
+	  osDelay(1);
+  }
+  /* USER CODE END controlLoopTaskFunction */
 }
 
 #ifdef USE_FULL_ASSERT
