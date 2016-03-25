@@ -5,6 +5,7 @@
  *      Author: Gagnon
  */
 
+#include "spi_wrapper.h"
 
 void SPI_write_8bits(uint8_t data) {
 	HAL_SPI_Transmit_IT(&hspi2, &data, 1);

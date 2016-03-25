@@ -8,12 +8,16 @@
 #ifndef QUAD_DRIVER_H_
 #define QUAD_DRIVER_H_
 
+// Librairy includes
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
-#include "CS_demux.h"
-#include "spi_wrapper.h"
 #include "stm32f4xx_hal.h"
+
+// Local includes
+#include "robocup_define.h"
+#include "chip_select_demux.h"
+#include "spi_wrapper.h"
 
 /****************************************************************************
  *   MD quadrature decoder Register
@@ -32,24 +36,24 @@ static const uint16_t QUAD_RESETCNT0 = 0x01u;  // used with CTRL register to res
 static const uint16_t QUAD_RESETCNT1 = 0x02u;
 static const uint16_t QUAD_RESETCNT2 = 0x04u;
 static const uint16_t QUAD_READ	     = 0x80u;  //these two are probably not used
-static const uint16_t QUAD_WRITE     = ~0x80u; //modification needed
+static const uint16_t QUAD_WRITE     = ~(uint16_t)(0x80u); //modification needed
 
 typedef struct quad_Handle {
 	chip_select structCSNPin;
-	int16_t Count0;
-	int16_t Count1;
+	int16_t count0;
+	int16_t count1;
 	float wheelVelocity[2];
 }quad_Handle;
 
-quad_Handle quad_init(chip_select pCSNPin);
-uint16_t quad_readRegister(uint16_t pReg,quad_Handle *pQuad);
+quad_Handle quad_Init(chip_select pCSNPin);
+uint16_t quad_ReadRegister(uint16_t pReg,quad_Handle *pQuad);
 void quad_WriteRegister(uint16_t pReg, uint16_t pValue,quad_Handle *pQuad);
-void quad_readCounters(quad_Handle *pQuad);
-void quad_calculateSpeed(quad_Handle *pQuad);
+void quad_ReadCounters(quad_Handle *pQuad);
+void quad_CalculateSpeed(quad_Handle *pQuad);
 
-void quad_displayCounters(quad_Handle *pQuad);
-void quad_displayVelocity(quad_Handle *pQuad);
+void quad_DisplayCounters(quad_Handle *pQuad);
+void quad_DisplayVelocity(quad_Handle *pQuad);
 
-bool quad_test(quad_Handle *pQuad);
+bool quad_Test(quad_Handle *pQuad);
 
 #endif /* QUAD_DRIVER_H_ */

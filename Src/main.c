@@ -31,10 +31,13 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
+// Librairy includes
 #include "stm32f4xx_hal.h"
 #include "cmsis_os.h"
 
 /* USER CODE BEGIN Includes */
+// Local includes
+#include "robocup_define.h"
 
 /* USER CODE END Includes */
 

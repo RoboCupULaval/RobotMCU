@@ -1,12 +1,6 @@
-/*
- * CS_demux.c
- *
- *  Created on: 2014-01-09
- *      Author: Philippe Babin
- */
 
 
-#include "CS_demux.h"
+#include "chip_select_demux.h"
 
 static Demux_Handle HandleDemux;
 
