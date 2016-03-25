@@ -31,9 +31,9 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
-// Librairy includes
 #include "stm32f4xx_hal.h"
 #include "cmsis_os.h"
+#include "usb_device.h"
 
 /* USER CODE BEGIN Includes */
 // Local includes
@@ -101,6 +101,7 @@ int main(void)
   MX_SPI2_Init();
   MX_USART2_UART_Init();
   MX_TIM3_Init();
+  MX_USB_DEVICE_Init();
 
   /* USER CODE BEGIN 2 */
 
@@ -181,24 +182,23 @@ void SystemClock_Config(void)
 
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = 16;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 50;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV4;
-  RCC_OscInitStruct.PLL.PLLQ = 7;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLM = 4;
+  RCC_OscInitStruct.PLL.PLLN = 72;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+  RCC_OscInitStruct.PLL.PLLQ = 3;
   HAL_RCC_OscConfig(&RCC_OscInitStruct);
 
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV8;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV4;
-  HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0);
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+  HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2);
 
   HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
 
@@ -300,10 +300,6 @@ void MX_USART2_UART_Init(void)
      PA7   ------> SPI1_MOSI
      PB10   ------> I2S2_CK
      PC7   ------> I2S3_MCK
-     PA9   ------> USB_OTG_FS_VBUS
-     PA10   ------> USB_OTG_FS_ID
-     PA11   ------> USB_OTG_FS_DM
-     PA12   ------> USB_OTG_FS_DP
      PC10   ------> I2S3_CK
      PC12   ------> I2S3_SD
      PB6   ------> I2C1_SCL
@@ -407,20 +403,6 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Alternate = GPIO_AF6_SPI3;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : VBUS_FS_Pin */
-  GPIO_InitStruct.Pin = VBUS_FS_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(VBUS_FS_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : OTG_FS_ID_Pin OTG_FS_DM_Pin OTG_FS_DP_Pin */
-  GPIO_InitStruct.Pin = OTG_FS_ID_Pin|OTG_FS_DM_Pin|OTG_FS_DP_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-  GPIO_InitStruct.Alternate = GPIO_AF10_OTG_FS;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
   /*Configure GPIO pin : OTG_FS_OverCurrent_Pin */
   GPIO_InitStruct.Pin = OTG_FS_OverCurrent_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
@@ -450,6 +432,8 @@ void MX_GPIO_Init(void)
 /* StartDefaultTask function */
 void StartDefaultTask(void const * argument)
 {
+  /* init code for USB_DEVICE */
+  MX_USB_DEVICE_Init();
 
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
@@ -464,12 +448,15 @@ void StartDefaultTask(void const * argument)
 void sendMessageTaskFunction(void const * argument)
 {
   /* USER CODE BEGIN sendMessageTaskFunction */
+	uint8_t Buf[] = "Hello USB World!\r\n";
+
   /* Infinite loop */
   for(;;)
   {
 	osDelay(1900);
 	HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_SET);
 	HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
+	CDC_Transmit_FS(Buf, 18);
 	//HAL_SPI_Transmit_IT(&hspi2,(uint8_t *)"Hello World!",12);
 	osDelay(100);
 	HAL_UART_Transmit_IT(&huart2,(uint8_t *)"\n\r",2);
