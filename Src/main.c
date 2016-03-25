@@ -104,12 +104,15 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
 
-  HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
+    HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
   	HAL_TIM_Base_Start(&htim3);
   	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_1);
   	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
   	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_3);
   	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_4);
+
+  	demux_Init(GPIOE, GPIO_PIN_4, GPIO_PIN_5, GPIO_PIN_6, CS_0);
+  	quad_Init(CS_3);
 
   /* USER CODE END 2 */
 

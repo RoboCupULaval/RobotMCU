@@ -7,6 +7,7 @@
 
 
 #include "quad_driver.h"
+#include "chip_select_demux.h"
 
 quad_Handle quad_Init(chip_select pCSNPin){
 	quad_Handle lHandle;
@@ -18,22 +19,22 @@ quad_Handle quad_Init(chip_select pCSNPin){
 
 uint16_t quad_ReadRegister(uint16_t pReg,quad_Handle *pQuad){
 	uint16_t answer = 0;
-	demux_connect_to(pQuad->structCSNPin);
+	demux_ConnectTo(pQuad->structCSNPin);
 	SPI_write_8bits(pReg | QUAD_READ); //put a 1 on the first
 	SPI_write_8bits(pReg); //dummy data
 	answer = SPI_read();
 	answer = SPI_read();
-	demux_disconnect();
+	demux_Disconnect();
 	return answer;
 }
 
 void quad_WriteRegister(uint16_t pReg, uint16_t pValue,quad_Handle *pQuad){
-	demux_connect_to(pQuad->structCSNPin);
+	demux_ConnectTo(pQuad->structCSNPin);
 	SPI_write_8bits(pReg & QUAD_WRITE); //put a 0 on the first
 	SPI_write_8bits(pValue); //dummy data
 	SPI_read();
 	SPI_read();
-	demux_disconnect();
+	demux_Disconnect();
 }
 
 
@@ -41,7 +42,7 @@ void quad_ReadCounters(quad_Handle *pQuad){
 	uint16_t lCount1[2] = {0,0};
 	uint16_t lCount0[2] = {0,0};
 
-	demux_connect_to(pQuad->structCSNPin);
+	demux_ConnectTo(pQuad->structCSNPin);
 	SPI_write_8bits(QUAD_COUNTER | QUAD_READ); //put a 0 on the first
 	SPI_write_8bits(0x00); //dummy
 	SPI_write_8bits(0x00); //dummy
@@ -57,13 +58,13 @@ void quad_ReadCounters(quad_Handle *pQuad){
 	lCount0[1] = SPI_read();
 	lCount0[0] = SPI_read();
 
-	demux_disconnect();
+	demux_Disconnect();
 	pQuad->count0 = (lCount0[1] << 8) | lCount0[0];
 	pQuad->count1 = (lCount1[1] << 8) | lCount1[0];
 
 	quad_WriteRegister( QUAD_CTRL, QUAD_RESETCNT0 | QUAD_RESETCNT1 | QUAD_RESETCNT2,pQuad); //reset counters
 
-	quad_calculateSpeed(pQuad);
+	quad_CalculateSpeed(pQuad);
 }
 
 void quad_CalculateSpeed(quad_Handle *pQuad){
@@ -79,13 +80,13 @@ void quad_DisplayCounters(quad_Handle *pQuad){
 	HAL_UART_Transmit_IT(&huart2,(uint8_t*)buffer, strlen(buffer));
 }
 
-void quad_displayVelocity(quad_Handle *pQuad){
+void quad_DisplayVelocity(quad_Handle *pQuad){
 	char buffer[128];
 	sprintf(buffer,"wheel0 =%f wheel1 =%f cm/10ms\n\r",pQuad->wheelVelocity[0],
 			pQuad->wheelVelocity[1]);
 	HAL_UART_Transmit_IT(&huart2,(uint8_t*)buffer, strlen(buffer));
 }
 
-bool quad_test(quad_Handle *pQuad){
-	return quad_readRegister(QUAD_CONFIG1, pQuad) == 0x80;  // if initialised before!
+bool quad_Test(quad_Handle *pQuad){
+	return quad_ReadRegister(QUAD_CONFIG1, pQuad) == 0x80;  // if initialised before!
 }
