@@ -5,3 +5,5 @@
 extern SPI_HandleTypeDef hspi2;
 extern TIM_HandleTypeDef htim3;
 extern UART_HandleTypeDef huart2;
+
+//extern quad_Handle quadA;

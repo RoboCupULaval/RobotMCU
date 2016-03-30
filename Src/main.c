@@ -55,7 +55,7 @@ osThreadId controlLoopHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-
+quad_Handle quadA;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -112,7 +112,7 @@ int main(void)
   	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_4);
 
   	demux_Init(GPIOE, GPIO_PIN_4, GPIO_PIN_5, GPIO_PIN_6, CS_0);
-  	quad_Init(CS_3);
+  	quadA = quad_Init(CS_1);
 
   /* USER CODE END 2 */
 
@@ -486,7 +486,7 @@ void speedTaskFunction(void const * argument)
 {
   /* USER CODE BEGIN speedTaskFunction */
   /* Infinite loop */
-	uint32_t Pulse;
+  uint32_t Pulse = 0;
   for(;;)
   {
 	  Pulse+=100;
@@ -509,9 +509,11 @@ void controlLoopTaskFunction(void const * argument)
 {
   /* USER CODE BEGIN controlLoopTaskFunction */
   /* Infinite loop */
+	HAL_GPIO_WritePin(GPIOE, GPIO_PIN_4, GPIO_PIN_SET);
   for(;;)
   {
-	  HAL_SPI_Transmit_IT(&hspi2, (uint8_t *)"\xaa", 1);
+	  quad_ReadCounters(&quadA);
+	  quad_DisplayCounters(&quadA);
 	  osDelay(1);
   }
   /* USER CODE END controlLoopTaskFunction */

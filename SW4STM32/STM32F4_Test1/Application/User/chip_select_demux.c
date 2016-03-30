@@ -5,7 +5,7 @@
 static Demux_Handle HandleDemux;
 
 void demux_Init(GPIO_TypeDef *gpio, uint16_t a0, uint16_t a1, uint16_t a2, chip_select notConnect) {
-
+	HandleDemux.gpio = gpio;
 	HandleDemux.a0 = a0;      // mux select pins
 	HandleDemux.a1 = a1;
 	HandleDemux.a2 = a2;
