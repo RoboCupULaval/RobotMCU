@@ -5,17 +5,17 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../Application/User/chip_select_demux.c \
-D:/RoboCup/GitHub/RobotMCU/Src/freertos.c \
-D:/RoboCup/GitHub/RobotMCU/Src/main.c \
+/Users/Gagnon/Documents/Robocup/RobotMCU/Src/freertos.c \
+/Users/Gagnon/Documents/Robocup/RobotMCU/Src/main.c \
 ../Application/User/quad_driver.c \
 ../Application/User/spi_wrapper.c \
-D:/RoboCup/GitHub/RobotMCU/Src/stm32f4xx_hal_msp.c \
-D:/RoboCup/GitHub/RobotMCU/Src/stm32f4xx_hal_timebase_TIM.c \
-D:/RoboCup/GitHub/RobotMCU/Src/stm32f4xx_it.c \
-D:/RoboCup/GitHub/RobotMCU/Src/usb_device.c \
-D:/RoboCup/GitHub/RobotMCU/Src/usbd_cdc_if.c \
-D:/RoboCup/GitHub/RobotMCU/Src/usbd_conf.c \
-D:/RoboCup/GitHub/RobotMCU/Src/usbd_desc.c 
+/Users/Gagnon/Documents/Robocup/RobotMCU/Src/stm32f4xx_hal_msp.c \
+/Users/Gagnon/Documents/Robocup/RobotMCU/Src/stm32f4xx_hal_timebase_TIM.c \
+/Users/Gagnon/Documents/Robocup/RobotMCU/Src/stm32f4xx_it.c \
+/Users/Gagnon/Documents/Robocup/RobotMCU/Src/usb_device.c \
+/Users/Gagnon/Documents/Robocup/RobotMCU/Src/usbd_cdc_if.c \
+/Users/Gagnon/Documents/Robocup/RobotMCU/Src/usbd_conf.c \
+/Users/Gagnon/Documents/Robocup/RobotMCU/Src/usbd_desc.c 
 
 OBJS += \
 ./Application/User/chip_select_demux.o \
@@ -50,80 +50,80 @@ C_DEPS += \
 Application/User/%.o: ../Application/User/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MCU GCC Compiler'
-	@echo %cd%
-	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))" -DUSE_HAL_DRIVER -DSTM32F407xx -I"D:/RoboCup/GitHub/RobotMCU/SW4STM32/STM32F4_Test1/Application/User" -I"D:/RoboCup/GitHub/RobotMCU/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/include" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/CMSIS/Include" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"D:/RoboCup/GitHub/RobotMCU/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Core/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
+	@echo $(PWD)
+	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))" -DUSE_HAL_DRIVER -DSTM32F407xx -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Core/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/include" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/CMSIS/Include" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/CMSIS/Device/ST/STM32F4xx/Include"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
-Application/User/freertos.o: D:/RoboCup/GitHub/RobotMCU/Src/freertos.c
+Application/User/freertos.o: /Users/Gagnon/Documents/Robocup/RobotMCU/Src/freertos.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MCU GCC Compiler'
-	@echo %cd%
-	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))" -DUSE_HAL_DRIVER -DSTM32F407xx -I"D:/RoboCup/GitHub/RobotMCU/SW4STM32/STM32F4_Test1/Application/User" -I"D:/RoboCup/GitHub/RobotMCU/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/include" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/CMSIS/Include" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"D:/RoboCup/GitHub/RobotMCU/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Core/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
+	@echo $(PWD)
+	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))" -DUSE_HAL_DRIVER -DSTM32F407xx -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Core/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/include" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/CMSIS/Include" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/CMSIS/Device/ST/STM32F4xx/Include"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
-Application/User/main.o: D:/RoboCup/GitHub/RobotMCU/Src/main.c
+Application/User/main.o: /Users/Gagnon/Documents/Robocup/RobotMCU/Src/main.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MCU GCC Compiler'
-	@echo %cd%
-	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))" -DUSE_HAL_DRIVER -DSTM32F407xx -I"D:/RoboCup/GitHub/RobotMCU/SW4STM32/STM32F4_Test1/Application/User" -I"D:/RoboCup/GitHub/RobotMCU/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/include" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/CMSIS/Include" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"D:/RoboCup/GitHub/RobotMCU/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Core/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
+	@echo $(PWD)
+	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))" -DUSE_HAL_DRIVER -DSTM32F407xx -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Core/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/include" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/CMSIS/Include" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/CMSIS/Device/ST/STM32F4xx/Include"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
-Application/User/stm32f4xx_hal_msp.o: D:/RoboCup/GitHub/RobotMCU/Src/stm32f4xx_hal_msp.c
+Application/User/stm32f4xx_hal_msp.o: /Users/Gagnon/Documents/Robocup/RobotMCU/Src/stm32f4xx_hal_msp.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MCU GCC Compiler'
-	@echo %cd%
-	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))" -DUSE_HAL_DRIVER -DSTM32F407xx -I"D:/RoboCup/GitHub/RobotMCU/SW4STM32/STM32F4_Test1/Application/User" -I"D:/RoboCup/GitHub/RobotMCU/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/include" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/CMSIS/Include" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"D:/RoboCup/GitHub/RobotMCU/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Core/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
+	@echo $(PWD)
+	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))" -DUSE_HAL_DRIVER -DSTM32F407xx -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Core/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/include" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/CMSIS/Include" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/CMSIS/Device/ST/STM32F4xx/Include"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
-Application/User/stm32f4xx_hal_timebase_TIM.o: D:/RoboCup/GitHub/RobotMCU/Src/stm32f4xx_hal_timebase_TIM.c
+Application/User/stm32f4xx_hal_timebase_TIM.o: /Users/Gagnon/Documents/Robocup/RobotMCU/Src/stm32f4xx_hal_timebase_TIM.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MCU GCC Compiler'
-	@echo %cd%
-	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))" -DUSE_HAL_DRIVER -DSTM32F407xx -I"D:/RoboCup/GitHub/RobotMCU/SW4STM32/STM32F4_Test1/Application/User" -I"D:/RoboCup/GitHub/RobotMCU/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/include" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/CMSIS/Include" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"D:/RoboCup/GitHub/RobotMCU/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Core/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
+	@echo $(PWD)
+	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))" -DUSE_HAL_DRIVER -DSTM32F407xx -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Core/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/include" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/CMSIS/Include" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/CMSIS/Device/ST/STM32F4xx/Include"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
-Application/User/stm32f4xx_it.o: D:/RoboCup/GitHub/RobotMCU/Src/stm32f4xx_it.c
+Application/User/stm32f4xx_it.o: /Users/Gagnon/Documents/Robocup/RobotMCU/Src/stm32f4xx_it.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MCU GCC Compiler'
-	@echo %cd%
-	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))" -DUSE_HAL_DRIVER -DSTM32F407xx -I"D:/RoboCup/GitHub/RobotMCU/SW4STM32/STM32F4_Test1/Application/User" -I"D:/RoboCup/GitHub/RobotMCU/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/include" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/CMSIS/Include" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"D:/RoboCup/GitHub/RobotMCU/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Core/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
+	@echo $(PWD)
+	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))" -DUSE_HAL_DRIVER -DSTM32F407xx -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Core/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/include" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/CMSIS/Include" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/CMSIS/Device/ST/STM32F4xx/Include"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
-Application/User/usb_device.o: D:/RoboCup/GitHub/RobotMCU/Src/usb_device.c
+Application/User/usb_device.o: /Users/Gagnon/Documents/Robocup/RobotMCU/Src/usb_device.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MCU GCC Compiler'
-	@echo %cd%
-	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))" -DUSE_HAL_DRIVER -DSTM32F407xx -I"D:/RoboCup/GitHub/RobotMCU/SW4STM32/STM32F4_Test1/Application/User" -I"D:/RoboCup/GitHub/RobotMCU/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/include" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/CMSIS/Include" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"D:/RoboCup/GitHub/RobotMCU/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Core/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
+	@echo $(PWD)
+	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))" -DUSE_HAL_DRIVER -DSTM32F407xx -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Core/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/include" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/CMSIS/Include" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/CMSIS/Device/ST/STM32F4xx/Include"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
-Application/User/usbd_cdc_if.o: D:/RoboCup/GitHub/RobotMCU/Src/usbd_cdc_if.c
+Application/User/usbd_cdc_if.o: /Users/Gagnon/Documents/Robocup/RobotMCU/Src/usbd_cdc_if.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MCU GCC Compiler'
-	@echo %cd%
-	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))" -DUSE_HAL_DRIVER -DSTM32F407xx -I"D:/RoboCup/GitHub/RobotMCU/SW4STM32/STM32F4_Test1/Application/User" -I"D:/RoboCup/GitHub/RobotMCU/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/include" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/CMSIS/Include" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"D:/RoboCup/GitHub/RobotMCU/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Core/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
+	@echo $(PWD)
+	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))" -DUSE_HAL_DRIVER -DSTM32F407xx -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Core/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/include" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/CMSIS/Include" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/CMSIS/Device/ST/STM32F4xx/Include"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
-Application/User/usbd_conf.o: D:/RoboCup/GitHub/RobotMCU/Src/usbd_conf.c
+Application/User/usbd_conf.o: /Users/Gagnon/Documents/Robocup/RobotMCU/Src/usbd_conf.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MCU GCC Compiler'
-	@echo %cd%
-	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))" -DUSE_HAL_DRIVER -DSTM32F407xx -I"D:/RoboCup/GitHub/RobotMCU/SW4STM32/STM32F4_Test1/Application/User" -I"D:/RoboCup/GitHub/RobotMCU/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/include" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/CMSIS/Include" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"D:/RoboCup/GitHub/RobotMCU/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Core/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
+	@echo $(PWD)
+	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))" -DUSE_HAL_DRIVER -DSTM32F407xx -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Core/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/include" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/CMSIS/Include" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/CMSIS/Device/ST/STM32F4xx/Include"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
-Application/User/usbd_desc.o: D:/RoboCup/GitHub/RobotMCU/Src/usbd_desc.c
+Application/User/usbd_desc.o: /Users/Gagnon/Documents/Robocup/RobotMCU/Src/usbd_desc.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MCU GCC Compiler'
-	@echo %cd%
-	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))" -DUSE_HAL_DRIVER -DSTM32F407xx -I"D:/RoboCup/GitHub/RobotMCU/SW4STM32/STM32F4_Test1/Application/User" -I"D:/RoboCup/GitHub/RobotMCU/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/include" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/CMSIS/Include" -I"D:/RoboCup/GitHub/RobotMCU/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"D:/RoboCup/GitHub/RobotMCU/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Core/Inc" -I"D:/RoboCup/GitHub/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
+	@echo $(PWD)
+	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))" -DUSE_HAL_DRIVER -DSTM32F407xx -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Core/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/include" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/CMSIS/Include" -I"/Users/Gagnon/Documents/Robocup/RobotMCU/Drivers/CMSIS/Device/ST/STM32F4xx/Include"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

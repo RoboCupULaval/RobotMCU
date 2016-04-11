@@ -32,6 +32,7 @@
   */
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
+#include "stm32f4xx_hal_tim.h"
 #include "cmsis_os.h"
 #include "usb_device.h"
 
@@ -110,6 +111,7 @@ int main(void)
   	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
   	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_3);
   	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_4);
+
 
   /* USER CODE END 2 */
 
