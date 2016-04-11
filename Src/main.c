@@ -473,7 +473,7 @@ void speedTaskFunction(void const * argument)
 {
   /* USER CODE BEGIN speedTaskFunction */
   /* Infinite loop */
-  uint32_t Pulse = 0;
+	uint32_t Pulse;
   for(;;)
   {
 	  Pulse+=100;
@@ -496,11 +496,9 @@ void controlLoopTaskFunction(void const * argument)
 {
   /* USER CODE BEGIN controlLoopTaskFunction */
   /* Infinite loop */
-	HAL_GPIO_WritePin(GPIOE, GPIO_PIN_4, GPIO_PIN_SET);
   for(;;)
   {
-	  quad_ReadCounters(&quadA);
-	  quad_DisplayCounters(&quadA);
+	  HAL_SPI_Transmit_IT(&hspi2, (uint8_t *)"\xaa", 1);
 	  osDelay(1);
   }
   /* USER CODE END controlLoopTaskFunction */

@@ -15,10 +15,10 @@ C_DEPS :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
-Application/SW4STM32 \
-Application/User \
-Drivers/CMSIS \
-Drivers/STM32F4xx_HAL_Driver \
-Middlewares/FreeRTOS \
 Middlewares/USB_Device_Library \
+Middlewares/FreeRTOS \
+Drivers/STM32F4xx_HAL_Driver \
+Drivers/CMSIS \
+Application/User \
+Application/SW4STM32 \
 
