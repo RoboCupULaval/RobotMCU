@@ -35,8 +35,8 @@ typedef struct Demux_Handle {
  *******************************************************************************/
 
 void demux_Init(GPIO_TypeDef gpio, uint16_t a0, uint16_t a1, uint16_t a2, chip_select notConnect);
-void demux_connect_to(chip_select CS);
-void demux_disconnect();
+void demux_ConnectTo(chip_select CS);
+void demux_Disconnect();
 
 
 #endif /* DEMUX_DRIVER_H_ */

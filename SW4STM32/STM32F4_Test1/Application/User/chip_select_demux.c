@@ -11,11 +11,11 @@ void demux_Init(GPIO_TypeDef gpio, uint16_t a0, uint16_t a1, uint16_t a2, chip_s
 	HandleDemux.a2 = a2;
 	HandleDemux.notConnect_pin = notConnect;
 
-    demux_disconnect();
+    demux_Disconnect();
 }
 
 // this function activate the right combination of select pin for output from CS_0 to CS_7
-void demux_connect_to(chip_select CS){
+void demux_ConnectTo(chip_select CS){
 	if(CS == CS_0){
 		HAL_GPIO_WritePin(&HandleDemux.gpio, HandleDemux.a0, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(&HandleDemux.gpio, HandleDemux.a1, GPIO_PIN_RESET);
@@ -59,6 +59,6 @@ void demux_connect_to(chip_select CS){
 }
 
 // this function use the unasigned pin when there is no communication
-void demux_disconnect(){
-	demux_connect_to(HandleDemux.notConnect_pin);
+void demux_Disconnect(){
+	demux_ConnectTo(HandleDemux.notConnect_pin);
 }
