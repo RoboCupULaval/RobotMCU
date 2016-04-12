@@ -16,7 +16,6 @@
 
 // Local includes
 #include "robocup_define.h"
-#include "chip_select_demux.h"
 #include "spi_wrapper.h"
 
 /****************************************************************************

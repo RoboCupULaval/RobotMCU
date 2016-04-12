@@ -7,6 +7,7 @@
 
 
 #include "quad_driver.h"
+#include "chip_select_demux.h"
 
 quad_Handle quad_Init(chip_select pCSNPin){
 	quad_Handle lHandle;
@@ -37,25 +38,31 @@ void quad_WriteRegister(uint16_t pReg, uint16_t pValue,quad_Handle *pQuad){
 }
 
 
+static char buffer[128];
 void quad_ReadCounters(quad_Handle *pQuad){
 	uint16_t lCount1[2] = {0,0};
 	uint16_t lCount0[2] = {0,0};
+	uint8_t b7, b6, b5, b4, b3, b2, b1, b0;
 
 	demux_ConnectTo(pQuad->structCSNPin);
 	SPI_write_8bits(QUAD_COUNTER | QUAD_READ); //put a 0 on the first
 	SPI_write_8bits(0x00); //dummy
 	SPI_write_8bits(0x00); //dummy
 	SPI_write_8bits(0x00); //dummy
-	SPI_read();
-	SPI_read();
-	SPI_read();
-	lCount1[1] = SPI_read();
+	b3 = SPI_read();
+	b2 = SPI_read();
+	b1 = SPI_read();
+	b0 = lCount1[1] = SPI_read();
 	SPI_write_8bits(0x00); //dummy
 	SPI_write_8bits(0x00); //dummy
 	SPI_write_8bits(0x00); //dummy
-	lCount1[0] = SPI_read();
-	lCount0[1] = SPI_read();
-	lCount0[0] = SPI_read();
+	b6 = lCount1[0] = SPI_read();
+	b5 = lCount0[1] = SPI_read();
+	b4 = lCount0[0] = SPI_read();
+
+
+	sprintf(buffer,"%x %x %x %x | %x %x %x\n\r", b3, b2, b1, b0, b6, b5, b4);
+	HAL_UART_Transmit_IT(&huart2,(uint8_t*)buffer, strlen(buffer));
 
 	demux_Disconnect();
 	pQuad->count0 = (lCount0[1] << 8) | lCount0[0];
@@ -74,9 +81,8 @@ void quad_CalculateSpeed(quad_Handle *pQuad){
 }
 
 void quad_DisplayCounters(quad_Handle *pQuad){
-	char buffer[128];
-	sprintf(buffer,"count0 =%d count1 =%d\n\r",pQuad->count0,pQuad->count1);
-	HAL_UART_Transmit_IT(&huart2,(uint8_t*)buffer, strlen(buffer));
+	//sprintf(buffer,"count0 =%d count1 =%d\n\r",pQuad->count0,pQuad->count1);
+	//HAL_UART_Transmit_IT(&huart2,(uint8_t*)buffer, strlen(buffer));
 }
 
 void quad_DisplayVelocity(quad_Handle *pQuad){

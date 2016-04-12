@@ -32,7 +32,6 @@
   */
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
-#include "stm32f4xx_hal_tim.h"
 #include "cmsis_os.h"
 #include "usb_device.h"
 
@@ -56,7 +55,7 @@ osThreadId controlLoopHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-
+quad_Handle quadA;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -102,16 +101,19 @@ int main(void)
   MX_SPI2_Init();
   MX_USART2_UART_Init();
   MX_TIM3_Init();
+  MX_USB_DEVICE_Init();
 
   /* USER CODE BEGIN 2 */
 
-  HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
+    HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
   	HAL_TIM_Base_Start(&htim3);
   	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_1);
   	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
   	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_3);
   	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_4);
 
+  	demux_Init(GPIOE, GPIO_PIN_4, GPIO_PIN_5, GPIO_PIN_6, CS_0);
+  	quadA = quad_Init(CS_1);
 
   /* USER CODE END 2 */
 
