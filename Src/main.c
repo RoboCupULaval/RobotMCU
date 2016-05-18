@@ -32,7 +32,6 @@
   */
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
-#include "stm32f4xx_hal_tim.h"
 #include "cmsis_os.h"
 #include "usb_device.h"
 
@@ -56,7 +55,7 @@ osThreadId controlLoopHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-
+quad_Handle quadA;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -102,16 +101,19 @@ int main(void)
   MX_SPI2_Init();
   MX_USART2_UART_Init();
   MX_TIM3_Init();
+  MX_USB_DEVICE_Init();
 
   /* USER CODE BEGIN 2 */
 
-  HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
+    HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
   	HAL_TIM_Base_Start(&htim3);
   	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_1);
   	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
   	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_3);
   	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_4);
 
+  	demux_Init(GPIOE, GPIO_PIN_4, GPIO_PIN_5, GPIO_PIN_6, CS_0);
+  	quadA = quad_Init(CS_1);
 
   /* USER CODE END 2 */
 
@@ -220,7 +222,7 @@ void MX_SPI2_Init(void)
   hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi2.Init.NSS = SPI_NSS_SOFT;
-  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
   hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi2.Init.TIMode = SPI_TIMODE_DISABLED;
   hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLED;
@@ -446,22 +448,35 @@ void StartDefaultTask(void const * argument)
 }
 
 /* sendMessageTaskFunction function */
+static char bufferGlobalDebug[256];
 void sendMessageTaskFunction(void const * argument)
 {
+
   /* USER CODE BEGIN sendMessageTaskFunction */
 	uint8_t Buf[] = "Hello USB World!\r\n";
 
   /* Infinite loop */
   for(;;)
   {
-	osDelay(1900);
-	HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_SET);
-	HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
-	CDC_Transmit_FS(Buf, 18);
-	//HAL_SPI_Transmit_IT(&hspi2,(uint8_t *)"Hello World!",12);
-	osDelay(100);
-	HAL_UART_Transmit_IT(&huart2,(uint8_t *)"\n\r",2);
-	HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_RESET);
+//	osDelay(1900);
+//	HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_SET);
+//	HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
+//	CDC_Transmit_FS(Buf, 18);
+//	//HAL_SPI_Transmit_IT(&hspi2,(uint8_t *)"Hello World!",12);
+//	osDelay(100);
+//	HAL_UART_Transmit_IT(&huart2,(uint8_t *)"\n\r",2);
+//	HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_RESET);
+	  osDelay(500);
+//	  bool succes = quad_Test(&quadA);
+//	  if (succes==true){
+//	  	   HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Success\r\n",9);
+//	  }else{
+//	  	   HAL_UART_Transmit_IT(&huart2,(uint8_t *)"No\r\n",4);
+//	  }
+	  quad_ReadCounters(&quadA);
+	  sprintf(bufferGlobalDebug,"COUNT %x, %x, %i, %i \n\r", quadA.count0, quadA.count1, quadA.count0, quadA.count1);
+	  HAL_UART_Transmit_IT(&huart2,(uint8_t*)bufferGlobalDebug, strlen(bufferGlobalDebug));
+//
   }
   /* USER CODE END sendMessageTaskFunction */
 }
@@ -494,10 +509,12 @@ void controlLoopTaskFunction(void const * argument)
 {
   /* USER CODE BEGIN controlLoopTaskFunction */
   /* Infinite loop */
+	uint8_t a[2];
+	a[0]=0x55;
   for(;;)
   {
-	  HAL_SPI_Transmit_IT(&hspi2, (uint8_t *)"\xaa", 1);
-	  osDelay(1);
+//	  HAL_SPI_Transmit_IT(&hspi2, a, 1);
+	  osDelay(100);
   }
   /* USER CODE END controlLoopTaskFunction */
 }

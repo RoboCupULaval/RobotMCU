@@ -2632,4 +2632,5 @@ static void SPI_CloseTx_ISR(SPI_HandleTypeDef *hspi)
   * @}
   */
 
+
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
