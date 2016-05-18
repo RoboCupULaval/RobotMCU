@@ -54,7 +54,7 @@ void demux_ConnectTo(chip_select CS){
 	else if(CS == CS_7){
 		HAL_GPIO_WritePin(HandleDemux.gpio, HandleDemux.a0, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(HandleDemux.gpio, HandleDemux.a1, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(&HandleDemux.gpio, HandleDemux.a2, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(HandleDemux.gpio, HandleDemux.a2, GPIO_PIN_SET);
 	}
 }
 

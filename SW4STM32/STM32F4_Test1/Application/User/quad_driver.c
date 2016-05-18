@@ -53,16 +53,16 @@ void quad_ReadCounters(quad_Handle *pQuad){
 	b2 = SPI_read();
 	b1 = SPI_read();
 	b0 = lCount1[1] = SPI_read();
-//	SPI_write_8bits(0x00); //dummy
-//	SPI_write_8bits(0x00); //dummy
-//	SPI_write_8bits(0x00); //dummy
-	//b6 = lCount1[0] = SPI_read();
-	//b5 = lCount0[1] = SPI_read();
-	//b4 = lCount0[0] = SPI_read();
+	SPI_write_8bits(0x00); //dummy
+	SPI_write_8bits(0x00); //dummy
+	SPI_write_8bits(0x00); //dummy
+	b6 = lCount1[0] = SPI_read();
+	b5 = lCount0[1] = SPI_read();
+	b4 = lCount0[0] = SPI_read();
 
 
-	//sprintf(buffer,"%x %x %x %x | %x %x %x\n\r", b3, b2, b1, b0, b6, b5, b4);
-	//HAL_UART_Transmit_IT(&huart2,(uint8_t*)buffer, strlen(buffer));
+	sprintf(buffer,"%x %x %x %x | %x %x %x\n\r", b3, b2, b1, b0, b6, b5, b4);
+	HAL_UART_Transmit_IT(&huart2,(uint8_t*)buffer, strlen(buffer));
 
 	demux_Disconnect();
 	pQuad->count0 = (b3 << 8) | b2;
