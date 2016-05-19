@@ -474,8 +474,8 @@ void sendMessageTaskFunction(void const * argument)
 //	  	   HAL_UART_Transmit_IT(&huart2,(uint8_t *)"No\r\n",4);
 //	  }
 	  quad_ReadCounters(&quadA);
-	  sprintf(bufferGlobalDebug,"COUNT %x, %x, %i, %i \n\r", quadA.count0, quadA.count1, quadA.count0, quadA.count1);
-	  HAL_UART_Transmit_IT(&huart2,(uint8_t*)bufferGlobalDebug, strlen(bufferGlobalDebug));
+//	  sprintf(bufferGlobalDebug,"COUNT %x, %x, %i, %i \n\r", quadA.count0, quadA.count1, quadA.count0, quadA.count1);
+//	  HAL_UART_Transmit_IT(&huart2,(uint8_t*)bufferGlobalDebug, strlen(bufferGlobalDebug));
 //
   }
   /* USER CODE END sendMessageTaskFunction */
