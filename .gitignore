@@ -10,3 +10,6 @@
 */.settings/*
 */SW4STM32/*
 *.ld
+
+.metadata/*
+RemoteSystemsTempFiles/
