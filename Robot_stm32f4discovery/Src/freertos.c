@@ -34,24 +34,166 @@
 /* Includes ------------------------------------------------------------------*/
 #include "FreeRTOS.h"
 #include "task.h"
+#include "cmsis_os.h"
 
 /* USER CODE BEGIN Includes */     
-
+#include "robocup/robocup_define.h"
 /* USER CODE END Includes */
 
 /* Variables -----------------------------------------------------------------*/
+osThreadId defaultTaskHandle;
+osThreadId sendMessageTaskHandle;
+osThreadId speedTaskHandle;
+osThreadId controlLoopHandle;
 
 /* USER CODE BEGIN Variables */
-
+extern quad_Handle quadA;
 /* USER CODE END Variables */
 
 /* Function prototypes -------------------------------------------------------*/
+void StartDefaultTask(void const * argument);
+void sendMessageTaskFunction(void const * argument);
+void speedTaskFunction(void const * argument);
+void controlLoopTaskFunction(void const * argument);
+
+extern void MX_USB_DEVICE_Init(void);
+void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /* USER CODE BEGIN FunctionPrototypes */
 
 /* USER CODE END FunctionPrototypes */
 
 /* Hook prototypes */
+
+/* Init FreeRTOS */
+
+void MX_FREERTOS_Init(void) {
+  /* USER CODE BEGIN Init */
+       
+  /* USER CODE END Init */
+
+  /* USER CODE BEGIN RTOS_MUTEX */
+  /* add mutexes, ... */
+  /* USER CODE END RTOS_MUTEX */
+
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* add semaphores, ... */
+  /* USER CODE END RTOS_SEMAPHORES */
+
+  /* USER CODE BEGIN RTOS_TIMERS */
+  /* start timers, add new ones, ... */
+  /* USER CODE END RTOS_TIMERS */
+
+  /* Create the thread(s) */
+  /* definition and creation of defaultTask */
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+
+  /* definition and creation of sendMessageTask */
+  osThreadDef(sendMessageTask, sendMessageTaskFunction, osPriorityNormal, 0, 128);
+  sendMessageTaskHandle = osThreadCreate(osThread(sendMessageTask), NULL);
+
+  /* definition and creation of speedTask */
+  osThreadDef(speedTask, speedTaskFunction, osPriorityIdle, 0, 128);
+  speedTaskHandle = osThreadCreate(osThread(speedTask), NULL);
+
+  /* definition and creation of controlLoop */
+  osThreadDef(controlLoop, controlLoopTaskFunction, osPriorityNormal, 0, 128);
+  controlLoopHandle = osThreadCreate(osThread(controlLoop), NULL);
+
+  /* USER CODE BEGIN RTOS_THREADS */
+  /* add threads, ... */
+  /* USER CODE END RTOS_THREADS */
+
+  /* USER CODE BEGIN RTOS_QUEUES */
+  /* add queues, ... */
+  /* USER CODE END RTOS_QUEUES */
+}
+
+/* StartDefaultTask function */
+void StartDefaultTask(void const * argument)
+{
+  /* init code for USB_DEVICE */
+  MX_USB_DEVICE_Init();
+
+  /* USER CODE BEGIN StartDefaultTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartDefaultTask */
+}
+
+/* sendMessageTaskFunction function */
+void sendMessageTaskFunction(void const * argument)
+{
+	/* USER CODE BEGIN sendMessageTaskFunction */
+	uint8_t Buf[] = "Hello USB World!\r\n";
+
+	/* Infinite loop */
+	for(;;)
+	{
+		//	osDelay(1900);
+		//	HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_SET);
+		//	HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
+		//	CDC_Transmit_FS(Buf, 18);
+		//	//HAL_SPI_Transmit_IT(&hspi2,(uint8_t *)"Hello World!",12);
+		//	osDelay(100);
+		//	HAL_UART_Transmit_IT(&huart2,(uint8_t *)"\n\r",2);
+		//	HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_RESET);
+		  osDelay(500);
+		//	  bool succes = quad_Test(&quadA);
+		//	  if (succes==true){
+		//	  	   HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Success\r\n",9);
+		//	  }else{
+		//	  	   HAL_UART_Transmit_IT(&huart2,(uint8_t *)"No\r\n",4);
+		//	  }
+		  quad_ReadCounters(&quadA);
+		//	  sprintf(bufferGlobalDebug,"COUNT %x, %x, %i, %i \n\r", quadA.count0, quadA.count1, quadA.count0, quadA.count1);
+		//	  HAL_UART_Transmit_IT(&huart2,(uint8_t*)bufferGlobalDebug, strlen(bufferGlobalDebug));
+		//
+	}
+	/* USER CODE END sendMessageTaskFunction */
+}
+
+/* speedTaskFunction function */
+void speedTaskFunction(void const * argument)
+{
+	/* USER CODE BEGIN speedTaskFunction */
+	/* Infinite loop */
+	uint32_t Pulse;
+	for(;;)
+	{
+		Pulse+=100;
+		//osDelay(5);
+		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, Pulse);
+		HAL_Delay(10);
+		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_2, Pulse + 100);
+		HAL_Delay(10);
+		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_3, Pulse + 200);
+		HAL_Delay(10);
+		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, Pulse + 300);
+		//osDelay(5);
+		Pulse = Pulse>60000 ? 0:Pulse;
+	}
+	/* USER CODODE END speedTaskFunction */
+}
+
+/* controlLoopTaskFunction function */
+void controlLoopTaskFunction(void const * argument)
+{
+	/* USER CODE BEGIN controlLoopTaskFunction */
+	/* Infinite loop */
+	uint8_t a[2];
+	a[0]=0x55;
+	for(;;)
+	{
+		//	  HAL_SPI_Transmit_IT(&hspi2, a, 1);
+		osDelay(100);
+	}
+	/* USER CODE END controlLoopTaskFunction */
+}
 
 /* USER CODE BEGIN Application */
      
