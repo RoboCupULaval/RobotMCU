@@ -9,3 +9,4 @@
 .mxproject
 */.settings/*
 */SW4STM32/*
+*.ld
