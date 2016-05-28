@@ -1,7 +1,6 @@
 # CubeMX
 # Don't ignore .project and .cproject to keep settings not set in CubeMX
 
-*/Inc/*
 */Middlewares/*
 */Debug/*
 */Release/*
