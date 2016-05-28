@@ -1,4 +1,4 @@
-/**tttttttttt
+/**
   ******************************************************************************
   * File Name          : stm32f4xx_hal_msp.c
   * Description        : This file provides code for the MSP Initialization 
@@ -50,6 +50,14 @@ void HAL_MspInit(void)
   HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
   /* System interrupt init*/
+  /* MemoryManagement_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(MemoryManagement_IRQn, 0, 0);
+  /* BusFault_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(BusFault_IRQn, 0, 0);
+  /* UsageFault_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(UsageFault_IRQn, 0, 0);
+  /* DebugMonitor_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DebugMonitor_IRQn, 0, 0);
   /* SysTick_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
 
@@ -68,7 +76,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
 
   /* USER CODE END SPI2_MspInit 0 */
     /* Peripheral clock enable */
-    __SPI2_CLK_ENABLE();
+    __HAL_RCC_SPI2_CLK_ENABLE();
   
     /**SPI2 GPIO Configuration    
     PC2     ------> SPI2_MISO
@@ -78,18 +86,18 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     GPIO_InitStruct.Pin = GPIO_PIN_2;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
-    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
     GPIO_InitStruct.Pin = GPIO_PIN_13|GPIO_PIN_15;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
-    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /* Peripheral interrupt init*/
+    /* Peripheral interrupt init */
     HAL_NVIC_SetPriority(SPI2_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(SPI2_IRQn);
   /* USER CODE BEGIN SPI2_MspInit 1 */
@@ -108,7 +116,7 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* hspi)
 
   /* USER CODE END SPI2_MspDeInit 0 */
     /* Peripheral clock disable */
-    __SPI2_CLK_DISABLE();
+    __HAL_RCC_SPI2_CLK_DISABLE();
   
     /**SPI2 GPIO Configuration    
     PC2     ------> SPI2_MISO
@@ -138,8 +146,8 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
 
   /* USER CODE END TIM3_MspInit 0 */
     /* Peripheral clock enable */
-    __TIM3_CLK_ENABLE();
-  /* Peripheral interrupt init*/
+    __HAL_RCC_TIM3_CLK_ENABLE();
+    /* Peripheral interrupt init */
     HAL_NVIC_SetPriority(TIM3_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(TIM3_IRQn);
   /* USER CODE BEGIN TIM3_MspInit 1 */
@@ -168,14 +176,14 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim)
     GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_5;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     GPIO_InitStruct.Alternate = GPIO_AF2_TIM3;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
     GPIO_InitStruct.Pin = GPIO_PIN_6;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     GPIO_InitStruct.Alternate = GPIO_AF2_TIM3;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
@@ -195,7 +203,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
 
   /* USER CODE END TIM3_MspDeInit 0 */
     /* Peripheral clock disable */
-    __TIM3_CLK_DISABLE();
+    __HAL_RCC_TIM3_CLK_DISABLE();
 
     /* Peripheral interrupt DeInit*/
     HAL_NVIC_DisableIRQ(TIM3_IRQn);
@@ -217,7 +225,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 
   /* USER CODE END USART2_MspInit 0 */
     /* Peripheral clock enable */
-    __USART2_CLK_ENABLE();
+    __HAL_RCC_USART2_CLK_ENABLE();
   
     /**USART2 GPIO Configuration    
     PA2     ------> USART2_TX
@@ -226,11 +234,11 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_3;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
-    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF7_USART2;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /* Peripheral interrupt init*/
+    /* Peripheral interrupt init */
     HAL_NVIC_SetPriority(USART2_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(USART2_IRQn);
   /* USER CODE BEGIN USART2_MspInit 1 */
@@ -249,7 +257,7 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
 
   /* USER CODE END USART2_MspDeInit 0 */
     /* Peripheral clock disable */
-    __USART2_CLK_DISABLE();
+    __HAL_RCC_USART2_CLK_DISABLE();
   
     /**USART2 GPIO Configuration    
     PA2     ------> USART2_TX
