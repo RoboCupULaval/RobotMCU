@@ -2,7 +2,7 @@
 
 ## Procédure d'installation
 
-1 - Installer l'IDE de votre choix (a ou b) et le toolchain :
+1 - Installer l'IDE de votre choix :
   - Eclipse (Linux, Mac et Windows) : voir section Eclipse (plus bas)
     - Installer les plug-ins de AC6 (voir plus bas)
   - System Workbench (Linux et Windows) : voir section System Workbench (plus bas)
