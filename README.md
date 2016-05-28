@@ -44,18 +44,18 @@ Compatible avec Linux, Mac et Windows.
 - Faites Next... jusqu'à ce que l'installation soit complété.
 - Vous devriez maintenent être capable d'importer le projet et le compiler.
 
-### Ressources
-#### STM32Cube
+## Ressources
+### STM32Cube
 Librairies et logiciel de ST
 - [RTOS et STM32Cube](http://www.st.com/content/ccc/resource/technical/document/user_manual/2d/60/ff/15/8c/c9/43/77/DM00105262.pdf/files/DM00105262.pdf/jcr:content/translations/en.DM00105262.pdf)
 - [Library HAL User manual](http://www.st.com/content/ccc/resource/technical/document/user_manual/2f/71/ba/b8/75/54/47/cf/DM00105879.pdf/files/DM00105879.pdf/jcr:content/translations/en.DM00105879.pdf)
 - [CubeMX documentation](http://www.st.com/content/ccc/resource/technical/document/data_brief/7a/81/a9/b5/72/99/4b/be/DM00103564.pdf/files/DM00103564.pdf/jcr:content/translations/en.DM00103564.pdf)
 
-#### FreeRTOS
+### FreeRTOS
 RTOS utilisé pour le projet
 - [Site officiel](http://www.freertos.org/)
 
-#### STM32F4
+### STM32F4
 MCU utilisé pour le projet
 - [STM32F4Discovery kit user manual](http://www.st.com/content/ccc/resource/technical/document/user_manual/70/fe/4a/3f/e7/e1/4f/7d/DM00039084.pdf/files/DM00039084.pdf/jcr:content/translations/en.DM00039084.pdf)
 - [STM32F4  Datasheet](http://www.st.com/content/ccc/resource/technical/document/datasheet/ef/92/76/6d/bb/c2/4f/f7/DM00037051.pdf/files/DM00037051.pdf/jcr:content/translations/en.DM00037051.pdf)
