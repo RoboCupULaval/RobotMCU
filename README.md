@@ -10,7 +10,7 @@
 2 - Installer CubeMX (Linux, Mac et Windows)
   - Téléchargez [ici](http://www.st.com/content/st_com/en/products/development-tools/software-development-tools/stm32-software-development-tools/stm32-configurators-and-code-generators/stm32cubemx.html?sc=stm32cubemx) (dans le bas de la page).
 
-3 - Cloner le repo localement.
+3 - Cloner le repo localement. **Faites un checkout sur la branche develop pour modifier le code**.
 
 4 - Ouvrir le fichier .ioc à l'aide de CubeMX et cliquer sur générer le code.
 
