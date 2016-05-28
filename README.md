@@ -8,7 +8,7 @@
   - System Workbench (Linux et Windows) : voir section System Workbench (plus bas)
   
 2 - Installer CubeMX (Linux, Mac et Windows)
-  - http://www.st.com/content/st_com/en/products/development-tools/software-development-tools/stm32-software-development-tools/stm32-configurators-and-code-generators/stm32cubemx.html?sc=stm32cubemx (dans le bas de la page)
+  - Téléchargez [ici](http://www.st.com/content/st_com/en/products/development-tools/software-development-tools/stm32-software-development-tools/stm32-configurators-and-code-generators/stm32cubemx.html?sc=stm32cubemx) (dans le bas de la page).
 
 3 - Cloner le repo localement.
 
@@ -21,7 +21,7 @@
 
 ## Logiciels nécessaires
 ### CubeMX
-Compatible avec Linux, Mac et Windows. Logiciel utilisé pour générer le code de base avec l'initialisation des périphériques du STM32.
+Compatible avec Linux, Mac et Windows. Logiciel utilisé pour générer le code de base avec l'initialisation des périphériques du STM32. Téléchargez [ici](http://www.st.com/content/st_com/en/products/development-tools/software-development-tools/stm32-software-development-tools/stm32-configurators-and-code-generators/stm32cubemx.html?sc=stm32cubemx) (dans le bas de la page).
 
 ### IDE
 Deux choix selon votre OS :
