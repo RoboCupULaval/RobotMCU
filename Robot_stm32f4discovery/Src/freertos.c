@@ -128,7 +128,7 @@ void StartDefaultTask(void const * argument)
 /* sendMessageTaskFunction function */
 void sendMessageTaskFunction(void const * argument)
 {
-	/* USER CODE BEGIN sendMessageTaskFunction */
+  /* USER CODE BEGIN sendMessageTaskFunction */
 	uint8_t Buf[] = "Hello USB World!\r\n";
 
 	/* Infinite loop */
@@ -154,36 +154,25 @@ void sendMessageTaskFunction(void const * argument)
 		//	  HAL_UART_Transmit_IT(&huart2,(uint8_t*)bufferGlobalDebug, strlen(bufferGlobalDebug));
 		//
 	}
-	/* USER CODE END sendMessageTaskFunction */
+  /* USER CODE END sendMessageTaskFunction */
 }
 
 /* speedTaskFunction function */
 void speedTaskFunction(void const * argument)
 {
-	/* USER CODE BEGIN speedTaskFunction */
-	/* Infinite loop */
-	uint32_t Pulse;
-	for(;;)
-	{
-		Pulse+=100;
-		//osDelay(5);
-		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, Pulse);
-		HAL_Delay(10);
-		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_2, Pulse + 100);
-		HAL_Delay(10);
-		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_3, Pulse + 200);
-		HAL_Delay(10);
-		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, Pulse + 300);
-		//osDelay(5);
-		Pulse = Pulse>60000 ? 0:Pulse;
-	}
-	/* USER CODODE END speedTaskFunction */
+  /* USER CODE BEGIN speedTaskFunction */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END speedTaskFunction */
 }
 
 /* controlLoopTaskFunction function */
 void controlLoopTaskFunction(void const * argument)
 {
-	/* USER CODE BEGIN controlLoopTaskFunction */
+  /* USER CODE BEGIN controlLoopTaskFunction */
 	/* Infinite loop */
 	uint8_t a[2];
 	a[0]=0x55;
@@ -192,7 +181,7 @@ void controlLoopTaskFunction(void const * argument)
 		//	  HAL_SPI_Transmit_IT(&hspi2, a, 1);
 		osDelay(100);
 	}
-	/* USER CODE END controlLoopTaskFunction */
+  /* USER CODE END controlLoopTaskFunction */
 }
 
 /* USER CODE BEGIN Application */
