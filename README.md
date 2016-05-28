@@ -1,5 +1,16 @@
 # RobotMCU
 
+## Structure des projets
+- Src :
+  - main.c : contient le code qui fait le lien entre tous les fichiers
+  - freertos.c : contient le code d'initialisation et gestion des tasks 
+  - Fichiers .c de configuration
+  - robocup :
+    - **fichiers sources spécifique à robocup**
+- Inc :
+  - Headers des fichiers de configuration
+- *.ioc : fichier pour CubeMX
+
 ## Procédure d'installation
 
 1 - Installez l'IDE de votre choix :
