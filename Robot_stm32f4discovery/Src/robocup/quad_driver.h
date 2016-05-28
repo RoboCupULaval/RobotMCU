@@ -14,8 +14,8 @@
 #include <stdbool.h>
 #include "stm32f4xx_hal.h"
 
-// Local includes
 #include "robocup_define.h"
+// Local includes
 #include "spi_wrapper.h"
 
 /****************************************************************************
