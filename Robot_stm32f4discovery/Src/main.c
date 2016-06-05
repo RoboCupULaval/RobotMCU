@@ -42,6 +42,7 @@
 /* USER CODE BEGIN Includes */
 // Local includes
 #include "robocup/robocup_define.h"
+#include "robocup/exampleTask.h"
 
 /* USER CODE END Includes */
 
@@ -104,6 +105,8 @@ int main(void)
   /* Call init function for freertos objects (in freertos.c) */
   MX_FREERTOS_Init();
 
+  xTaskCreate(exampleTaskBlinkRed, (signed char*)"loltaskred", 200, 0, 1, 0);
+  xTaskCreate(exampleTaskBlinkBlue, (signed char*)"loltaskblue", 200, 0, 1, 0);
   /* Start scheduler */
   osKernelStart();
   
