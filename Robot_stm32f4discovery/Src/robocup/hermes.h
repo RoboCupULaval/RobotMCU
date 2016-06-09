@@ -113,17 +113,17 @@ int dataSizeArray[] = {
 1  // 0x2B
 };
 
-
+// TODO: More specific failure than just FAILURE
+typedef enum {
+	FAILURE,
+	MySUCCESS
+}Result_t;
 
 typedef struct packetHeaderStruct packetHeaderStruct;
 
-void decobifyData(const unsigned char *originalData,
-				  unsigned char *decobifiedData,
-		          unsigned long numberOfBytes);
+Result_t cobifyData(const unsigned char *msg, size_t msg_len, unsigned char *dst);
 
-void cobifyData(const unsigned char *originalData,
-		  		        unsigned char *cobifiedData, unsigned long originalNumberOfBytes);
-
+Result_t decobifyData(const char *data, size_t len, char *dst, size_t *dst_len);
 
 
 #endif
