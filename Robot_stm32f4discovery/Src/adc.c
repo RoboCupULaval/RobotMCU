@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * File Name          : SPI.c
+  * File Name          : ADC.c
   * Description        : This file provides code for the configuration
-  *                      of the SPI instances.
+  *                      of the ADC instances.
   ******************************************************************************
   *
   * COPYRIGHT(c) 2016 STMicroelectronics
@@ -33,7 +33,7 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "spi.h"
+#include "adc.h"
 
 #include "gpio.h"
 
@@ -41,98 +41,91 @@
 
 /* USER CODE END 0 */
 
-SPI_HandleTypeDef hspi2;
+ADC_HandleTypeDef hadc1;
 
-/* SPI2 init function */
-void MX_SPI2_Init(void)
+/* ADC1 init function */
+void MX_ADC1_Init(void)
 {
+  ADC_ChannelConfTypeDef sConfig;
 
-  hspi2.Instance = SPI2;
-  hspi2.Init.Mode = SPI_MODE_MASTER;
-  hspi2.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi2.Init.DataSize = SPI_DATASIZE_8BIT;
-  hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
-  hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
-  hspi2.Init.NSS = SPI_NSS_SOFT;
-  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
-  hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
-  hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
-  hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-  hspi2.Init.CRCPolynomial = 10;
-  if (HAL_SPI_Init(&hspi2) != HAL_OK)
+    /**Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion) 
+    */
+  hadc1.Instance = ADC1;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
+  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
+  hadc1.Init.ScanConvMode = DISABLE;
+  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.DiscontinuousConvMode = DISABLE;
+  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  hadc1.Init.NbrOfConversion = 1;
+  hadc1.Init.DMAContinuousRequests = DISABLE;
+  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  if (HAL_ADC_Init(&hadc1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+    /**Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
+    */
+  sConfig.Channel = ADC_CHANNEL_14;
+  sConfig.Rank = 1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
   }
 
 }
 
-void HAL_SPI_MspInit(SPI_HandleTypeDef* spiHandle)
+void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
 {
 
   GPIO_InitTypeDef GPIO_InitStruct;
-  if(spiHandle->Instance==SPI2)
+  if(adcHandle->Instance==ADC1)
   {
-  /* USER CODE BEGIN SPI2_MspInit 0 */
+  /* USER CODE BEGIN ADC1_MspInit 0 */
 
-  /* USER CODE END SPI2_MspInit 0 */
+  /* USER CODE END ADC1_MspInit 0 */
     /* Peripheral clock enable */
-    __HAL_RCC_SPI2_CLK_ENABLE();
+    __HAL_RCC_ADC1_CLK_ENABLE();
   
-    /**SPI2 GPIO Configuration    
-    PC2     ------> SPI2_MISO
-    PB13     ------> SPI2_SCK
-    PB15     ------> SPI2_MOSI 
+    /**ADC1 GPIO Configuration    
+    PC4     ------> ADC1_IN14
+    PC5     ------> ADC1_IN15 
     */
-    GPIO_InitStruct.Pin = NRF_MISO_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_PULLUP;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
-    HAL_GPIO_Init(NRF_MISO_GPIO_Port, &GPIO_InitStruct);
+    GPIO_InitStruct.Pin = POSITION_SENSOR1_Pin|POSITION_SENSOR2_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = NRF_SCK_Pin|NRF_MOSI_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_PULLUP;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
-    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  /* USER CODE BEGIN ADC1_MspInit 1 */
 
-    /* Peripheral interrupt init */
-    HAL_NVIC_SetPriority(SPI2_IRQn, 5, 0);
-    HAL_NVIC_EnableIRQ(SPI2_IRQn);
-  /* USER CODE BEGIN SPI2_MspInit 1 */
-
-  /* USER CODE END SPI2_MspInit 1 */
+  /* USER CODE END ADC1_MspInit 1 */
   }
 }
 
-void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle)
+void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
 {
 
-  if(spiHandle->Instance==SPI2)
+  if(adcHandle->Instance==ADC1)
   {
-  /* USER CODE BEGIN SPI2_MspDeInit 0 */
+  /* USER CODE BEGIN ADC1_MspDeInit 0 */
 
-  /* USER CODE END SPI2_MspDeInit 0 */
+  /* USER CODE END ADC1_MspDeInit 0 */
     /* Peripheral clock disable */
-    __HAL_RCC_SPI2_CLK_DISABLE();
+    __HAL_RCC_ADC1_CLK_DISABLE();
   
-    /**SPI2 GPIO Configuration    
-    PC2     ------> SPI2_MISO
-    PB13     ------> SPI2_SCK
-    PB15     ------> SPI2_MOSI 
+    /**ADC1 GPIO Configuration    
+    PC4     ------> ADC1_IN14
+    PC5     ------> ADC1_IN15 
     */
-    HAL_GPIO_DeInit(NRF_MISO_GPIO_Port, NRF_MISO_Pin);
-
-    HAL_GPIO_DeInit(GPIOB, NRF_SCK_Pin|NRF_MOSI_Pin);
-
-    /* Peripheral interrupt Deinit*/
-    HAL_NVIC_DisableIRQ(SPI2_IRQn);
+    HAL_GPIO_DeInit(GPIOC, POSITION_SENSOR1_Pin|POSITION_SENSOR2_Pin);
 
   }
-  /* USER CODE BEGIN SPI2_MspDeInit 1 */
+  /* USER CODE BEGIN ADC1_MspDeInit 1 */
 
-  /* USER CODE END SPI2_MspDeInit 1 */
+  /* USER CODE END ADC1_MspDeInit 1 */
 } 
 
 /* USER CODE BEGIN 1 */

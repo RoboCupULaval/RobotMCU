@@ -33,6 +33,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 #include "cmsis_os.h"
+#include "adc.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -87,6 +88,10 @@ int main(void)
   MX_SPI2_Init();
   MX_USART2_UART_Init();
   MX_TIM3_Init();
+  MX_ADC1_Init();
+  MX_TIM1_Init();
+  MX_TIM2_Init();
+  MX_TIM4_Init();
 
   /* USER CODE BEGIN 2 */
 
@@ -105,8 +110,6 @@ int main(void)
   /* Call init function for freertos objects (in freertos.c) */
   MX_FREERTOS_Init();
 
-  xTaskCreate(exampleTaskBlinkRed, (signed char*)"loltaskred", 200, 0, 1, 0);
-  xTaskCreate(exampleTaskBlinkBlue, (signed char*)"loltaskblue", 200, 0, 1, 0);
   /* Start scheduler */
   osKernelStart();
   
