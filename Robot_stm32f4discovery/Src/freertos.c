@@ -38,6 +38,7 @@
 
 /* USER CODE BEGIN Includes */     
 #include "robocup/robocup_define.h"
+#include "robocup/hermes.h"
 /* USER CODE END Includes */
 
 /* Variables -----------------------------------------------------------------*/
@@ -94,7 +95,7 @@ void MX_FREERTOS_Init(void) {
   sendMessageTaskHandle = osThreadCreate(osThread(sendMessageTask), NULL);
 
   /* definition and creation of speedTask */
-  osThreadDef(speedTask, speedTaskFunction, osPriorityIdle, 0, 128);
+  osThreadDef(speedTask, speedTaskFunction, osPriorityIdle, 0, 1024);
   speedTaskHandle = osThreadCreate(osThread(speedTask), NULL);
 
   /* definition and creation of controlLoop */
@@ -149,7 +150,7 @@ void sendMessageTaskFunction(void const * argument)
 		//	  }else{
 		//	  	   HAL_UART_Transmit_IT(&huart2,(uint8_t *)"No\r\n",4);
 		//	  }
-		  quad_ReadCounters(&quadA);
+////////  quad_ReadCounters(&quadA);
 		//	  sprintf(bufferGlobalDebug,"COUNT %x, %x, %i, %i \n\r", quadA.count0, quadA.count1, quadA.count0, quadA.count1);
 		//	  HAL_UART_Transmit_IT(&huart2,(uint8_t*)bufferGlobalDebug, strlen(bufferGlobalDebug));
 		//
@@ -160,11 +161,16 @@ void sendMessageTaskFunction(void const * argument)
 /* speedTaskFunction function */
 void speedTaskFunction(void const * argument)
 {
+
+    HAL_UART_Transmit_IT(&huart2,(uint8_t *)"ab", 2);
   /* USER CODE BEGIN speedTaskFunction */
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+
+	    HAL_UART_Transmit_IT(&huart2,(uint8_t *)"cd", 2);
+	test_hermes();
+    osDelay(1000);
   }
   /* USER CODE END speedTaskFunction */
 }
@@ -185,7 +191,7 @@ void controlLoopTaskFunction(void const * argument)
 }
 
 /* USER CODE BEGIN Application */
-     
+
 /* USER CODE END Application */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

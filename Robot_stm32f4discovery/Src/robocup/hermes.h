@@ -1,20 +1,32 @@
 /*
- * CS_demux.h
+ * hermes.h
  *
- *  Created on: 2014-01-09
+ *  Created on: 2016-06-21
  *      Author: Philippe Babin
  */
 
-#ifndef SAMPLE_TASK_H_
-#define SAMPLE_TASK_H_
+#ifndef HERMES_TASK_H_
+#define HERMES_TASK_H_
 
 #include <stdio.h>
+#include <string.h>
+
+#include "usart.h"
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx.h"
 
 /*******************************************************************************
  * User Interface Function
  *******************************************************************************/
+
+typedef struct {
+	char protocolVersion;
+	char srcAddress;
+	char destAddress;
+	char packetType;
+	char checksum;
+} packetHeaderStruct_t;
+
 
 // an enum for each packet type
 enum packetTypes {
@@ -66,7 +78,7 @@ enum packetTypes {
 
 
 // the size for each packet type
-int dataSizeArray[] = {
+static size_t dataSizeArray[] = {
 0,  // 0x00
 0,  // 0x01
 16, // 0x02
@@ -121,9 +133,14 @@ typedef enum {
 
 typedef struct packetHeaderStruct packetHeaderStruct;
 
-Result_t cobifyData(const unsigned char *msg, size_t msg_len, unsigned char *dst);
 
-Result_t decobifyData(const char *data, size_t len, char *dst, size_t *dst_len);
+void test_hermes();
+
+Result_t validPayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen);
+
+Result_t cobifyData(const void *ptr, size_t msg_len,   char *dst);
+
+Result_t decobifyData(const char *ptr, size_t len, void *dst, size_t *dst_len);
 
 
-#endif
+#endif // HERMES_TASK_H_

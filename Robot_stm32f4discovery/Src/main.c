@@ -90,7 +90,7 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
 
-    HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
+    //HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
   	HAL_TIM_Base_Start(&htim3);
   	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_1);
   	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
@@ -105,8 +105,6 @@ int main(void)
   /* Call init function for freertos objects (in freertos.c) */
   MX_FREERTOS_Init();
 
-  xTaskCreate(exampleTaskBlinkRed, (signed char*)"loltaskred", 200, 0, 1, 0);
-  xTaskCreate(exampleTaskBlinkBlue, (signed char*)"loltaskblue", 200, 0, 1, 0);
   /* Start scheduler */
   osKernelStart();
   
