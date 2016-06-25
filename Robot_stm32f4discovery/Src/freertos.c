@@ -130,7 +130,6 @@ void StartDefaultTask(void const * argument)
 void sendMessageTaskFunction(void const * argument)
 {
   /* USER CODE BEGIN sendMessageTaskFunction */
-	uint8_t Buf[] = "Hello USB World!\r\n";
 
 	/* Infinite loop */
 	for(;;)
@@ -168,7 +167,7 @@ void speedTaskFunction(void const * argument)
   for(;;)
   {
 
-	    HAL_UART_Transmit_IT(&huart2,(uint8_t *)"cd", 2);
+	    //HAL_UART_Transmit_IT(&huart2,(uint8_t *)"cd", 2);
 	test_hermes();
     osDelay(1000);
   }
@@ -180,8 +179,6 @@ void controlLoopTaskFunction(void const * argument)
 {
   /* USER CODE BEGIN controlLoopTaskFunction */
 	/* Infinite loop */
-	uint8_t a[2];
-	a[0]=0x55;
 	for(;;)
 	{
 		//	  HAL_SPI_Transmit_IT(&hspi2, a, 1);
