@@ -81,23 +81,96 @@ Result_t test_hermes_invalid_packet(const char* pInvalid_packet, size_t packet_l
 	return decobifyData(pInvalid_packet, packet_len, decode, &decode_len);
 }
 
+
+
+/*
+ * Validation of the command
+void hermer_handleMessage(const unsigned char * msg, size_t msg_len){
+	uint8_t id = msg[0];
+
+  // Not implemented command
+	if( id >= cmd_table_len || cmd_table[id].callback == nop){
+		char err[255];
+		sprintf(err, "Invalid command id : %d", id);
+		sendError(err);
+		sendNack();
+		return;
+	}
+  // Invalid  table entry
+	else if(cmd_table[id].id != id){
+		char err[255];
+		sprintf(err, "Function table wrong id (cmd_table[id].id != id): %d != %d", cmd_table[id].id, id);
+		sendError(err);
+		sendNack();
+		return;
+	}
+  else if(cmd_table[id].msg_len != msg_len -1){
+    char err[255];
+    char hex[140];
+    convertBytesToStr(msg, msg_len, hex);
+    sprintf(err, "Invalid length expect %d receive %d, %s", cmd_table[id].msg_len, msg_len - 1 , hex);
+    sendError(err);
+    convertBytesToStr(msg, msg_len, err);
+    sendError(err);
+    sendNack();
+    return;
+  }
+
+	sendAck();
+	cmd_table[id].callback(*this, msg);
+}*/
+
+// TODO extract the uart from the this function
+size_t readUntilZero(void * pBuffer, size_t length){
+	uint8_t *buf = pBuffer;
+	if (length < 1) return 0;
+	  size_t index = 0;
+	  while (index < length) {
+	    uint8_t c;
+	    HAL_StatusTypeDef res = HAL_UART_Receive(&huart2, &c, 1, 100000);
+	    if(res != HAL_OK)
+	    	return 0;
+	    *buf++ = c;
+	    if (c == '\0') break;
+	    index++;
+	  }
+	  return index;
+}
+
+
 // This is the main task, it is intended to run indefinitely
 void hermesTask(void * pvParameters) {
-	int accumulatedBytes = 0; // number of bytes accumulated before 0 reached
-	unsigned char packetBuffer[BUFFERSIZE];
-	unsigned char dataBuffer[BUFFERSIZE + 2];
+	char packetBuffer[COBS_MAX_PACKET_LEN];
+	unsigned char dataBuffer[COBS_MAX_PACKET_LEN + 2];
 	packetHeaderStruct_t *currentPacketHeaderPtr;
-	int packetIsCorrect = 1;
 	size_t payloadLen = 0;
 	Result_t res;
 	while (1) {
-		accumulatedBytes = 0;
 		// Get data from device
 
-		// The data is treated
-		res = decobifyData(packetBuffer, accumulatedBytes, dataBuffer, &payloadLen);
-		if (res == FAILURE)
+		size_t bytesReceived = readUntilZero(packetBuffer, COBS_MAX_PACKET_LEN);
+
+		if(bytesReceived == 0){
+			Debug_Print("Timeout on receiving\r\n");
 			continue;
+		}
+		if(bytesReceived < sizeof(packetHeaderStruct_t)){
+			Debug_Print("Too small packet\r\n");
+			continue;
+	    }
+
+		// Extract destination address without decoding the packet
+		// TODO switch the litteral '4' to a more elegant solution
+		if(packetBuffer[4] != ADDR_ROBOT && packetBuffer[4] != ADDR_BROADCAST){
+			continue;
+		}
+
+		// The data is treated
+		res = decobifyData(packetBuffer, bytesReceived, dataBuffer, &payloadLen);
+		if (res == FAILURE){
+			Debug_Print("Fail decoding\r\n");
+			continue;
+		}
 
 		// we "extract" the packet header
 		// This is done here because we need the size for the checksum.
@@ -106,16 +179,18 @@ void hermesTask(void * pvParameters) {
 
 		if (res == FAILURE) {
 			// Send a warning packet to control tower
+			Debug_Print("Invalid packet\r\n");
 			continue;
 		}
 
+		Debug_Print("Success!!!\r\n");
+		//Debug_Print(dataBuffer);
 		// Call callback that handle the packet
 
 	}
 }
 
-Result_t validPayload(packetHeaderStruct_t *currentPacketHeaderPtr,
-		size_t payloadLen) {
+Result_t validPayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen) {
 	size_t sizeOfTheData;
 
 	sizeOfTheData = g_packetsTable[(size_t) currentPacketHeaderPtr->packetType].len;
