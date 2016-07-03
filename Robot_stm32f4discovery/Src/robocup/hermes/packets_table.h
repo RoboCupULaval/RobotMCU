@@ -8,8 +8,18 @@
 #ifndef ROBOCUP_PACKETS_TABLE_H_
 #define ROBOCUP_PACKETS_TABLE_H_
 
-#include "commands.h"
+#include <stdint.h>
 
+#include "commands.h"
+// commands.c ->
+//			hermes.h(send_respond),
+//          packet_Table(enum)
+// hermes.h ->
+//          commands.h(struct),
+//          packet_table(everything)
+// commands.h
+// packet_table ->
+//          commands.h(functions)
 
 
 // an enum for each packet type
@@ -73,7 +83,7 @@ typedef struct {
 static const packet_t g_packetsTable[] = {
 		{HeartbeatRequest,                   command_heartbeatRequest, sizeof(msg_no_arg_t)},
 		{HeartbeatResponse,                  nop, (size_t)0},
-		{MovementCommand,                    nop, (size_t)0},
+		{MovementCommand,                    command_movementCommand,  sizeof(msg_set_speed_t)},
 		{EmergencyStopRequest,               nop, (size_t)0},
 		{UnitTestCommand,                    nop, (size_t)0},
 		{UnitTestResultRequest,              nop, (size_t)0},
@@ -117,6 +127,7 @@ static const packet_t g_packetsTable[] = {
 		{WirelessTimeWatchdogValue,          nop, (size_t)0}
 };
 
+static const size_t g_packetsTableLen = sizeof(g_packetsTable) / sizeof(packet_t);
 
 
 #endif /* ROBOCUP_PACKETS_TABLE_H_ */

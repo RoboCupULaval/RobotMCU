@@ -23,21 +23,25 @@ CMD_SET_CHARGE        = '\x10'
 CMD_FETCH_LETTER      = '\x11'
 
 # Command type
-HEART_BEAT_REQUEST_ID = 0x00
-MOVEMENT_COMMAND_ID   = 0x02
+HEART_BEAT_REQUEST_ID         = 0x00
+HEART_BEAT_RESPOND_ID         = 0x01
+MOVEMENT_COMMAND_ID           = 0x02
+ROBOT_CRASHED_NOTIFICATION_ID = 0x26
 
 
-PROTOCOL_VERSION  = b'\x01'
+PROTOCOL_VERSION  = 0x01
 
 #address
-ADDR_BASE_STATION = b'\x00'
-ADDR_BROADCAST    = b'\xFF'
+ADDR_BASE_STATION = 0x00
+ADDR_BROADCAST    = 0xFF
 
 
 def intToByteString(i):
     if i == 0:
         return '\x00'
     return bitstring.BitString(uint=i, length=(i.bit_length()+7)/8*8).bytes
+
+
 
 def unpackagePayload(pack):
     #print "Decode(", pack, ")"
@@ -53,12 +57,11 @@ def unpackagePayload(pack):
         #print("payload len %d data=" % len(pack) + ":".join("{:02x}".format(ord(c)) for c in pack))
 
 def generateHeader(packet_type, dest_addres=ADDR_BROADCAST):
-    header = bytes()
-    header += PROTOCOL_VERSION
-    header += ADDR_BASE_STATION
-    header += dest_addres
-    header += bytes(packet_type)
-    header += b'\x00' # Checksum
+    header = bytes([PROTOCOL_VERSION,
+                    ADDR_BASE_STATION,
+                    dest_addres,
+                    packet_type,
+                    0x00])
     return header
 
 def packagePayloadLess(id):
@@ -66,8 +69,7 @@ def packagePayloadLess(id):
     return cobs.encode(bytes(pay)) + b'\0'
 
 def packagePayload(id, payload):
-    pay = ''
-    pay += generateHeader(id)
+    pay = generateHeader(id)
     pay += payload
     return cobs.encode(bytes(pay))  + b'\0'
 
@@ -80,42 +82,10 @@ def createCommandAskRobotName():
 def createCommandGetStatus():
     return packagePayloadLess(CMD_GET_STATUS)
 
-def createCommandSendSpeed(vx, vy, vz):
+def create3FloatCommand(id, vx, vy, vz):
     vel = [vx, vy, vz]
     payload = struct.pack('%sf' % len(vel), *vel)
     #print("payload len %d data=" % len(payload) + ":".join("{:02x}".format(ord(c)) for c in payload))
     #print 'Raw payload', ":".join("{:02x}".format(ord(c)) for c in payload)
-    return packagePayload(CMD_SET_SPEED, payload)
-
-
-def createCommandSetPid(m, p, i, d):
-    pid = [p, i, d]
-    payload = struct.pack('%sf' % len(pid), *pid)
-    payload = intToByteString(m) + payload
-    #print 'Raw payload', ":".join("{:02x}".format(ord(c)) for c in payload)
-    return packagePayload(CMD_SET_PID, payload)
-
-
-def createCommandListCommand():
-    return packagePayloadLess(CMD_LIST_COMMANDS)
-
-def createCommandSetMagnet(enable):
-    value = '\x01' if enable else '\x00'
-    return packagePayload(CMD_SET_MAGNET, value)
-
-def createCommandSetBreakTrigger(enable):
-    value = '\x01' if enable else '\x00'
-    return packagePayload(CMD_SET_BREAK_TRIGGER, value)
-
-def createCommandSetCharge(enable):
-    value = '\x01' if enable else '\x00'
-    return packagePayload(CMD_SET_CHARGE, value)
-
-def createCommandMoveServo(id, angle):
-    payload  = str(unichr(id))
-    payload += intToByteString(angle) if angle != 0 else '\x00'
-    return packagePayload(CMD_SET_MOVE_SERVO, payload)
-
-def createCommandFetchLetter():
-    return packagePayloadLess(CMD_FETCH_LETTER)
+    return packagePayload(id, payload)
 

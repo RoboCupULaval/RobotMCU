@@ -7,7 +7,7 @@ if __name__ == "__main__":
     print("==== pyhermes ====")
     port = getFirstSerialPort()
 
-    com = McuCom(port, 9600)
+    com = McuCom(port, 115200)
     quitting = False
     def listener():
         while True:

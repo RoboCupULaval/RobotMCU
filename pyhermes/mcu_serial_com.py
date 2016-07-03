@@ -31,7 +31,7 @@ def getFirstSerialPort():
 
 class McuCom(object):
     """Handle communication between the microcontroller and the computer"""
-    def __init__(self, port, baudrate, time_out=1):
+    def __init__(self, port, baudrate, time_out=5):
         self.port = port
         self.baudrate = baudrate
         self.ser = serial.Serial(port, baudrate, timeout=time_out)
@@ -42,13 +42,21 @@ class McuCom(object):
         print("Cmd ask: ", cmd)
         #self.sendCommandAndWaitAcknowledge(cmd)
         self.sendCommand(cmd)
-        #res = self.retreiveRespond()
+        try:
+            res = self.retreiveRespond()
+        except serial.SerialTimeoutException:
+            print("No Robot detected")
+            return
+
+        if res[3] == HEART_BEAT_RESPOND_ID:
+            print("Robot {} is alive".format(res[1]))
+
         #print 'Header', ":".join("{:02x}".format(ord(c)) for c in res)
         #return res[0] == CMD_ASK_ROBOT_NAME and  res[1] == ROBOT_NAME
 
 
     def sendSpeed(self, vx, vy, vz):
-        cmd = createCommandSendSpeed(vx, vy, vz)
+        cmd = create3FloatCommand(MOVEMENT_COMMAND_ID, vx, vy, vz)
         #print("Cmd ask: ", cmd)
         #self.sendCommandAndWaitAcknowledge(cmd)
         self.sendCommand(cmd)
@@ -105,15 +113,19 @@ class McuCom(object):
         return pack[0] == CMD_ACK
     def isNack(self, pack):
         return pack[0] == CMD_NACK
-    def isError(self, res):
-        return res[0] == CMD_ERROR
+    def isError(self, id):
+        return id == ROBOT_CRASHED_NOTIFICATION_ID
     def isDebug(self, res):
         return res[0] == CMD_DEBUG
     def isMultiPartPacket(self, res):
         return res[0] == CMD_MULTI_PART
+    def getId(self, res):
+        return res[3]
 
     def retreiveRespond(self):
         res = unpackagePayload(self.readUntilZero())
+        id = self.getId(res)
+        """
         last_res = res
 
         while self.isMultiPartPacket(last_res):
@@ -122,11 +134,12 @@ class McuCom(object):
         else:
             # Set the id on the last part to the head of the respond
             res = last_res[0] + res[1:]
+        """
 
-        if self.isError(last_res):
+        if self.isError(id):
             print("ERROR: ", res[1:])
-        elif self.isDebug(last_res):
-            print("DEBUG: ", res[1:])
+        #elif self.isDebug(last_res):
+        #    print("DEBUG: ", res[1:])
         #else:
         #    print('unpacked res=', res)
         return res

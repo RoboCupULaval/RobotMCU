@@ -38,7 +38,7 @@
 
 /* USER CODE BEGIN Includes */     
 #include "robocup/robocup_define.h"
-#include "robocup/hermes.h"
+#include "robocup/hermes/hermes.h"
 /* USER CODE END Includes */
 
 /* Variables -----------------------------------------------------------------*/

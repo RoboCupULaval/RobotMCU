@@ -10,7 +10,6 @@
 
 #include "stdint.h"
 
-
 typedef struct __attribute__((__packed__)) {
 	uint8_t protocolVersion;
 	uint8_t srcAddress;
@@ -51,6 +50,7 @@ typedef struct __attribute__((__packed__)) {
 
 void nop(const void *msg);
 void command_heartbeatRequest(const void *msg);
+void command_movementCommand(const void *msg);
 
 
 #endif /* ROBOCUP_COMMANDS_H_ */

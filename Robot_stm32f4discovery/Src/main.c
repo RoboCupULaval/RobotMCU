@@ -43,6 +43,7 @@
 // Local includes
 #include "robocup/robocup_define.h"
 #include "robocup/exampleTask.h"
+#include "robocup/bluetooth/bluetooth.h"
 
 /* USER CODE END Includes */
 
@@ -99,6 +100,10 @@ int main(void)
 
   	demux_Init(GPIOE, GPIO_PIN_4, GPIO_PIN_5, GPIO_PIN_6, CS_0);
   	quadA = quad_Init(CS_1);
+
+  	// Init communication
+  	comHandle_t com = bluetooth_init();
+  	hermes_init(com);
 
   /* USER CODE END 2 */
 

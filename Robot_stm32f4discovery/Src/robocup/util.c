@@ -1,11 +1,8 @@
 /*
  * util.c
- *
- *  Created on: Jun 26, 2016
- *      Author: philippe
- */
-#include "stdio.h"
-#include <stdint.h>
+*/
+#include "util.h"
+
 
 void convertBytesToStr(const void * ptr, size_t len, char* str){
   uint8_t *bytes = (uint8_t *)ptr;
@@ -14,4 +11,9 @@ void convertBytesToStr(const void * ptr, size_t len, char* str){
     str += 3;
   }
   *str = '\0';
+}
+
+
+void Debug_Print(char * pStr){
+	g_hermesHandle.com.write(pStr, strlen(pStr));
 }
