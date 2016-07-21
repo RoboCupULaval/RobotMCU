@@ -34,13 +34,6 @@ extern hermesHandle_t g_hermesHandle;
 //#define PID_I 0.005
 #define PID_D 0.000
 
-typedef struct DCMotor_Handle {
-		PWM_Handle PwmHandler;
-		GPIO_Number_e DirectionPin;
-		bool aPwm;
-}DCMotor_Handle;
-
-
 typedef struct {
 		float Ref; // Input: reference set-point
 		float Fbk; // Input: feedback

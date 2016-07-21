@@ -46,6 +46,8 @@
 #include "robocup/exampleTask.h"
 #include "robocup/bluetooth/bluetooth.h"
 
+void mySpeedTaskFunction(void const * argument);
+
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -115,6 +117,10 @@ int main(void)
   /* Call init function for freertos objects (in freertos.c) */
   MX_FREERTOS_Init();
 
+  xTaskCreate(exampleTaskBlinkRed, (signed char*)"loltaskred", 200, 0, 1, 0);
+  xTaskCreate(exampleTaskBlinkBlue, (signed char*)"loltaskblue", 200, 0, 1, 0);
+  xTaskCreate(mySpeedTaskFunction, (signed char*)"speedTasknom", 200, 0, 1, 0);
+
   /* Start scheduler */
   osKernelStart();
   
@@ -131,6 +137,29 @@ int main(void)
   }
   /* USER CODE END 3 */
 
+}
+
+/* speedTaskFunction function */
+void mySpeedTaskFunction(void const * argument)
+{
+  /* USER CODE BEGIN speedTaskFunction */
+  /* Infinite loop */
+	uint32_t Pulse = 0;
+  for(;;)
+  {
+	  Pulse+=100;
+	      //osDelay(5);
+	  		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, Pulse); // This is the command that sets the speed
+	  		HAL_Delay(10);
+	  		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_2, Pulse+100);
+	  		HAL_Delay(10);
+	  		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_3, Pulse+200);
+	  		HAL_Delay(10);
+	  		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, Pulse+300);
+	  		//osDelay(5);
+	  		Pulse = Pulse>60000 ? 0:Pulse;
+  }
+  /* USER CODE END speedTaskFunction */
 }
 
 /** System Clock Configuration
