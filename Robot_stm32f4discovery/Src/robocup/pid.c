@@ -43,7 +43,14 @@ struct PID_Wheel wheels[4]; // the four wheels (clock configuration)
 //   pKd: The Kd parameter for the PID
 //   pUmax: the maximum value for u (saturation)
 //   pUmin: the minimum value for u (saturation)
+
+static quad_Handle quadA;
+static quad_Handle quadB;
+
 void initializePID(float pKp, float pKi, float pKd, float pUmax, float pUmin){
+
+	quadA = quad_Init(CS_1);
+	quadB = quad_Init(CS_2);
 
     // loop for each wheel
 	for (int i=0; i<4; i++)
@@ -107,21 +114,29 @@ void updatePID(struct PID_Wheel *pWheel){
 }
 
 //TODO
-float COMMANDX = 1; // the wireless command
-float COMMANDY = 1; // the wireless command
+float COMMANDX = 100; // the wireless command
+float COMMANDY = 100; // the wireless command
+float COMMANDROT = 100; // in rad/s
+float RADIUS = 0.5;
+
 
 // This function sets the appropriate PWM value for each wheel
 void setWheelsCommands() {
 	for (int i=0; i<4; i++) {
-		wheels[i].r = wheels[i].vectorX * COMMANDX + wheels[i].vectorY * COMMANDY;
+		wheels[i].r = wheels[i].vectorX * COMMANDX + wheels[i].vectorY * COMMANDY + COMMANDROT * RADIUS;
+
 	}
 }
 
 void setWheelsPWM() {
-__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, (int) wheels[1].output);
-__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, (int) wheels[2].output);
-__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, (int) wheels[3].output);
-__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, (int) wheels[4].output);
+	__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, (int) 1<<15);
+	__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, (int) 300);
+	//__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, (int) 300);
+	//__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, (int) 300);
+//__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, (int) abs(wheels[0].output));
+//__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, (int) abs(wheels[1].output));
+//__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, (int) abs(wheels[2].output));
+//__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, (int) abs(wheels[3].output));
 }
 
 // This tasks deals with the movements of the robot
@@ -129,14 +144,19 @@ void wheelTask(void * pvParameters) {
 	while (1)
 	  {
 		// Get the command from communication and compute the wheel-wise command
-		setWheelsCommands();
+		//setWheelsCommands();
 
 		// Get the feedback and set it's value for each wheel
-		//TODO
+		//quad_ReadCounters(&quadA);
+		//quad_ReadCounters(&quadB);
+		//wheels[0].fbk = quadA.count0;
+		//wheels[1].fbk = quadA.count1;
+		//wheels[2].fbk = quadB.count0;
+		//wheels[3].fbk = quadB.count1;
 
 		// Compute the PID output for each wheel
 		for (int i=0; i<4; i++) {
-		    updatePID(&(wheels[i]));
+		    //updatePID(&(wheels[i]));
 		}
 
 		// set the wheels PWM

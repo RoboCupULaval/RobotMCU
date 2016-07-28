@@ -45,6 +45,7 @@
 #include "robocup/robocup_define.h"
 #include "robocup/exampleTask.h"
 #include "robocup/bluetooth/bluetooth.h"
+#include "robocup/pid.h"
 
 void mySpeedTaskFunction(void const * argument);
 
@@ -100,10 +101,11 @@ int main(void)
 
     //HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
   	HAL_TIM_Base_Start(&htim3);
-  	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_1);
-  	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
-  	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_3);
   	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_4);
+  	//HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
+  	//HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_3);
+  	//HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_4);
+    HAL_GPIO_WritePin(ENABLE_POWER_GPIO_Port, ENABLE_POWER_Pin, 1);
 
   	demux_Init(GPIOE, GPIO_PIN_4, GPIO_PIN_5, GPIO_PIN_6, CS_0);
   	quadA = quad_Init(CS_1);
@@ -111,15 +113,12 @@ int main(void)
   	// Init communication
   	comHandle_t com = bluetooth_init();
   	hermes_init(com);
+	__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, (int) 2<<14);
 
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
   MX_FREERTOS_Init();
-
-  xTaskCreate(exampleTaskBlinkRed, (signed char*)"loltaskred", 200, 0, 1, 0);
-  xTaskCreate(exampleTaskBlinkBlue, (signed char*)"loltaskblue", 200, 0, 1, 0);
-  xTaskCreate(mySpeedTaskFunction, (signed char*)"speedTasknom", 200, 0, 1, 0);
 
   /* Start scheduler */
   osKernelStart();
@@ -137,29 +136,6 @@ int main(void)
   }
   /* USER CODE END 3 */
 
-}
-
-/* speedTaskFunction function */
-void mySpeedTaskFunction(void const * argument)
-{
-  /* USER CODE BEGIN speedTaskFunction */
-  /* Infinite loop */
-	uint32_t Pulse = 0;
-  for(;;)
-  {
-	  Pulse+=100;
-	      //osDelay(5);
-	  		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, Pulse); // This is the command that sets the speed
-	  		HAL_Delay(10);
-	  		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_2, Pulse+100);
-	  		HAL_Delay(10);
-	  		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_3, Pulse+200);
-	  		HAL_Delay(10);
-	  		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, Pulse+300);
-	  		//osDelay(5);
-	  		Pulse = Pulse>60000 ? 0:Pulse;
-  }
-  /* USER CODE END speedTaskFunction */
 }
 
 /** System Clock Configuration
