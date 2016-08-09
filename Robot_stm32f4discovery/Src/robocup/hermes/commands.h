@@ -29,7 +29,7 @@ typedef struct __attribute__((__packed__)) {
 	packetHeaderStruct_t header;
 	float   vx;
 	float   vy;
-	float   vz;
+	float   vtheta;
 } msg_set_speed_t;
 
 typedef struct __attribute__((__packed__)) {
