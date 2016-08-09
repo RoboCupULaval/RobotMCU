@@ -129,14 +129,14 @@ void setWheelsCommands() {
 }
 
 void setWheelsPWM() {
-	__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, (int) 1<<15);
-	__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, (int) 300);
-	//__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, (int) 300);
-	//__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, (int) 300);
-//__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, (int) abs(wheels[0].output));
-//__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, (int) abs(wheels[1].output));
-//__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, (int) abs(wheels[2].output));
-//__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, (int) abs(wheels[3].output));
+	__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, 7<<12); // moteur 2
+  	__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_3, 7<<12); // moteur 3
+	__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, 7<<12); // moteur 4
+	__HAL_TIM_SetCompare(&htim4, TIM_CHANNEL_4, 7<<12); // moteur 1
+//__HAL_TIM_SetCompare(&htim4, TIM_CHANNEL_4, (int) abs(wheels[0].output));
+//__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, (int) abs(wheels[1].output));
+//__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_3, (int) abs(wheels[2].output));
+//__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, (int) abs(wheels[3].output));
 }
 
 // This tasks deals with the movements of the robot

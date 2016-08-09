@@ -47,8 +47,6 @@
 #include "robocup/bluetooth/bluetooth.h"
 #include "robocup/pid.h"
 
-void mySpeedTaskFunction(void const * argument);
-
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -100,9 +98,15 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
     //HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
+    //HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
+    HAL_TIM_Base_Start(&htim1);
+    HAL_TIM_Base_Start(&htim2);
   	HAL_TIM_Base_Start(&htim3);
+  	HAL_TIM_Base_Start(&htim4);
+  	HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_4);
+  	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_3);
   	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_4);
-  	//HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
+  	HAL_TIM_PWM_Start(&htim4,TIM_CHANNEL_4);
   	//HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_3);
   	//HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_4);
     HAL_GPIO_WritePin(ENABLE_POWER_GPIO_Port, ENABLE_POWER_Pin, 1);
@@ -114,6 +118,16 @@ int main(void)
   	comHandle_t com = bluetooth_init();
   	hermes_init(com);
 	__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, (int) 2<<14);
+  	// this makes a wheel spin
+	//__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, 3<<13); // moteur 2
+  	//__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_3, 3<<14); // moteur 3
+	//__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, 7<<12); // moteur 4
+	//__HAL_TIM_SetCompare(&htim4, TIM_CHANNEL_4, 7<<12); // moteur 1
+
+	// wheel task
+
+	TaskHandle_t xHandle = NULL;
+	xTaskCreate(wheelTask, "lol", 300, (void *) 1, tskIDLE_PRIORITY, &xHandle);
 
   /* USER CODE END 2 */
 
