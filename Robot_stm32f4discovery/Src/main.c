@@ -44,6 +44,7 @@
 // Local includes
 #include "robocup/robocup_define.h"
 #include "robocup/exampleTask.h"
+#include "robocup/bluetooth/bluetooth.h"
 
 /* USER CODE END Includes */
 
@@ -95,7 +96,7 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
 
-    HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
+    //HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
   	HAL_TIM_Base_Start(&htim3);
   	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_1);
   	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
@@ -104,6 +105,10 @@ int main(void)
 
   	demux_Init(GPIOE, GPIO_PIN_4, GPIO_PIN_5, GPIO_PIN_6, CS_0);
   	quadA = quad_Init(CS_1);
+
+  	// Init communication
+  	comHandle_t com = bluetooth_init();
+  	hermes_init(com);
 
   /* USER CODE END 2 */
 
