@@ -34,7 +34,7 @@ struct PID_Wheel
 };
 
 // declaration (kinda instanciation) of the wheel structs
-struct PID_Wheel wheels[4]; // the four wheels (clock configuration)
+static struct PID_Wheel wheels[4]; // the four wheels (clock configuration)
 
 // This function initializes the PID structure for each wheel
 // Inputs:
@@ -53,7 +53,7 @@ void initializePID(float pKp, float pKi, float pKd, float pUmax, float pUmin){
 	quadB = quad_Init(CS_2);
 
     // loop for each wheel
-	for (int i=0; i<4; i++)
+	for (int i=0; i<1; i++)
 	{
 		float theAngle = 3.141592645/2 * i - 3.141592645/2/4;
 		wheels[i].vectorX = cos(theAngle);
@@ -102,7 +102,7 @@ void updatePID(struct PID_Wheel *pWheel){
 	pWheel->u = pWheel->up + pWheel->ui + pWheel->ud;
 
 	// the saturated command
-	if (pWheel->u >= pWheel->uMax ) {
+	if (pWheel->u >= pWheel->uMax) {
 		pWheel->output = pWheel->uMax;
 	}
 	else if (pWheel->u <= pWheel->uMin) {
@@ -114,9 +114,9 @@ void updatePID(struct PID_Wheel *pWheel){
 }
 
 //TODO
-float COMMANDX = 100; // the wireless command
-float COMMANDY = 100; // the wireless command
-float COMMANDROT = 100; // in rad/s
+float COMMANDX = -2; // the wireless command
+float COMMANDY = 0; // the wireless command
+float COMMANDROT = 0; // in rad/s
 float RADIUS = 0.5;
 
 
@@ -129,10 +129,12 @@ void setWheelsCommands() {
 }
 
 void setWheelsPWM() {
-	__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, 7<<12); // moteur 2
-  	__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_3, 7<<12); // moteur 3
-	__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, 7<<12); // moteur 4
-	__HAL_TIM_SetCompare(&htim4, TIM_CHANNEL_4, 7<<12); // moteur 1
+	//__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, 7<<12); // moteur 2
+  	//__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_3, 7<<12); // moteur 3
+	int command = (int) fabs(wheels[0].output);
+	__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, command); // moteur 4
+
+	//__HAL_TIM_SetCompare(&htim4, TIM_CHANNEL_4, 7<<12); // moteur 1
 //__HAL_TIM_SetCompare(&htim4, TIM_CHANNEL_4, (int) abs(wheels[0].output));
 //__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, (int) abs(wheels[1].output));
 //__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_3, (int) abs(wheels[2].output));
@@ -141,10 +143,12 @@ void setWheelsPWM() {
 
 // This tasks deals with the movements of the robot
 void wheelTask(void * pvParameters) {
+	initializePID(1, 1, 0, 28000, -28000);
 	while (1)
 	  {
+
 		// Get the command from communication and compute the wheel-wise command
-		//setWheelsCommands();
+		setWheelsCommands();
 
 		// Get the feedback and set it's value for each wheel
 		//quad_ReadCounters(&quadA);
@@ -155,8 +159,8 @@ void wheelTask(void * pvParameters) {
 		//wheels[3].fbk = quadB.count1;
 
 		// Compute the PID output for each wheel
-		for (int i=0; i<4; i++) {
-		    //updatePID(&(wheels[i]));
+		for (int i=0; i<1; i++) {
+		    updatePID(&(wheels[i]));
 		}
 
 		// set the wheels PWM

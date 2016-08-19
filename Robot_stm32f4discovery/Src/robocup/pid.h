@@ -35,13 +35,13 @@ typedef struct {
 	float e2; // Data: error term storage e(n-1)
 } PID_DATA;
 
-typedef struct {
-		PID_TERMINALS term;
-		PID_PARAMETERS param;
-		PID_DATA data;
-} PID_Handle;
+//typedef struct {
+//		PID_TERMINALS term;
+//		PID_PARAMETERS param;
+//		PID_DATA data;
+//} PID_Handle;
 
-PID_Handle pid_Init( float pKp, float pKi, float pKd, float pUmax, float pUmin);
+void initializePID(float pKp, float pKi, float pKd, float pUmax, float pUmin);
 float pid_Update(PID_Handle *pPid, float pFbk);
 void pid_Set(PID_Handle *pPid, float pKp, float pKi, float pKd);
 void wheelTask(void * pvParameters);

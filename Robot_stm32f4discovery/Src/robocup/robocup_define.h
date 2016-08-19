@@ -70,32 +70,32 @@ typedef struct {
 } PID_Handle;
 
 
-typedef struct Robot_Handle {
+//typedef struct Robot_Handle {
+//
+//	SCI_Handle HandleSCI;
+//	CLK_Handle HandleCLK;
+//	GPIO_Handle HandleGPIO;
+//	SPI_Handle HandleSPI;
+//	FLASH_Handle HandleFlash;
+//    CPU_Handle HandleCpu;
+//    PLL_Handle HandlePll;
+//    WDOG_Handle HandleWDog;
+//
+//    // Robot
+//    Demux_Handle HandleDemux;
+//    nRF24L01_Handle HandleRF;
+//    quad_Handle HandleQuad[2];
+//    robot_param robotParam;
+//    L3GD20_Handle HandleGyro;
+//    arduino_Handle HandleArduino;
+//    PWM_Handle HandlePwm1;
+//    PWM_Handle HandlePwm2;
+//    PWM_Handle HandlePwm3;
+//    DCMotor_Handle HandleMotor[4];
+//    PID_Handle HandlePid[4];
+//} Robot_Handle;
 
-	SCI_Handle HandleSCI;
-	CLK_Handle HandleCLK;
-	GPIO_Handle HandleGPIO;
-	SPI_Handle HandleSPI;
-	FLASH_Handle HandleFlash;
-    CPU_Handle HandleCpu;
-    PLL_Handle HandlePll;
-    WDOG_Handle HandleWDog;
-
-    // Robot
-    Demux_Handle HandleDemux;
-    nRF24L01_Handle HandleRF;
-    quad_Handle HandleQuad[2];
-    robot_param robotParam;
-    L3GD20_Handle HandleGyro;
-    arduino_Handle HandleArduino;
-    PWM_Handle HandlePwm1;
-    PWM_Handle HandlePwm2;
-    PWM_Handle HandlePwm3;
-    DCMotor_Handle HandleMotor[4];
-    PID_Handle HandlePid[4];
-} Robot_Handle;
-
-extern Robot_Handle HandleRobot;
+//extern Robot_Handle HandleRobot;
 
 
 
