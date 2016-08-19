@@ -134,6 +134,9 @@ void setWheelsPWM() {
 	int command = (int) fabs(wheels[0].output);
 	__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, command); // moteur 4
 
+	//HAL_GPIO_WritePin(MOTOR3_DIR_GPIO_Port, MOTOR3_DIR_Pin, command > 0 ? 1 : 0);
+	HAL_GPIO_WritePin(MOTOR3_DIR_GPIO_Port, MOTOR3_DIR_Pin, command > 0 ? 1 : 0);
+
 	//__HAL_TIM_SetCompare(&htim4, TIM_CHANNEL_4, 7<<12); // moteur 1
 //__HAL_TIM_SetCompare(&htim4, TIM_CHANNEL_4, (int) abs(wheels[0].output));
 //__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, (int) abs(wheels[1].output));
@@ -143,7 +146,7 @@ void setWheelsPWM() {
 
 // This tasks deals with the movements of the robot
 void wheelTask(void * pvParameters) {
-	initializePID(1, 1, 0, 28000, -28000);
+	initializePID(1, 0.05, 0, 28000, -28000);
 	while (1)
 	  {
 
