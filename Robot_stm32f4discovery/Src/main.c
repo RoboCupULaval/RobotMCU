@@ -112,7 +112,6 @@ int main(void)
     HAL_GPIO_WritePin(KICKER_SELECT_GPIO_Port, KICKER_SELECT_Pin, 1);
 
   	demux_Init(GPIOE, GPIO_PIN_4, GPIO_PIN_5, GPIO_PIN_6, CS_0);
-  	quadA = quad_Init(CS_1);
 
   	// Init communication
   	comHandle_t com = bluetooth_init();

@@ -41,12 +41,14 @@ typedef struct quad_Handle {
 	chip_select structCSNPin;
 	int16_t count0;
 	int16_t count1;
+	int16_t delta_count0;
+	int16_t delta_count1;
 	float wheelVelocity[2];
 }quad_Handle;
 
 quad_Handle quad_Init(chip_select pCSNPin);
 uint16_t quad_ReadRegister(uint16_t pReg,quad_Handle *pQuad);
-void quad_WriteRegister(uint16_t pReg, uint16_t pValue,quad_Handle *pQuad);
+void quad_WriteRegister(uint8_t pReg, uint8_t pValue,quad_Handle *pQuad);
 void quad_ReadCounters(quad_Handle *pQuad);
 void quad_CalculateSpeed(quad_Handle *pQuad);
 

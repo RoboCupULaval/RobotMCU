@@ -129,10 +129,11 @@ void setWheelsCommands() {
 }
 
 void setWheelsPWM() {
-	//__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, 7<<12); // moteur 2
-  	//__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_3, 7<<12); // moteur 3
-	int command = (int) fabs(wheels[0].output);
+	//int command = (int) fabs(wheels[0].output);
+	int command = 40000;
 	__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, command); // moteur 4
+	__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, command); // moteur 2
+  	__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_3, command); // moteur 3
 
 	//HAL_GPIO_WritePin(MOTOR3_DIR_GPIO_Port, MOTOR3_DIR_Pin, command > 0 ? 1 : 0);
 	HAL_GPIO_WritePin(MOTOR3_DIR_GPIO_Port, MOTOR3_DIR_Pin, command > 0 ? 1 : 0);
@@ -146,7 +147,10 @@ void setWheelsPWM() {
 
 // This tasks deals with the movements of the robot
 void wheelTask(void * pvParameters) {
+	Debug_Print("Starting!!!\r\n");
 	initializePID(1, 0.05, 0, 28000, -28000);
+  	quadA = quad_Init(CS_1);
+  	quadB = quad_Init(CS_2);
 	while (1)
 	  {
 
@@ -154,12 +158,14 @@ void wheelTask(void * pvParameters) {
 		setWheelsCommands();
 
 		// Get the feedback and set it's value for each wheel
-		//quad_ReadCounters(&quadA);
-		//quad_ReadCounters(&quadB);
-		//wheels[0].fbk = quadA.count0;
-		//wheels[1].fbk = quadA.count1;
-		//wheels[2].fbk = quadB.count0;
-		//wheels[3].fbk = quadB.count1;
+		quad_ReadCounters(&quadA);
+		quad_ReadCounters(&quadB);
+		Debug_Print("\r\n");
+
+		wheels[0].fbk = quadA.delta_count0;
+		//wheels[1].fbk = quadA.delta_count1;
+		//wheels[2].fbk = quadB.delta_count0;
+		//wheels[3].fbk = quadB.delta_count1;
 
 		// Compute the PID output for each wheel
 		for (int i=0; i<1; i++) {
@@ -168,6 +174,8 @@ void wheelTask(void * pvParameters) {
 
 		// set the wheels PWM
 		setWheelsPWM();
+
+		osDelay(50); // 4ms ~= 250hz
 	  }
 
 }

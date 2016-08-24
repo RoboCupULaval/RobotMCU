@@ -9,6 +9,7 @@
 #define APPLICATION_USER_PID_H_
 
 #include <stdio.h>
+#include "tim.h"
 #include "robocup_define.h"
 
 typedef struct {

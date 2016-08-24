@@ -90,7 +90,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* spiHandle)
     GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
     HAL_GPIO_Init(NRF_MISO_GPIO_Port, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = NRF_SCK_Pin|NRF_MOSI_Pin;
+    GPIO_InitStruct.Pin = GPIO_PIN_13|NRF_MOSI_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
@@ -124,7 +124,7 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle)
     */
     HAL_GPIO_DeInit(NRF_MISO_GPIO_Port, NRF_MISO_Pin);
 
-    HAL_GPIO_DeInit(GPIOB, NRF_SCK_Pin|NRF_MOSI_Pin);
+    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_13|NRF_MOSI_Pin);
 
     /* Peripheral interrupt Deinit*/
     HAL_NVIC_DisableIRQ(SPI2_IRQn);
