@@ -48,7 +48,6 @@ osThreadId speedTaskHandle;
 osThreadId controlLoopHandle;
 
 /* USER CODE BEGIN Variables */
-extern quad_Handle quadA;
 /* USER CODE END Variables */
 
 /* Function prototypes -------------------------------------------------------*/

@@ -34,6 +34,7 @@
 #include "stm32f4xx_hal.h"
 #include "cmsis_os.h"
 #include "adc.h"
+#include "i2c.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -93,6 +94,8 @@ int main(void)
   MX_ADC1_Init();
   MX_TIM1_Init();
   MX_TIM2_Init();
+  MX_TIM4_Init();
+  MX_I2C3_Init();
 
   /* USER CODE BEGIN 2 */
 
@@ -101,27 +104,21 @@ int main(void)
     HAL_TIM_Base_Start(&htim1);
     HAL_TIM_Base_Start(&htim2);
   	HAL_TIM_Base_Start(&htim3);
-  	//HAL_TIM_Base_Start(&htim4);
-  	HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_4);
-  	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_3);
-  	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_4);
-  	//HAL_TIM_PWM_Start(&htim4,TIM_CHANNEL_4);
-  	//HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_3);
-  	//HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_4);
-    //HAL_GPIO_WritePin(ENABLE_POWER_GPIO_Port, ENABLE_POWER_Pin, 1);
-    HAL_GPIO_WritePin(KICKER_SELECT_GPIO_Port, KICKER_SELECT_Pin, 1);
+  	HAL_TIM_Base_Start(&htim4);
+  	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_3); // moteur 1
+  	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_3); // moteur 2
+  	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_4); // moteur 3
+  	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_4); // moteur 4
+
+    HAL_GPIO_WritePin(EN_POWER_GPIO_Port, EN_POWER_Pin, 1);
+    //HAL_GPIO_WritePin(KICKER_SELECT_GPIO_Port, KICKER_SELECT_Pin, 1);
 
   	demux_Init(GPIOE, GPIO_PIN_4, GPIO_PIN_5, GPIO_PIN_6, CS_0);
 
   	// Init communication
   	comHandle_t com = bluetooth_init();
   	hermes_init(com);
-	//__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, (int) 2<<14);
-  	// this makes a wheel spin
-	//__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, 3<<13); // moteur 2
-  	//__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_3, 3<<14); // moteur 3
-	//__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, 7<<12); // moteur 4
-	//__HAL_TIM_SetCompare(&htim4, TIM_CHANNEL_4, 7<<12); // moteur 1
+
 
 	// wheel task
 	TaskHandle_t xHandle = NULL;
@@ -197,6 +194,27 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
+
+/**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM14 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+/* USER CODE BEGIN Callback 0 */
+
+/* USER CODE END Callback 0 */
+  if (htim->Instance == TIM14) {
+    HAL_IncTick();
+  }
+/* USER CODE BEGIN Callback 1 */
+
+/* USER CODE END Callback 1 */
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.

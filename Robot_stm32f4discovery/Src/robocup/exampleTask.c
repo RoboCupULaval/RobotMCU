@@ -9,7 +9,7 @@ void exampleTaskBlinkRed(void * pvParameters) {
 	      static int ledval = 0;
 
 	      // toggle LED
-	      HAL_GPIO_WritePin(LD5_GPIO_Port, LD5_Pin, (ledval) ? GPIO_PIN_SET: GPIO_PIN_RESET);
+	      //HAL_GPIO_WritePin(LD5_GPIO_Port, LD5_Pin, (ledval) ? GPIO_PIN_SET: GPIO_PIN_RESET);
 	      ledval = 1 - ledval;
 	      vTaskDelay(200);
 	  }

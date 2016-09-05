@@ -22,7 +22,7 @@ quad_Handle quad_Init(chip_select pCSNPin){
     quad_ReadRegister(QUAD_CONFIG1, &lHandle);  // counter TTL
 
     // Init count with the value in the encoder register
-    quad_ReadCounters(&lHandle);
+    //quad_ReadCounters(&lHandle);
     return lHandle;
 }
 
@@ -67,8 +67,9 @@ void quad_ReadCounters(quad_Handle *pQuad){
 	pQuad->delta_count0 = pQuad->count0 - old_count0;
 	pQuad->delta_count1 = pQuad->count1 - old_count1;
 
-	snprintf(buffer, 128, "%i %i %i ", count2, pQuad->count0, pQuad->count1);
-	Debug_Print(buffer);
+	//snprintf(buffer, 128, "%6i %6i %6i ", count2, pQuad->count0, pQuad->count1);
+	snprintf(buffer, 128, "%+6i %+6i ", pQuad->delta_count0, pQuad->delta_count1);
+	//Debug_Print(buffer);
 
 //	quad_WriteRegister( QUAD_CTRL, QUAD_RESETCNT0 | QUAD_RESETCNT1 | QUAD_RESETCNT2,pQuad); //reset counters
 
@@ -96,5 +97,5 @@ void quad_DisplayVelocity(quad_Handle *pQuad){
 
 bool quad_Test(quad_Handle *pQuad){
 	uint16_t temp = quad_ReadRegister(QUAD_CONFIG1, pQuad);  // if initialised before!
-	return temp== 0x80;
+	return temp == 0x80;
 }
