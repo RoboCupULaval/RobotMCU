@@ -6,7 +6,8 @@
  */
 
 #include "commands.h"
-#include "hermes.h"
+
+#include "hermes_task.h"
 
 //extern order_t robotOrder;
 

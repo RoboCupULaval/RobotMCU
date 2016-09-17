@@ -24,14 +24,14 @@ size_t bluetooth_write(const void *pBuffer, size_t length){
 	return res == HAL_OK ? length : 0;
 }
 
-size_t bluetooth_readUntilZero(const void *pBuffer, size_t length){
+size_t bluetooth_readUntilZero(void *pBuffer, size_t length){
 	uint8_t *buf = pBuffer;
 	if (length < 1)
 		return 0;
 	size_t index = 0;
 	while(index < length){
 		uint8_t c;
-		HAL_StatusTypeDef res = HAL_UART_Receive(&huart2, &c, 1, 100000);
+		HAL_StatusTypeDef res = HAL_UART_Receive(&huart2, &c, 1, HAL_MAX_DELAY);
 		if(res != HAL_OK)
 			return 0;
 		*buf++ = c;

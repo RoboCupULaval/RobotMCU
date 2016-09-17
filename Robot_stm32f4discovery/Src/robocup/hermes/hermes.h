@@ -5,8 +5,8 @@
  *      Author: Philippe Babin
  */
 
-#ifndef HERMES_TASK_H_
-#define HERMES_TASK_H_
+#ifndef HERMES_H_
+#define HERMES_H_
 
 #include <stdio.h>
 #include <string.h>
@@ -37,14 +37,13 @@ typedef enum {
 
 typedef struct packetHeaderStruct packetHeaderStruct;
 
-void hermes_init(comHandle_t com);
-void hermesTask(void * pvParameters);
-Result_t validPayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen);
-void hermes_sendError(char * pStr);
+void                 hermes_init(comHandle_t com);
+Result_t             validPayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen);
+void                 hermes_sendError(char * pStr);
 packetHeaderStruct_t hermes_createHeader(uint8_t packetType);
-void hermes_sendPayloadLessRespond(uint8_t packetType);
-void hermes_sendRespond(uint8_t packetType, char* pData, size_t dataLen);
-Result_t cobifyData(const void *ptr, size_t msg_len,   char *dst);
-Result_t decobifyData(const char *ptr, size_t len, void *dst, size_t *dst_len);
+void                 hermes_sendPayloadLessRespond(uint8_t packetType);
+void                 hermes_sendRespond(uint8_t packetType, char* pData, size_t dataLen);
+Result_t             cobifyData(const void *ptr, size_t msg_len,   char *dst);
+Result_t             decobifyData(const char *ptr, size_t len, void *dst, size_t *dst_len);
 
-#endif // HERMES_TASK_H_
+#endif // HERMES_H_

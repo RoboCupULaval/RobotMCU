@@ -15,6 +15,6 @@
 comHandle_t bluetooth_init();
 size_t      bluetooth_read(const void *pBuffer, size_t length);
 size_t      bluetooth_write(const void *pBuffer, size_t length);
-size_t      bluetooth_readUntilZero(const void *pBuffer, size_t length);
+size_t      bluetooth_readUntilZero(void *pBuffer, size_t length);
 
 #endif /* ROBOCUP_BLUETOOTH_BLUETOOTH_H_ */

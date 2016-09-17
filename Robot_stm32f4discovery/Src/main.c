@@ -46,7 +46,8 @@
 #include "robocup/robocup_define.h"
 #include "robocup/exampleTask.h"
 #include "robocup/bluetooth/bluetooth.h"
-#include "robocup/pid.h"
+#include "robocup/motors/wheels_task.h"
+#include "robocup/hermes/hermes_task.h"
 
 /* USER CODE END Includes */
 

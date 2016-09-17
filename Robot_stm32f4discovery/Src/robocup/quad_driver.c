@@ -43,7 +43,6 @@ void quad_WriteRegister(uint8_t pReg, uint8_t pValue,quad_Handle *pQuad){
 }
 
 
-static char buffer[128];
 void quad_ReadCounters(quad_Handle *pQuad){
 	uint8_t cnt2_msb, cnt2_lsb, cnt1_msb, cnt1_lsb, cnt0_msb, cnt0_lsb;
 
@@ -67,6 +66,7 @@ void quad_ReadCounters(quad_Handle *pQuad){
 	pQuad->delta_count0 = pQuad->count0 - old_count0;
 	pQuad->delta_count1 = pQuad->count1 - old_count1;
 
+	static char buffer[128];
 	//snprintf(buffer, 128, "%6i %6i %6i ", count2, pQuad->count0, pQuad->count1);
 	snprintf(buffer, 128, "%+6i %+6i ", pQuad->delta_count0, pQuad->delta_count1);
 	//Debug_Print(buffer);
