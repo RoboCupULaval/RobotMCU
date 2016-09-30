@@ -22,7 +22,7 @@ quad_Handle quad_Init(chip_select pCSNPin){
     quad_ReadRegister(QUAD_CONFIG1, &lHandle);  // counter TTL
 
     // Init count with the value in the encoder register
-    //quad_ReadCounters(&lHandle);
+    quad_ReadCounters(&lHandle);
     return lHandle;
 }
 

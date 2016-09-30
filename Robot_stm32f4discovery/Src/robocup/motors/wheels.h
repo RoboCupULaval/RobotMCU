@@ -23,6 +23,7 @@ typedef enum{
 
 
 typedef struct {
+	char*              debugName;    // Name of the wheel for debuging
 	PidWheel_t         pid;          // Instance of the pid
 	QuadEncoder_t      quad;         // Which encoder is connected to the motor
 	TIM_HandleTypeDef* pTimer;       // Pointer to the instance of the timer used by the motor
@@ -33,7 +34,10 @@ typedef struct {
 	float              angle;        // Angle in rad, normally motor1 is at 45 degree and motor4 at -45 degree, refer to documentation for more information on convention
 } Wheel_t;
 
-float wheel_setCommand(Wheel_t* wheel, const float vx, const float vy, const float vt) ;
-void wheel_setPWM(const Wheel_t *wheel);
+#define MOTOR_BREAK 0.0
+
+float wheel_setCommand(Wheel_t* wheel, const float vx, const float vy, const float vt);
+void wheel_break(const Wheel_t *wheel);
+void wheel_setPWM(const Wheel_t *wheel, float speed);
 
 #endif /* WHEELS_H */

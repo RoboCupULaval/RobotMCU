@@ -35,7 +35,7 @@ void test_hermes() {
 		Debug_Print("[FAIL]\r\n");
 
 	Debug_Print("HERMES - Test encoding and decoding of a packet of more than 255 characters");
-	char *buffer = (char *)malloc(300);
+	char buffer[300];
 	memset(buffer, 'a', 300);
 	buffer[299] = '\0';
 	res = test_hermes_try_encode_decode(buffer, strlen(buffer));

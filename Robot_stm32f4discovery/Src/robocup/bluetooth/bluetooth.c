@@ -15,12 +15,12 @@ comHandle_t bluetooth_init(){
 }
 
 size_t bluetooth_read(const void *pBuffer, size_t length){
-	HAL_StatusTypeDef res = HAL_UART_Receive(&huart2, (uint8_t*) pBuffer, length, HAL_MAX_DELAY);
+	HAL_StatusTypeDef res = HAL_UART_Receive(&huart5, (uint8_t*) pBuffer, length, HAL_MAX_DELAY);
 	return res == HAL_OK ? length : 0;
 }
 
 size_t bluetooth_write(const void *pBuffer, size_t length){
-	HAL_StatusTypeDef res = HAL_UART_Transmit(&huart2, (uint8_t*) pBuffer, length, HAL_MAX_DELAY);
+	HAL_StatusTypeDef res = HAL_UART_Transmit(&huart5, (uint8_t*) pBuffer, length, HAL_MAX_DELAY);
 	return res == HAL_OK ? length : 0;
 }
 
@@ -31,7 +31,7 @@ size_t bluetooth_readUntilZero(void *pBuffer, size_t length){
 	size_t index = 0;
 	while(index < length){
 		uint8_t c;
-		HAL_StatusTypeDef res = HAL_UART_Receive(&huart2, &c, 1, HAL_MAX_DELAY);
+		HAL_StatusTypeDef res = HAL_UART_Receive(&huart5, &c, 1, HAL_MAX_DELAY);
 		if(res != HAL_OK)
 			return 0;
 		*buf++ = c;

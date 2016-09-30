@@ -90,26 +90,29 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_SPI2_Init();
-  MX_USART2_UART_Init();
   MX_TIM3_Init();
   MX_ADC1_Init();
   MX_TIM1_Init();
   MX_TIM2_Init();
   MX_TIM4_Init();
-  MX_I2C3_Init();
+  MX_I2C2_Init();
+  MX_TIM5_Init();
+  MX_TIM8_Init();
+  MX_TIM12_Init();
+  MX_UART5_Init();
 
   /* USER CODE BEGIN 2 */
 
-    //HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
-    //HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
     HAL_TIM_Base_Start(&htim1);
     HAL_TIM_Base_Start(&htim2);
   	HAL_TIM_Base_Start(&htim3);
   	HAL_TIM_Base_Start(&htim4);
-  	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_3); // moteur 1
-  	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_3); // moteur 2
-  	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_4); // moteur 3
-  	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_4); // moteur 4
+  	HAL_TIM_Base_Start(&htim5);
+  	HAL_TIM_Base_Start(&htim8);
+  	//HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_3); // moteur 1
+  	//HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_3); // moteur 2
+  	//HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_4); // moteur 3
+  	//HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_4); // moteur 4
 
     HAL_GPIO_WritePin(EN_POWER_GPIO_Port, EN_POWER_Pin, 1);
     //HAL_GPIO_WritePin(KICKER_SELECT_GPIO_Port, KICKER_SELECT_Pin, 1);
