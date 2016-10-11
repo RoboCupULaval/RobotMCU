@@ -14,6 +14,6 @@ void convertBytesToStr(const void * ptr, size_t len, char* str){
 }
 
 
-void Debug_Print(char * pStr){
-	g_hermesHandle.com.write(pStr, strlen(pStr));
+void LOG_INFO(char * pStr){
+	g_logHandle.write(pStr, strlen(pStr));
 }

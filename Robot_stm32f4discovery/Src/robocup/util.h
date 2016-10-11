@@ -11,7 +11,7 @@
 #include "robocup_define.h"
 
 void convertBytesToStr(const void * ptr, size_t len, char* str);
-void Debug_Print(char * pStr);
+void LOG_INFO(char * pStr);
 
 
 #endif /* ROBOCUP_UTIL_H_ */

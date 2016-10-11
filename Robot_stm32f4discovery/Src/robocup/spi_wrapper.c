@@ -10,8 +10,7 @@
 #include "stm32f4xx_hal_spi.h"
 
 void SPI_write_8bits(uint8_t data) {
-//	HAL_SPI_Transmit_IT(&hspi2, &data, 1);
-	HAL_SPI_TransmitReceive(&hspi2, &data,&data, 1,1000);
+	HAL_SPI_TransmitReceive(&hspi2, &data, &data, 1, 1000);
 }
 
 

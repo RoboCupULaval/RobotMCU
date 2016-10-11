@@ -54,7 +54,7 @@
 								</option>
 								<option id="fr.ac6.managedbuild.gnu.c.compiler.option.misc.other.506766078" superClass="fr.ac6.managedbuild.gnu.c.compiler.option.misc.other" useByScannerDiscovery="false" value="-fmessage-length=0" valueType="string" />
 								<option id="gnu.c.compiler.option.dialect.std.1780872270" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.c.compiler.dialect.default" valueType="enumerated" />
-								<option id="fr.ac6.managedbuid.gnu.c.compiler.option.misc.other.1852709046" superClass="fr.ac6.managedbuid.gnu.c.compiler.option.misc.other" value="-fmessage-length=0 -fno-math-errno" valueType="string" />
+								<option id="fr.ac6.managedbuid.gnu.c.compiler.option.misc.other.1852709046" name="Other flags" superClass="fr.ac6.managedbuid.gnu.c.compiler.option.misc.other" useByScannerDiscovery="false" value="-fmessage-length=0 -fno-math-errno" valueType="string" />
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c.945299738" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c" />
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s.467739038" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s" />
 							</tool>
@@ -84,10 +84,10 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares" />
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers" />
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Src" />
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Inc" />
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares" />
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Src" />
 					</sourceEntries>
 				</configuration>
 			</storageModule>

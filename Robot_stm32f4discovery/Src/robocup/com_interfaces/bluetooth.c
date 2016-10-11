@@ -14,7 +14,7 @@ comHandle_t bluetooth_init(){
 	return com;
 }
 
-size_t bluetooth_read(const void *pBuffer, size_t length){
+size_t bluetooth_read(void *pBuffer, size_t length){
 	HAL_StatusTypeDef res = HAL_UART_Receive(&huart5, (uint8_t*) pBuffer, length, HAL_MAX_DELAY);
 	return res == HAL_OK ? length : 0;
 }

@@ -12,7 +12,7 @@
 #include <string.h>
 
 #include "../robocup_define.h"
-#include "com_interface.h"
+#include "../com_interfaces/com_interface.h"
 #include "../util.h"
 #include "packets_table.h"
 

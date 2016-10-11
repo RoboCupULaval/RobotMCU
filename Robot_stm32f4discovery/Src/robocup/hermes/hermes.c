@@ -12,17 +12,17 @@ void hermes_init(comHandle_t com){
 Result_t validPayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen) {
 	uint8_t id = currentPacketHeaderPtr->packetType;
 	if(currentPacketHeaderPtr->protocolVersion != PROTOCOL_VERSION){
-		Debug_Print("Invalid protocol\r\n");
+		LOG_INFO("Invalid protocol\r\n");
 		return FAILURE;
 	}
 
 	if(id >= g_packetsTableLen || g_packetsTable[id].callback == nop){
-		Debug_Print("Invalid command\r\n");
+		LOG_INFO("Invalid command\r\n");
 		return FAILURE;
 	}
 
 	if(g_packetsTable[id].len != payloadLen){
-		Debug_Print("Too small packet\r\n");
+		LOG_INFO("Too small packet\r\n");
 		return FAILURE;
 	}
 

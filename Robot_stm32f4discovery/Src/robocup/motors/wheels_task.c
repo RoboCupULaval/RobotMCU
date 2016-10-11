@@ -33,10 +33,10 @@ bool test_startUp() {
 	}
 
 	bool success = true;
-	Debug_Print("MOTORS - Each motor should remains immobile \r\n");
+	LOG_INFO("MOTORS - Each motor should remains immobile \r\n");
   	for (int i = 0; i < wheelsLen; ++i) {
 		Wheel_t* pWheel = &wheels[i];
-		Debug_Print(pWheel->debugName);
+		LOG_INFO(pWheel->debugName);
 
 		int16_t nbTick = abs(test_spinAndStopWheel(pWheel, BREAK_SPEED));
 		// Check absolute value
@@ -48,10 +48,10 @@ bool test_startUp() {
   	if(!success)
   		return success;
 
-	Debug_Print("MOTORS - Each motor turns the right encoder \r\n");
+	LOG_INFO("MOTORS - Each motor turns the right encoder \r\n");
   	for (int i = 0; i < wheelsLen; ++i) {
 		Wheel_t* pWheel = &wheels[i];
-		Debug_Print(pWheel->debugName);
+		LOG_INFO(pWheel->debugName);
 
 		int16_t nbTick = abs(test_spinAndStopWheel(pWheel, NORMAL_SPEED));
 		// Check absolute value
@@ -63,10 +63,10 @@ bool test_startUp() {
   	if(!success)
   		return success;
 
-	Debug_Print("MOTORS - Each wheels turns clockwise \r\n");
+	LOG_INFO("MOTORS - Each wheels turns clockwise \r\n");
   	for (int i = 0; i < wheelsLen; ++i) {
 		Wheel_t* pWheel = &wheels[i];
-		Debug_Print(pWheel->debugName);
+		LOG_INFO(pWheel->debugName);
 
 		int16_t nbTick = test_spinAndStopWheel(pWheel, NORMAL_SPEED);
 
@@ -78,10 +78,10 @@ bool test_startUp() {
   		return success;
 
 
-	Debug_Print("MOTORS - Each wheels turns anti-clockwise \r\n");
+	LOG_INFO("MOTORS - Each wheels turns anti-clockwise \r\n");
   	for (int i = 0; i < wheelsLen; ++i) {
 		Wheel_t* pWheel = &wheels[i];
-		Debug_Print(pWheel->debugName);
+		LOG_INFO(pWheel->debugName);
 
 		int16_t nbTick = test_spinAndStopWheel(pWheel, -NORMAL_SPEED);
 
@@ -99,7 +99,7 @@ void test_logWheelSpining(bool successful, int16_t nbTick) {
 		snprintf(logBuffer, 128, " nbTick:%d [OK]\r\n", nbTick);
 	else
 		snprintf(logBuffer, 128, " nbTick:%d [FAIL]\r\n", nbTick);
-	Debug_Print(logBuffer);
+	LOG_INFO(logBuffer);
 }
 
 int16_t test_spinAndStopWheel(Wheel_t* pWheel, float speed) {
@@ -121,10 +121,15 @@ int16_t test_spinAndStopWheel(Wheel_t* pWheel, float speed) {
 
 // This tasks deals with the movements of the robot
 void wheelTask(void * pvParameters) {
+
+  	for(;;){
+		LOG_INFO("STOP messaging yourself! \r\n");
+		osDelay(500);
+  	}
 	test_startUp();
   	for(;;){}
 	return;
-	Debug_Print("Starting!!!\r\n");
+	LOG_INFO("Starting!!!\r\n");
 	for(int i = 0; i < wheelsLen; ++i) {
 		// Start the pwm
 	  	HAL_TIM_PWM_Start(wheels[i].pTimer, wheels[i].timerChannel);
@@ -156,7 +161,7 @@ void wheelTask(void * pvParameters) {
 
 				static char buffer[128];
 				snprintf(buffer, 128, "%s ref:%.5f, fbk:%.3f ", pWheel->debugName, reference, feedback);
-				Debug_Print(buffer);
+				LOG_INFO(buffer);
 			} else {
 				pWheel->pid.r = reference;
 				pWheel->pid.fbk = feedback;
@@ -171,7 +176,7 @@ void wheelTask(void * pvParameters) {
 		}
 
 		if (g_ctrlLoopState == CLOSE_LOOP)
-			Debug_Print("\r\n");
+			LOG_INFO("\r\n");
 
 
 		osDelay(50); // 4ms ~= 250hz

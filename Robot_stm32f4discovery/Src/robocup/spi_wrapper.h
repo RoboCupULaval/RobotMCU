@@ -9,6 +9,7 @@
 #define APPLICATION_USER_SPI_WRAPPER_H_
 
 #include "stm32f4xx_hal.h"
+#include "spi.h"
 
 #include "robocup_define.h"
 

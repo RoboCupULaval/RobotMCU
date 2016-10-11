@@ -45,7 +45,8 @@
 // Local includes
 #include "robocup/robocup_define.h"
 #include "robocup/exampleTask.h"
-#include "robocup/bluetooth/bluetooth.h"
+#include "robocup/com_interfaces/bluetooth.h"
+#include "robocup/com_interfaces/usb.h"
 #include "robocup/motors/wheels_task.h"
 #include "robocup/hermes/hermes_task.h"
 
@@ -55,7 +56,7 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-quad_Handle quadA;
+comHandle_t g_logHandle;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -109,10 +110,6 @@ int main(void)
   	HAL_TIM_Base_Start(&htim4);
   	HAL_TIM_Base_Start(&htim5);
   	HAL_TIM_Base_Start(&htim8);
-  	//HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_3); // moteur 1
-  	//HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_3); // moteur 2
-  	//HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_4); // moteur 3
-  	//HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_4); // moteur 4
 
     HAL_GPIO_WritePin(EN_POWER_GPIO_Port, EN_POWER_Pin, 1);
     //HAL_GPIO_WritePin(KICKER_SELECT_GPIO_Port, KICKER_SELECT_Pin, 1);
@@ -121,8 +118,10 @@ int main(void)
 
   	// Init communication
   	comHandle_t com = bluetooth_init();
+  	//comHandle_t com = usb_init();
   	hermes_init(com);
-
+  	g_logHandle = usb_init();
+  	//g_logHandle= bluetooth_init();
 
 	// wheel task
 	TaskHandle_t xHandle = NULL;

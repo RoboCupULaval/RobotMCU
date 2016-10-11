@@ -17,11 +17,11 @@ void hermesTask(void * pvParameters) {
 		size_t bytesReceived = g_hermesHandle.com.readUntilZero(packetBuffer, COBS_MAX_PACKET_LEN);
 
 		if(bytesReceived == 0){
-			Debug_Print("Timeout on receiving\r\n");
+			LOG_INFO("Timeout on receiving\r\n");
 			continue;
 		}
 		if(bytesReceived < sizeof(packetHeaderStruct_t)){
-			Debug_Print("Too small packet\r\n");
+			LOG_INFO("Too small packet\r\n");
 			continue;
 	    }
 
@@ -35,7 +35,7 @@ void hermesTask(void * pvParameters) {
 		// The data is treated
 		res = decobifyData(packetBuffer, bytesReceived, dataBuffer, &payloadLen);
 		if (res == FAILURE){
-			Debug_Print("Fail decoding\r\n");
+			LOG_INFO("Fail decoding\r\n");
 			continue;
 		}
 
@@ -46,7 +46,7 @@ void hermesTask(void * pvParameters) {
 
 		if (res == FAILURE) {
 			// Send a warning packet to control tower
-			Debug_Print("Invalid packet\r\n");
+			LOG_INFO("Invalid packet\r\n");
 			continue;
 		}
 		packet_t packet = g_packetsTable[(size_t) currentPacketHeaderPtr->packetType];

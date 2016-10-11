@@ -88,11 +88,11 @@ void quad_DisplayCounters(quad_Handle *pQuad){
 	//HAL_UART_Transmit_IT(&huart2,(uint8_t*)buffer, strlen(buffer));
 }
 
+// TODO Change to log
 void quad_DisplayVelocity(quad_Handle *pQuad){
 	char buffer[128];
 	sprintf(buffer,"wheel0 =%f wheel1 =%f cm/10ms\n\r",pQuad->wheelVelocity[0],
 			pQuad->wheelVelocity[1]);
-	HAL_UART_Transmit_IT(&huart2,(uint8_t*)buffer, strlen(buffer));
 }
 
 bool quad_Test(quad_Handle *pQuad){
