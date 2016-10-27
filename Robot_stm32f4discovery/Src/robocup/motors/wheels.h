@@ -31,7 +31,7 @@ typedef struct {
 	GPIO_TypeDef*      dirGpioPort;  // Pointer to the gpio port for the direction pin
 	uint16_t           dirGpioPin;   // Mask used for selecting the individual gpio pin
 	WheelDirection_t   direction;    // Reverse the pin direction
-	float              angle;        // Angle in rad, normally motor1 is at 45 degree and motor4 at -45 degree, refer to documentation for more information on convention
+	double             angle;        // Angle in rad, normally motor1 is at 45 degree and motor4 at -45 degree, refer to documentation for more information on convention
 } Wheel_t;
 
 #define MOTOR_BREAK 0.0

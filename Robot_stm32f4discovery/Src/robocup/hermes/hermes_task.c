@@ -1,17 +1,13 @@
 #include "hermes_task.h"
 
-
-
-
 // This is the main task, it is intended to run indefinitely
-void hermesTask(void * pvParameters) {
+void hermesTask(void) {
 	// We have a small stack, this is why they are static
-	static char packetBuffer[COBS_MAX_PACKET_LEN];
-	static unsigned char dataBuffer[COBS_MAX_PACKET_LEN + 2];
-	packetHeaderStruct_t *currentPacketHeaderPtr;
+	static char packetBuffer[COBS_MAX_PAYLOAD_LEN];
+	static unsigned char dataBuffer[COBS_MAX_PACKET_LEN];
 	size_t payloadLen = 0;
 	Result_t res;
-	while (1) {
+	for(;;) {
 		// Get data from device
 
 		size_t bytesReceived = g_hermesHandle.com.readUntilZero(packetBuffer, COBS_MAX_PACKET_LEN);
@@ -20,19 +16,19 @@ void hermesTask(void * pvParameters) {
 			LOG_INFO("Timeout on receiving\r\n");
 			continue;
 		}
-		if(bytesReceived < sizeof(packetHeaderStruct_t)){
+		if(bytesReceived < sizeof(encodedPacketHeaderStruct_t)){
 			LOG_INFO("Too small packet\r\n");
 			continue;
 	    }
 
 		// Extract destination address without decoding the packet and
 		// check if our robot is recipient
-		// TODO switch the litteral '4' to a more elegant solution
-		if(packetBuffer[4] != ADDR_ROBOT && packetBuffer[4] != ADDR_BROADCAST){
+		encodedPacketHeaderStruct_t* encodedHeader = (encodedPacketHeaderStruct_t *) packetBuffer;
+		if (encodedHeader->header.destAddress != ADDR_ROBOT && encodedHeader->header.destAddress != ADDR_BROADCAST) {
 			continue;
 		}
 
-		// The data is treated
+		// The packet is decoded
 		res = decobifyData(packetBuffer, bytesReceived, dataBuffer, &payloadLen);
 		if (res == FAILURE){
 			LOG_INFO("Fail decoding\r\n");
@@ -41,7 +37,7 @@ void hermesTask(void * pvParameters) {
 
 		// we "extract" the packet header
 		// This is done here because we need the size for the checksum.
-		currentPacketHeaderPtr = (packetHeaderStruct_t *) dataBuffer;
+		packetHeaderStruct_t* currentPacketHeaderPtr = (packetHeaderStruct_t *) dataBuffer;
 		res = validPayload(currentPacketHeaderPtr, payloadLen);
 
 		if (res == FAILURE) {
@@ -49,9 +45,9 @@ void hermesTask(void * pvParameters) {
 			LOG_INFO("Invalid packet\r\n");
 			continue;
 		}
-		packet_t packet = g_packetsTable[(size_t) currentPacketHeaderPtr->packetType];
+		packet_t packet = g_packetsTable[(size_t) (currentPacketHeaderPtr->packetType)];
 
-		hermes_sendError("Success!!!\r\n");
+		LOG_INFO("Success!!!\r\n");
 		// Call callback that handle the packet
 		packet.callback(dataBuffer);
 	}

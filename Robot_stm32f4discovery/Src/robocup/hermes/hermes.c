@@ -12,7 +12,7 @@ void hermes_init(comHandle_t com){
 Result_t validPayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen) {
 	uint8_t id = currentPacketHeaderPtr->packetType;
 	if(currentPacketHeaderPtr->protocolVersion != PROTOCOL_VERSION){
-		LOG_INFO("Invalid protocol\r\n");
+		LOG_INFO("Invalid protocol version\r\n");
 		return FAILURE;
 	}
 
@@ -31,6 +31,7 @@ Result_t validPayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t paylo
 	return SUCCESS;
 }
 
+//
 void hermes_sendError(char * pStr){
 	hermes_sendRespond(RobotCrashedNotification, pStr, strlen(pStr));
 }
@@ -117,7 +118,7 @@ Result_t cobifyData(const void *data, size_t msg_len, char *dstOut) {
  * dst_len : Number of byte in the payload, should alway be payload's len -1
  */
 Result_t decobifyData(const char *msg, size_t len, void *dstOut, size_t *dst_len) {
-	if(len >= COBS_MAX_PACKET_LEN)
+	if(len >= COBS_MAX_PAYLOAD_LEN)
 		return FAILURE;
 	unsigned char *ptr = (unsigned char*) msg;
 	unsigned char *dst = (unsigned char*) dstOut;

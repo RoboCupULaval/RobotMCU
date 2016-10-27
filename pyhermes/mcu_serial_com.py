@@ -31,7 +31,7 @@ def getFirstSerialPort():
 
 class McuCom(object):
     """Handle communication between the microcontroller and the computer"""
-    def __init__(self, port, baudrate, time_out=0.2):
+    def __init__(self, port, baudrate, time_out=1.0):
         self.port = port
         self.baudrate = baudrate
         self.ser = serial.Serial(port, baudrate, timeout=time_out)
@@ -111,17 +111,8 @@ class McuCom(object):
             elif self.isDebug(res):
                 print("DEBUG: ", res[1:])
 
-
-    def isValidAcknowledge(self, pack):
-        return pack[0] == CMD_ACK
-    def isNack(self, pack):
-        return pack[0] == CMD_NACK
     def isError(self, id):
         return id == ROBOT_CRASHED_NOTIFICATION_ID
-    def isDebug(self, res):
-        return res[0] == CMD_DEBUG
-    def isMultiPartPacket(self, res):
-        return res[0] == CMD_MULTI_PART
     def getId(self, res):
         return res[3]
 
@@ -156,7 +147,6 @@ class McuCom(object):
             bytesToRead = self.ser.inWaiting()
             if bytesToRead > 0:
                 buf += self.ser.read(1)
-                print(buf)
             elif (time.time() - start_time) > 1:
                 raise serial.SerialTimeoutException("Timeout on serial communication")
         return buf

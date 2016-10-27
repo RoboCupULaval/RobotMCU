@@ -12,7 +12,7 @@
 
 #include "com_interface.h"
 
-comHandle_t bluetooth_init();
+comHandle_t bluetooth_init(void);
 size_t      bluetooth_read(void *pBuffer, size_t length);
 size_t      bluetooth_write(const void *pBuffer, size_t length);
 size_t      bluetooth_readUntilZero(void *pBuffer, size_t length);

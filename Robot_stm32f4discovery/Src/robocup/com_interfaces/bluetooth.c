@@ -6,7 +6,7 @@
  */
 #include "bluetooth.h"
 
-comHandle_t bluetooth_init(){
+comHandle_t bluetooth_init(void){
 	comHandle_t com;
 	com.read = bluetooth_read;
 	com.write = bluetooth_write;
@@ -15,12 +15,14 @@ comHandle_t bluetooth_init(){
 }
 
 size_t bluetooth_read(void *pBuffer, size_t length){
-	HAL_StatusTypeDef res = HAL_UART_Receive(&huart5, (uint8_t*) pBuffer, length, HAL_MAX_DELAY);
+	uint16_t length16b = length & 0xFFFF;
+	HAL_StatusTypeDef res = HAL_UART_Receive(&huart5, (uint8_t*) pBuffer, length16b, HAL_MAX_DELAY);
 	return res == HAL_OK ? length : 0;
 }
 
 size_t bluetooth_write(const void *pBuffer, size_t length){
-	HAL_StatusTypeDef res = HAL_UART_Transmit(&huart5, (uint8_t*) pBuffer, length, HAL_MAX_DELAY);
+	uint16_t length16b = length & 0xFFFF;
+	HAL_StatusTypeDef res = HAL_UART_Transmit(&huart5, (uint8_t*) pBuffer, length16b, HAL_MAX_DELAY);
 	return res == HAL_OK ? length : 0;
 }
 

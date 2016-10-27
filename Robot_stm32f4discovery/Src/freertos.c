@@ -42,18 +42,16 @@
 
 /* Variables -----------------------------------------------------------------*/
 osThreadId defaultTaskHandle;
-osThreadId sendMessageTaskHandle;
-osThreadId speedTaskHandle;
-osThreadId controlLoopHandle;
+osThreadId wheelsTaskHandle;
+osThreadId hermesTaskHandle;
 
 /* USER CODE BEGIN Variables */
 /* USER CODE END Variables */
 
 /* Function prototypes -------------------------------------------------------*/
 void StartDefaultTask(void const * argument);
-void sendMessageTaskFunction(void const * argument);
-void speedTaskFunction(void const * argument);
-void controlLoopTaskFunction(void const * argument);
+void wheelsTaskLoopFunction(void const * argument);
+void hermesTaskLoopFunction(void const * argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -85,20 +83,16 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityRealtime, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
-  /* definition and creation of sendMessageTask */
-  osThreadDef(sendMessageTask, sendMessageTaskFunction, osPriorityNormal, 0, 128);
-  sendMessageTaskHandle = osThreadCreate(osThread(sendMessageTask), NULL);
+  /* definition and creation of wheelsTask */
+  osThreadDef(wheelsTask, wheelsTaskLoopFunction, osPriorityAboveNormal, 0, 1048);
+  wheelsTaskHandle = osThreadCreate(osThread(wheelsTask), NULL);
 
-  /* definition and creation of speedTask */
-  osThreadDef(speedTask, speedTaskFunction, osPriorityIdle, 0, 128);
-  speedTaskHandle = osThreadCreate(osThread(speedTask), NULL);
-
-  /* definition and creation of controlLoop */
-  osThreadDef(controlLoop, controlLoopTaskFunction, osPriorityNormal, 0, 128);
-  controlLoopHandle = osThreadCreate(osThread(controlLoop), NULL);
+  /* definition and creation of hermesTask */
+  osThreadDef(hermesTask, hermesTaskLoopFunction, osPriorityNormal, 0, 1048);
+  hermesTaskHandle = osThreadCreate(osThread(hermesTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
 	/* add threads, ... */
@@ -119,69 +113,30 @@ void StartDefaultTask(void const * argument)
 	/* Infinite loop */
 	for(;;)
 	{
-		osDelay(1);
+		osDelay(10000);
 	}
   /* USER CODE END StartDefaultTask */
 }
 
-/* sendMessageTaskFunction function */
-void sendMessageTaskFunction(void const * argument)
+/* wheelsTaskLoopFunction function */
+void wheelsTaskLoopFunction(void const * argument)
 {
-  /* USER CODE BEGIN sendMessageTaskFunction */
-
-	/* Infinite loop */
-	for(;;)
-	{
-		//	osDelay(1900);
-		//	HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_SET);
-		//	HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
-		//	CDC_Transmit_FS(Buf, 18);
-		//	//HAL_SPI_Transmit_IT(&hspi2,(uint8_t *)"Hello World!",12);
-		//	osDelay(100);
-		//	HAL_UART_Transmit_IT(&huart2,(uint8_t *)"\n\r",2);
-		//	HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_RESET);
-		osDelay(500);
-		//	  bool succes = quad_Test(&quadA);
-		//	  if (succes==true){
-		//	  	   HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Success\r\n",9);
-		//	  }else{
-		//	  	   HAL_UART_Transmit_IT(&huart2,(uint8_t *)"No\r\n",4);
-		//	  }
-		////////  quad_ReadCounters(&quadA);
-		//	  sprintf(bufferGlobalDebug,"COUNT %x, %x, %i, %i \n\r", quadA.count0, quadA.count1, quadA.count0, quadA.count1);
-		//	  HAL_UART_Transmit_IT(&huart2,(uint8_t*)bufferGlobalDebug, strlen(bufferGlobalDebug));
-		//
-	}
-  /* USER CODE END sendMessageTaskFunction */
+  /* USER CODE BEGIN wheelsTaskLoopFunction */
+  /* Infinite loop */
+  for(;;)
+  {
+	  //wheelTask();
+      osDelay(1);
+  }
+  /* USER CODE END wheelsTaskLoopFunction */
 }
 
-/* speedTaskFunction function */
-void speedTaskFunction(void const * argument)
+/* hermesTaskLoopFunction function */
+void hermesTaskLoopFunction(void const * argument)
 {
-  /* USER CODE BEGIN speedTaskFunction */
-	/* Infinite loop */
-	for(;;)
-	{
-
-		//HAL_UART_Transmit_IT(&huart2,(uint8_t *)"cd", 2);
-		//test_hermes();
-		//hermesTask(NULL);
-		osDelay(1000);
-	}
-  /* USER CODE END speedTaskFunction */
-}
-
-/* controlLoopTaskFunction function */
-void controlLoopTaskFunction(void const * argument)
-{
-  /* USER CODE BEGIN controlLoopTaskFunction */
-	/* Infinite loop */
-	for(;;)
-	{
-		//	  HAL_SPI_Transmit_IT(&hspi2, a, 1);
-		osDelay(100);
-	}
-  /* USER CODE END controlLoopTaskFunction */
+  /* USER CODE BEGIN hermesTaskLoopFunction */
+  hermesTask();
+  /* USER CODE END hermesTaskLoopFunction */
 }
 
 /* USER CODE BEGIN Application */

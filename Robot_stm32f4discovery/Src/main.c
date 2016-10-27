@@ -44,7 +44,6 @@
 /* USER CODE BEGIN Includes */
 // Local includes
 #include "robocup/robocup_define.h"
-#include "robocup/exampleTask.h"
 #include "robocup/com_interfaces/bluetooth.h"
 #include "robocup/com_interfaces/usb.h"
 #include "robocup/motors/wheels_task.h"
@@ -124,8 +123,8 @@ int main(void)
   	//g_logHandle= bluetooth_init();
 
 	// wheel task
-	TaskHandle_t xHandle = NULL;
-	xTaskCreate(wheelTask, "lol", 300, (void *) 1, tskIDLE_PRIORITY +1, &xHandle);
+	//TaskHandle_t xHandle = NULL;
+	//xTaskCreate(wheelTask, "lol", 300, (void *) 1, tskIDLE_PRIORITY +1, &xHandle);
 
   /* USER CODE END 2 */
 

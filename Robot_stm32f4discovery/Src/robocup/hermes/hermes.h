@@ -16,11 +16,13 @@
 #include "../util.h"
 #include "packets_table.h"
 
-#define COBS_MAX_PACKET_LEN 255
+#define COBS_MAX_PAYLOAD_LEN 255
+// Packet = Offset(1 byte) + Payload + \0(1 byte)
+#define COBS_MAX_PACKET_LEN 257
 
 static const uint8_t ADDR_BROADCAST    = 0xFF;
-static const uint8_t ADDR_BASE_STATION = 0x00;
-static const uint8_t ADDR_ROBOT        = 0x01; //Make it configurable (switch?)
+static const uint8_t ADDR_BASE_STATION = 0xFE;
+static const uint8_t ADDR_ROBOT        = 0x01; // Make it configurable with a switch
 
 static const uint8_t PROTOCOL_VERSION  = 0x01;
 

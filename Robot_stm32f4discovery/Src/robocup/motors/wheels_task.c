@@ -27,14 +27,14 @@ const int16_t MIN_TICK_FOR_MOVEMENT = 800;
 bool test_startUp() {
   	quadA = quad_Init(CS_1);
   	quadB = quad_Init(CS_2);
-	for(int i = 0; i < wheelsLen; ++i) {
+	for(size_t i = 0; i < wheelsLen; ++i) {
 		// Start the pwm
 	  	HAL_TIM_PWM_Start(wheels[i].pTimer, wheels[i].timerChannel);
 	}
 
 	bool success = true;
 	LOG_INFO("MOTORS - Each motor should remains immobile \r\n");
-  	for (int i = 0; i < wheelsLen; ++i) {
+  	for (size_t i = 0; i < wheelsLen; ++i) {
 		Wheel_t* pWheel = &wheels[i];
 		LOG_INFO(pWheel->debugName);
 
@@ -49,7 +49,7 @@ bool test_startUp() {
   		return success;
 
 	LOG_INFO("MOTORS - Each motor turns the right encoder \r\n");
-  	for (int i = 0; i < wheelsLen; ++i) {
+  	for (size_t i = 0; i < wheelsLen; ++i) {
 		Wheel_t* pWheel = &wheels[i];
 		LOG_INFO(pWheel->debugName);
 
@@ -64,7 +64,7 @@ bool test_startUp() {
   		return success;
 
 	LOG_INFO("MOTORS - Each wheels turns clockwise \r\n");
-  	for (int i = 0; i < wheelsLen; ++i) {
+  	for (size_t i = 0; i < wheelsLen; ++i) {
 		Wheel_t* pWheel = &wheels[i];
 		LOG_INFO(pWheel->debugName);
 
@@ -79,7 +79,7 @@ bool test_startUp() {
 
 
 	LOG_INFO("MOTORS - Each wheels turns anti-clockwise \r\n");
-  	for (int i = 0; i < wheelsLen; ++i) {
+  	for (size_t i = 0; i < wheelsLen; ++i) {
 		Wheel_t* pWheel = &wheels[i];
 		LOG_INFO(pWheel->debugName);
 
@@ -120,17 +120,18 @@ int16_t test_spinAndStopWheel(Wheel_t* pWheel, float speed) {
 
 
 // This tasks deals with the movements of the robot
-void wheelTask(void * pvParameters) {
+void wheelTask() {
 
   	for(;;){
 		LOG_INFO("STOP messaging yourself! \r\n");
-		osDelay(500);
+		osDelay(1000);
   	}
 	test_startUp();
-  	for(;;){}
+  	for(;;){
+  	}
 	return;
 	LOG_INFO("Starting!!!\r\n");
-	for(int i = 0; i < wheelsLen; ++i) {
+	for(size_t i = 0; i < wheelsLen; ++i) {
 		// Start the pwm
 	  	HAL_TIM_PWM_Start(wheels[i].pTimer, wheels[i].timerChannel);
 		wheels[i].pid = pid_init(0.00001, 0.00001, 0, 1, -1);

@@ -40,7 +40,6 @@ typedef struct __attribute__((__packed__)) {
 } msg_set_pid_t;
 
 
-
 typedef struct __attribute__((__packed__)) {
 	packetHeaderStruct_t header;
 	uint8_t value;

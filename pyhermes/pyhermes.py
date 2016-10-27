@@ -4,11 +4,15 @@
 
 from threading import Thread
 from time import sleep
+import sys
 from mcu_serial_com import *
 
 
 if __name__ == "__main__":
     print("==== pyhermes ====")
+    if sys.version_info[0] < 3:
+        raise "Must be python 3"
+
     port = getFirstSerialPort()
 
     com = McuCom(port, 9600) #115200
