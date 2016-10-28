@@ -21,8 +21,7 @@ void hermesTask(void) {
 			continue;
 	    }
 
-		// Extract destination address without decoding the packet and
-		// check if our robot is recipient
+		// Check if our robot is recipient, before decoding
 		encodedPacketHeaderStruct_t* encodedHeader = (encodedPacketHeaderStruct_t *) packetBuffer;
 		if (encodedHeader->header.destAddress != ADDR_ROBOT && encodedHeader->header.destAddress != ADDR_BROADCAST) {
 			continue;

@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
+
 #include "hermes.h"
 
 // When the packet is encoded some data in the header is still in a decoded forms

@@ -16,13 +16,19 @@ comHandle_t bluetooth_init(void){
 
 size_t bluetooth_read(void *pBuffer, size_t length){
 	uint16_t length16b = length & 0xFFFF;
-	HAL_StatusTypeDef res = HAL_UART_Receive(&huart5, (uint8_t*) pBuffer, length16b, HAL_MAX_DELAY);
+	HAL_StatusTypeDef res;
+	do {
+		res = HAL_UART_Receive(&huart5, (uint8_t*) pBuffer, length16b, HAL_MAX_DELAY);
+	} while(res == HAL_BUSY || res == HAL_TIMEOUT);
 	return res == HAL_OK ? length : 0;
 }
 
 size_t bluetooth_write(const void *pBuffer, size_t length){
 	uint16_t length16b = length & 0xFFFF;
-	HAL_StatusTypeDef res = HAL_UART_Transmit(&huart5, (uint8_t*) pBuffer, length16b, HAL_MAX_DELAY);
+	HAL_StatusTypeDef res;
+	do {
+		res = HAL_UART_Transmit(&huart5, (uint8_t*) pBuffer, length16b, HAL_MAX_DELAY);
+	} while(res == HAL_BUSY);
 	return res == HAL_OK ? length : 0;
 }
 

@@ -22,7 +22,6 @@
 
 static const uint8_t ADDR_BROADCAST    = 0xFF;
 static const uint8_t ADDR_BASE_STATION = 0xFE;
-static const uint8_t ADDR_ROBOT        = 0x01; // Make it configurable with a switch
 
 static const uint8_t PROTOCOL_VERSION  = 0x01;
 

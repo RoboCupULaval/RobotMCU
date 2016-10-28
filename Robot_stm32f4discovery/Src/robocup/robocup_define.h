@@ -25,7 +25,12 @@ typedef struct {
 extern hermesHandle_t g_hermesHandle;
 extern comHandle_t g_logHandle;
 
-//extern quad_Handle quadA;
+/***
+ * Global constants
+ */
+
+
+static const uint8_t ADDR_ROBOT = 0x01; // Make it configurable with a switch
 
 #define PID_P 13.0
 #define PID_I 0.0

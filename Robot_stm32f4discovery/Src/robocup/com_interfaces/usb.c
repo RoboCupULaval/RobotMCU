@@ -34,8 +34,10 @@ size_t usb_read(__attribute__ ((unused)) void *pBuffer,
 
 size_t usb_write(const void *pBuffer, size_t length){
 	uint16_t length16b = length & 0xFFFF;
-
-	uint8_t res = CDC_Transmit_FS((uint8_t*)pBuffer, length16b);
+	uint8_t res;
+	do {
+		res = CDC_Transmit_FS((uint8_t*)pBuffer, length16b);
+	} while(res == USBD_BUSY);
 	return res == USBD_OK ? length16b : 0;
 }
 
