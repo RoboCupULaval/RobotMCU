@@ -8,7 +8,9 @@
 #ifndef ROBOCUP_BLUETOOTH_BLUETOOTH_H_
 #define ROBOCUP_BLUETOOTH_BLUETOOTH_H_
 
+#include <stdbool.h>
 #include "usart.h"
+#include "stm32f4xx_hal_conf.h"
 
 #include "com_interface.h"
 

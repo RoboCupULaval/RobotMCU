@@ -47,7 +47,8 @@ void quad_ReadCounters(quad_Handle *pQuad){
 	uint8_t cnt2_msb, cnt2_lsb, cnt1_msb, cnt1_lsb, cnt0_msb, cnt0_lsb;
 
 	demux_ConnectTo(pQuad->structCSNPin);
-	SPI_write_8bits((QUAD_COUNTER) | QUAD_READ); // For some reason the first 2 bytes are unused
+	SPI_write_8bits((QUAD_COUNTER) | QUAD_READ);
+	// For some reason the first 2 bytes are unused
 	cnt2_msb = SPI_read();
 	cnt2_lsb = SPI_read();
 	cnt1_msb = SPI_read();
@@ -59,16 +60,16 @@ void quad_ReadCounters(quad_Handle *pQuad){
 	const int16_t old_count0 = pQuad->count0;
 	const int16_t old_count1 = pQuad->count1;
 
-	const int16_t count2  = (cnt2_msb << 8) | cnt2_lsb;		 // not used
+	//const int16_t count2  = (cnt2_msb << 8) | cnt2_lsb;		 // not used
 	pQuad->count0 = (cnt1_msb << 8) | cnt1_lsb;
 	pQuad->count1 = (cnt0_msb << 8) | cnt0_lsb;
 
 	pQuad->delta_count0 = pQuad->count0 - old_count0;
 	pQuad->delta_count1 = pQuad->count1 - old_count1;
 
-	static char buffer[128];
+	//static char buffer[128];
 	//snprintf(buffer, 128, "%6i %6i %6i ", count2, pQuad->count0, pQuad->count1);
-	snprintf(buffer, 128, "%+6i %+6i ", pQuad->delta_count0, pQuad->delta_count1);
+	//snprintf(buffer, 128, "%+6i %+6i ", pQuad->delta_count0, pQuad->delta_count1);
 	//Debug_Print(buffer);
 
 //	quad_WriteRegister( QUAD_CTRL, QUAD_RESETCNT0 | QUAD_RESETCNT1 | QUAD_RESETCNT2,pQuad); //reset counters

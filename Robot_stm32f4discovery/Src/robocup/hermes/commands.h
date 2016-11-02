@@ -39,17 +39,25 @@ typedef struct __attribute__((__packed__)) {
 	float   kd;
 } msg_set_pid_t;
 
+typedef struct __attribute__((__packed__)) {
+	packetHeaderStruct_t header;
+	uint8_t registe;
+	uint8_t value;
+} msg_set_register_t;
 
 typedef struct __attribute__((__packed__)) {
 	packetHeaderStruct_t header;
 	uint8_t value;
 } msg_uint8_t;
 
-
+enum registerTypes_t {
+	CONTROL_LOOP_STATE = 0,
+};
 
 void nop(const void *msg);
 void command_heartbeatRequest(const void *msg);
 void command_movementCommand(const void *msg);
+void command_setRegister(const void *msg);
 
 
 #endif /* ROBOCUP_COMMANDS_H_ */

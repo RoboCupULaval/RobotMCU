@@ -13,17 +13,26 @@ void hermesTask(void) {
 		size_t bytesReceived = g_hermesHandle.com.readUntilZero(packetBuffer, COBS_MAX_PACKET_LEN);
 
 		if(bytesReceived == 0){
-			LOG_INFO("Timeout on receiving\r\n");
+			//LOG_INFO("Timeout on receiving\r\n");
+			// It's more efficient to wait a few ticks before trying again
+			osDelay(1);
 			continue;
 		}
 		if(bytesReceived < sizeof(encodedPacketHeaderStruct_t)){
-			LOG_INFO("Too small packet\r\n");
+			static char packetHumanReadable[3*100]; // For each byte, three character needed
+			static char messageAndPacket[3*100+30];
+
+			convertBytesToStr(packetBuffer, bytesReceived, packetHumanReadable);
+
+			sprintf(messageAndPacket, "Too small packet %s\r\n", packetHumanReadable);
+			LOG_INFO(messageAndPacket);
 			continue;
 	    }
 
 		// Check if our robot is recipient, before decoding
 		encodedPacketHeaderStruct_t* encodedHeader = (encodedPacketHeaderStruct_t *) packetBuffer;
 		if (encodedHeader->header.destAddress != ADDR_ROBOT && encodedHeader->header.destAddress != ADDR_BROADCAST) {
+			LOG_INFO("Wrong dest\r\n");
 			continue;
 		}
 
@@ -34,20 +43,21 @@ void hermesTask(void) {
 			continue;
 		}
 
-		// we "extract" the packet header
-		// This is done here because we need the size for the checksum.
 		packetHeaderStruct_t* currentPacketHeaderPtr = (packetHeaderStruct_t *) dataBuffer;
 		res = validPayload(currentPacketHeaderPtr, payloadLen);
 
 		if (res == FAILURE) {
-			// Send a warning packet to control tower
-			LOG_INFO("Invalid packet\r\n");
 			continue;
 		}
+
+		// Find the corresponding packet in the packet table
 		packet_t packet = g_packetsTable[(size_t) (currentPacketHeaderPtr->packetType)];
 
 		LOG_INFO("Success!!!\r\n");
 		// Call callback that handle the packet
 		packet.callback(dataBuffer);
+
+		// This is use to give back control to other task
+		osDelay(1);
 	}
 }

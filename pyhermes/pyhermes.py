@@ -5,7 +5,11 @@
 from threading import Thread
 from time import sleep
 import sys
+import argparse
+
 from mcu_serial_com import *
+from open_loop_cli import *
+from diagnostic import *
 
 
 if __name__ == "__main__":
@@ -13,29 +17,22 @@ if __name__ == "__main__":
     if sys.version_info[0] < 3:
         raise "Must be python 3"
 
-    port = getFirstSerialPort()
+    main_parser = argparse.ArgumentParser(description='Communication utility between Robocup Robot and control station')
+    main_parser.add_argument('command', choices={"ping", "test"}, help='Type of utility')
 
-    com = McuCom(port, 9600) #115200
-    quitting = False
-    def listener():
-        while True:
-            buf = ""
-            while not '\n' in buf:
-                if quitting:
-                    return
-                buf += '' #str(com.ser.read(1))
-            print(buf)
 
-    #thread = Thread(target = listener)
-    #thread.start()
+    """
+    subparsers = main_parser.add_subparsers('command', choices={},help='Type of utility')
+    ping_parser = subparsers.add_parser('ping', help='Search for robot to talk to')
+    ping_parser.set_defaults(which='a1')
+    test_parser = subparsers.add_parser('test', help='Test open loop and unit test')
+    test_parser.set_defaults(which='a2')
+    """
+    args = main_parser.parse_args()
 
-    try:
-        while True:
-            com.testHeartBeat()
-            #sleep(1)
-    except (KeyboardInterrupt, SystemExit):
-        quitting = True
-        #thread.join()
-        com.ser.close()
+    if args.command == "ping":
+        diagnostic()
+    elif args.command == "test":
+        open_loop_test()
 
 

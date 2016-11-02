@@ -13,6 +13,7 @@
 
 #define MAX_METADATA_LEN 128
 
+void log_init();
 void LOG_INFO(const char * pMessage);
 void LOG_ERROR(const char * pMessage);
 void LOG_DEBUG(const char * pMessage);

@@ -87,7 +87,7 @@ void MX_FREERTOS_Init(void) {
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* definition and creation of wheelsTask */
-  osThreadDef(wheelsTask, wheelsTaskLoopFunction, osPriorityAboveNormal, 0, 1048);
+  osThreadDef(wheelsTask, wheelsTaskLoopFunction, osPriorityRealtime, 0, 1048);
   wheelsTaskHandle = osThreadCreate(osThread(wheelsTask), NULL);
 
   /* definition and creation of hermesTask */
@@ -110,6 +110,7 @@ void StartDefaultTask(void const * argument)
   MX_USB_DEVICE_Init();
 
   /* USER CODE BEGIN StartDefaultTask */
+  	vTaskSuspend(NULL); // Suspend the task forever
 	/* Infinite loop */
 	for(;;)
 	{
@@ -125,7 +126,7 @@ void wheelsTaskLoopFunction(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-	  //wheelTask();
+	  wheelTask();
       osDelay(1);
   }
   /* USER CODE END wheelsTaskLoopFunction */
@@ -135,7 +136,9 @@ void wheelsTaskLoopFunction(void const * argument)
 void hermesTaskLoopFunction(void const * argument)
 {
   /* USER CODE BEGIN hermesTaskLoopFunction */
-  hermesTask();
+	for (;;) {
+		hermesTask();
+	}
   /* USER CODE END hermesTaskLoopFunction */
 }
 

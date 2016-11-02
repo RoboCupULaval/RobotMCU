@@ -42,6 +42,7 @@ void                 hermes_init(comHandle_t com);
 Result_t             validPayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen);
 void                 hermes_sendError(char * pStr);
 packetHeaderStruct_t hermes_createHeader(uint8_t packetType);
+void                 hermes_sendAcknowledgment(void);
 void                 hermes_sendPayloadLessRespond(uint8_t packetType);
 void                 hermes_sendRespond(uint8_t packetType, char* pData, size_t dataLen);
 Result_t             cobifyData(const void *ptr, size_t msg_len,   char *dst);

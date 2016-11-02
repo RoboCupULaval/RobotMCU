@@ -122,6 +122,8 @@ int main(void)
   	g_logHandle = usb_init();
   	//g_logHandle= bluetooth_init();
 
+  	log_init();
+
 	// wheel task
 	//TaskHandle_t xHandle = NULL;
 	//xTaskCreate(wheelTask, "lol", 300, (void *) 1, tskIDLE_PRIORITY +1, &xHandle);

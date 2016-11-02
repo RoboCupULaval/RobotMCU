@@ -32,9 +32,11 @@ extern comHandle_t g_logHandle;
 
 static const uint8_t ADDR_ROBOT = 0x01; // Make it configurable with a switch
 
+
+#define CONTROL_LOOP_PERIOD_MS 10
+
 #define PID_P 13.0
 #define PID_I 0.0
-//#define PID_I 0.005
 #define PID_D 0.000
 
 

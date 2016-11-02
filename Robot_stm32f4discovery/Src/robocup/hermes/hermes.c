@@ -22,7 +22,7 @@ Result_t validPayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t paylo
 	}
 
 	if(g_packetsTable[id].len != payloadLen){
-		LOG_INFO("Too small packet\r\n");
+		LOG_INFO("Too small payload\r\n");
 		return FAILURE;
 	}
 
@@ -45,6 +45,10 @@ packetHeaderStruct_t hermes_createHeader(uint8_t packetType){
 	header.packetType = packetType;
 	header.checksum = 0;
 	return header;
+}
+
+void hermes_sendAcknowledgment(void) {
+	hermes_sendPayloadLessRespond(Ack);
 }
 
 void hermes_sendPayloadLessRespond(uint8_t packetType){

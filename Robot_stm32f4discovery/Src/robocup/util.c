@@ -2,6 +2,9 @@
  * util.c
 */
 #include "cmsis_os.h"
+#include "semphr.h"
+#include "queue.h"
+
 #include "util.h"
 
 // Convert a series of bytes in a human readable format.
@@ -16,14 +19,28 @@ void convertBytesToStr(const void * ptr, size_t len, char* str){
   *str = '\0';
 }
 
+static SemaphoreHandle_t mutex = NULL;
+
+void log_init() {
+	mutex = xSemaphoreCreateMutex();
+}
+
+
 void log_broadcast(const char *pLogType, const char *pMessage){
-	static char metaData[MAX_METADATA_LEN];
-	TickType_t msSinceStartup = xTaskGetTickCount() * portTICK_PERIOD_MS;
+	char metaData[MAX_METADATA_LEN];
+	const TickType_t msSinceStartup = xTaskGetTickCount() * portTICK_PERIOD_MS;
 
 	snprintf(metaData, MAX_METADATA_LEN, "%s|%06u|R%d|", pLogType, (unsigned)msSinceStartup, ADDR_ROBOT);
 
+	// Start of critical zone
+	xSemaphoreTake(mutex, portMAX_DELAY);
+
 	g_logHandle.write(metaData, strlen(metaData));
 	g_logHandle.write(pMessage, strlen(pMessage));
+
+	// End of critical zone
+	xSemaphoreGive(mutex);
+
 }
 
 
