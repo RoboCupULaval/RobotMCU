@@ -59,6 +59,8 @@
 #include "robocup/com_interfaces/usb.h"
 #include "robocup/hermes/hermes_task.h"
 #include "robocup/motors/ctrl_task.h"
+#include "robocup/led.h"
+#include "robocup/pmu.h"
 
 /* USER CODE END Includes */
 
@@ -121,19 +123,34 @@ int main(void)
   	HAL_TIM_Base_Start(&htim5);
   	HAL_TIM_Base_Start(&htim8);
 
-    HAL_GPIO_WritePin(EN_POWER_GPIO_Port, EN_POWER_Pin, 1);
+    //HAL_GPIO_WritePin(EN_POWER_GPIO_Port, EN_POWER_Pin, 1);
     //HAL_GPIO_WritePin(KICKER_SELECT_GPIO_Port, KICKER_SELECT_Pin, 1);
 
   	//demux_Init(GPIOE, GPIO_PIN_4, GPIO_PIN_5, GPIO_PIN_6, CS_0);
 
   	// Init communication
-  	comHandle_t com = bluetooth_init();
+  	//comHandle_t com = bluetooth_init();
   	//comHandle_t com = usb_init();
-  	hermes_init(com);
-  	g_logHandle = usb_init();
+  	//hermes_init(com);
+  	//g_logHandle = usb_init();
   	//g_logHandle= bluetooth_init();
 
-  	log_init();
+  	//log_init();
+  	led_init();
+  	pmu_init();
+
+  	Wheel_t wheel1 = {"wheel 3", {0}, QuadEncoderA1, &htim5, TIM_CHANNEL_3, MOTOR2_DIR_GPIO_Port, MOTOR2_DIR_Pin, ClockWise, -M_PI_2 -M_PI_4};
+  	initPwmAndQuad();
+  	float cmd = 0.1f;
+  	wheel_setPWM(&wheel1, cmd);
+
+  	while(1) {
+  		pmu_checkBattVoltage();
+  		HAL_Delay(10);
+  	}
+
+  	//pmu_enablePower();
+  	//pmu_disablePower();
 
 	// wheel task
 	//TaskHandle_t xHandle = NULL;
