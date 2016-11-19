@@ -124,20 +124,20 @@ IRQ			Not used	Interrupt pin. Goes low when active. Pin functionality is active,
 
 /* Default SPI used */
 #ifndef NRF24L01_SPI
-#define NRF24L01_SPI				SPI3
-#define NRF24L01_SPI_PINS			TM_SPI_PinsPack_2
+#define NRF24L01_SPI				SPI1
+#define NRF24L01_SPI_PINS			TM_SPI_PinsPack_1
 #endif
 
 /* SPI chip enable pin */
 #ifndef NRF24L01_CSN_PIN
-#define NRF24L01_CSN_PORT			GPIOD
-#define NRF24L01_CSN_PIN			GPIO_PIN_7
+#define NRF24L01_CSN_PORT			GPIOA
+#define NRF24L01_CSN_PIN			GPIO_PIN_4
 #endif
 
 /* Chip enable for transmitting */
 #ifndef NRF24L01_CE_PIN
-#define NRF24L01_CE_PORT			GPIOD
-#define NRF24L01_CE_PIN				GPIO_PIN_8
+#define NRF24L01_CE_PORT			GPIOA
+#define NRF24L01_CE_PIN				GPIO_PIN_3
 #endif
 
 /* Pins configuration */
