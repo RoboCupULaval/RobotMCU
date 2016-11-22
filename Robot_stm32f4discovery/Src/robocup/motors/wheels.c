@@ -23,10 +23,13 @@ void wheel_break(const Wheel_t *wheel) {
 void wheel_setPWM(const Wheel_t *wheel, float speed) {
 	// Range is 20000 to 28000, the output is in the range -1.0 to 1.0
 	// TODO put in own function
-	int command = ((int) fabs(speed))* 24000 + 18000;
+	float trueSpeed = 1.0f - fabs(speed);
+	int command = ((int) (fabs(trueSpeed) * 65535.0f));//24000 + 18000;
 	// Less then 4% of power we break
 	if(fabs(speed) < 0.04)
 		command = 0;
+	if(fabs(speed) >= 1.0)
+		command = 100;
 
 
   	__HAL_TIM_SetCompare(wheel->pTimer, wheel->timerChannel, command);
