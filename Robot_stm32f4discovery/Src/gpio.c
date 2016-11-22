@@ -76,8 +76,7 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, CS_I2C_SPI_Pin|ID_0_demux_0_Pin|ID_1_demux_1_Pin|MOTOR1_DIR_Pin 
-                          |MOTOR2_DIR_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, CS_I2C_SPI_Pin|MOTOR1_DIR_Pin|MOTOR2_DIR_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, OTG_FS_PowerSwitchOn_Pin|GPIO1_Pin|EN_POWER_Pin, GPIO_PIN_RESET);
@@ -89,20 +88,18 @@ void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOD, CHARGE_BANK_Pin|KICK_Pin|KICKER_SELECT_Pin|LD4_GPIO5_Pin 
                           |LD3_GPIO4_Pin|LD5_GPIO3_Pin|LD6_GPIO2_Pin|Audio_RST_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : PEPin PEPin PEPin PEPin 
-                           PEPin */
-  GPIO_InitStruct.Pin = CS_I2C_SPI_Pin|ID_0_demux_0_Pin|ID_1_demux_1_Pin|MOTOR1_DIR_Pin 
-                          |MOTOR2_DIR_Pin;
+  /*Configure GPIO pins : PEPin PEPin PEPin */
+  GPIO_InitStruct.Pin = CS_I2C_SPI_Pin|MOTOR1_DIR_Pin|MOTOR2_DIR_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PtPin */
-  GPIO_InitStruct.Pin = ID_2_demux_2_Pin;
+  /*Configure GPIO pins : PEPin PEPin PEPin */
+  GPIO_InitStruct.Pin = ID_0_demux_0_Pin|ID_1_demux_1_Pin|ID_2_demux_2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(ID_2_demux_2_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PCPin PCPin PCPin */
   GPIO_InitStruct.Pin = OTG_FS_PowerSwitchOn_Pin|GPIO1_Pin|EN_POWER_Pin;

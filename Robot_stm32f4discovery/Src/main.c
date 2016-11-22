@@ -122,6 +122,7 @@ int main(void)
   	HAL_TIM_Base_Start(&htim4);
   	HAL_TIM_Base_Start(&htim5);
   	HAL_TIM_Base_Start(&htim8);
+  	HAL_TIM_Base_Start(&htim12);
 
     //HAL_GPIO_WritePin(EN_POWER_GPIO_Port, EN_POWER_Pin, 1);
     //HAL_GPIO_WritePin(KICKER_SELECT_GPIO_Port, KICKER_SELECT_Pin, 1);
@@ -138,14 +139,45 @@ int main(void)
   	//log_init();
   	led_init();
   	pmu_init();
+  	dribbler_init();
 
-  	Wheel_t wheel1 = {"wheel 3", {0}, QuadEncoderA1, &htim5, TIM_CHANNEL_3, MOTOR2_DIR_GPIO_Port, MOTOR2_DIR_Pin, ClockWise, -M_PI_2 -M_PI_4};
+  	Wheel_t wheels[] = {
+  	/* wheel == sticker -> pin == cubeMX name + soudure*/
+  	{"wheel 1", {0}, QuadEncoderB1, &htim5, TIM_CHANNEL_1, MOTOR4_DIR_GPIO_Port, MOTOR4_DIR_Pin, ClockWise, M_PI_4},              /*wheel 1 -> pin_motor4*/
+  	{"wheel 2", {0}, QuadEncoderA2, &htim8, TIM_CHANNEL_3, MOTOR1_DIR_GPIO_Port, MOTOR1_DIR_Pin, ClockWise, M_PI_2 + M_PI_4},     /*wheel 2 -> pin_motor1*/
+  	{"wheel 3", {0}, QuadEncoderA1, &htim5, TIM_CHANNEL_3, MOTOR2_DIR_GPIO_Port, MOTOR2_DIR_Pin, ClockWise, -M_PI_2 -M_PI_4},     /*wheel 3 -> pin_motor2*/
+  	{"wheel 4", {0}, QuadEncoderB2, &htim5, TIM_CHANNEL_4, MOTOR3_DIR_GPIO_Port, MOTOR3_DIR_Pin, ClockWise, -M_PI_4}              /*wheel 4 -> pin_motor3*/
+  	};
   	initPwmAndQuad();
-  	float cmd = 0.1f;
-  	wheel_setPWM(&wheel1, cmd);
+  	//float cmd = 0.0f;
+  	wheel_setPWM(&wheels[0], 0.0f);
+  	wheel_setPWM(&wheels[1], 0.0f);
+  	wheel_setPWM(&wheels[2], 0.0f);
+  	wheel_setPWM(&wheels[3], 0.0f);
+
+  	//ID selection
+  	uint8_t id = robot_getID();
+  	led_turnOn(id);
+
+  	//Debug mode
+  	if(robot_isDebug())
+  		led_turnOn(8);
+
+  	uint8_t dribblerState = 0;
 
   	while(1) {
-  		pmu_checkBattVoltage();
+  		if(robot_isBtnPressed() == 1) {
+  			//Dribbler
+  			if(dribblerState == 1) {
+  				dribbler_setPWM(0.0f);
+  				dribblerState = 0;
+  			} else {
+				dribbler_setPWM(0.2f);
+				dribblerState = 1;
+  			}
+	  		HAL_Delay(1000);
+  		}
+  		pmu_handleBattProtection();
   		HAL_Delay(10);
   	}
 

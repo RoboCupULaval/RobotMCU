@@ -35,9 +35,11 @@ double pmu_getBattVoltage(void);
 double pmu_getCurrent(void);
 
 uint8_t pmu_enablePower(void);
+uint8_t pmu_forceEnablePower(void);
 uint8_t pmu_disablePower(void);
 uint8_t pmu_isPowerEnabled(void);
 
-powerState pmu_checkBattVoltage(void); //Call this as frequently as possible!
+powerState pmu_checkBattVoltage(void);
+powerState pmu_handleBattProtection(void);//Call this as frequently as possible!
 
 #endif /* ROBOCUP_PMU_H_ */

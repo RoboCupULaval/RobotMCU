@@ -26,7 +26,7 @@ void pmu_init(void) {
 	I2C_write(PMU_ADDRESS, PMU_REG_CALIB, data, 2);
 
 	pmu_enablePower(); //Enables if POWER_OK
-	pmu_enablePower(); //Enables if POWER_OK
+	pmu_enablePower(); //Repeat because first measure from INA is always 0
 }
 
 //Returns voltage in V
@@ -57,6 +57,14 @@ uint8_t pmu_enablePower(void) {
 	return pmu_isPowerEnabled();
 }
 
+//FORCE enables motors power w/o checking batt voltage
+//USE WITH CAUTION
+//Returns 1 if power enabled
+uint8_t pmu_forceEnablePower(void) {
+	HAL_GPIO_WritePin(EN_POWER_GPIO_Port, EN_POWER_Pin, GPIO_PIN_SET);
+	return pmu_isPowerEnabled();
+}
+
 //Manually disables motors power
 //Returns 0 if power disabled
 uint8_t pmu_disablePower(void) {
@@ -69,18 +77,35 @@ uint8_t pmu_isPowerEnabled(void) {
 	return HAL_GPIO_ReadPin(EN_POWER_GPIO_Port, EN_POWER_Pin);
 }
 
-//Automatically reads batt voltage and decides if the power should be disable
+//Automatically reads batt voltage and deduces the power state
 //Returns the power state
 powerState pmu_checkBattVoltage(void) {
 	double battVoltage = pmu_getBattVoltage();
-	if(battVoltage < PMU_BATT_SHUTDOWN_TRESHOLD) {
-		pmu_disablePower();
+	if(battVoltage < PMU_BATT_SHUTDOWN_TRESHOLD)
 		return POWER_CRITICAL;
-	}
 	else if(battVoltage < PMU_BATT_WARNING_TRESHOLD)
 		return POWER_WARNING;
 	else
 		return POWER_OK;
 }
 
+//Automatically reads batt voltage and decides if the power should be disable
+//Returns the power state
+powerState pmu_handleBattProtection(void) {
+	powerState state = pmu_checkBattVoltage();
+
+	switch(state) {
+	case POWER_CRITICAL:
+		pmu_disablePower();
+		break;
+	case POWER_WARNING:
+		break;
+	case POWER_OK:
+		//if(pmu_isPowerEnabled() == 0)
+			pmu_forceEnablePower();
+		break;
+	};
+
+	return state;
+}
 
