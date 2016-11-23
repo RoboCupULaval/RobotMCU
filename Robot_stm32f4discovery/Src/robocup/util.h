@@ -13,10 +13,12 @@
 
 #define MAX_METADATA_LEN 128
 
-void log_init();
+void log_init(void);
 void LOG_INFO(const char * pMessage);
 void LOG_ERROR(const char * pMessage);
 void LOG_DEBUG(const char * pMessage);
+void LOG_INFO_AND_BUFFER(const char * pMessage, void * pBuffer, size_t length);
+void LOG_ERROR_AND_BUFFER(const char * pMessage, void * pBuffer, size_t length);
 void convertBytesToStr(const void * ptr, size_t len, char* str);
 
 

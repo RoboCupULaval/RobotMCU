@@ -5,11 +5,14 @@
 #include <math.h>
 
 #include "../util.h"
-#include "wheels.h"
+#include "motor_data_log.h"
+#include "encoder_stm32.h"
+#include "wheel.h"
 
 typedef enum {
 	OPEN_LOOP,
-	CLOSE_LOOP
+	CLOSE_LOOP_WITH_LOGGING,
+	CLOSE_LOOP_WITHOUT_LOGGING
 } CtrlLoop_t;
 
 typedef struct {

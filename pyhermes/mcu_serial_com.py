@@ -53,7 +53,7 @@ class McuCom(object):
             print("No Robot detected")
             return False
 
-        if res[3] == CMD_HEART_BEAT_RESPOND:
+        if self.getId(res) == CMD_HEART_BEAT_RESPOND:
             print("Robot {} is alive".format(res[1]))
             return True
         else:
@@ -75,17 +75,9 @@ class McuCom(object):
 
     def setRegister(self, register, value):
         cmd = create2BytesCommand(CMD_SET_REGISTER, register, value)
-        self.sendCommand(cmd)
-
-
-    """
-    def setPid(self, m, p, i, d):
-        cmd = createCommandSetPid(m, p, i, d)
         print("Cmd ask: ", cmd)
         self.sendCommandAndWaitAcknowledge(cmd)
-        self.retreiveRespond()
 
-    """
     def sendCommand(self, cmd):
         self.ser.write(cmd)
         self.ser.flush()
@@ -97,28 +89,31 @@ class McuCom(object):
         :param cmd: packaged command
         """
         while True:
-            self.ser.write(cmd)
-            self.ser.flush()
+            self.sendCommand(cmd)
             try:
-                res = unpackagePayload(self.readUntilZero())
+                res = self.retreiveRespond()
             except cobs.DecodeError:
+                print("No response, sending again (invalid response)")
                 continue
             except serial.SerialTimeoutException:
                 print("No response, sending again")
                 continue
-            if res is []:
-                print("Empty packet ????")
-            elif self.isValidAcknowledge(res):
-                return res
+
+            if self.isValidAcknowledge(res):
+                print("Awknownledge!")
+                break
             elif self.isError(res):
                 print("ERROR: ", res[1:])
+            else:
+                print("Unexpected id response")
+
             #elif self.isDebug(res):
             #    print("DEBUG: ", res[1:])
 
-    def isError(self, id):
-        return id == CMD_ROBOT_CRASHED_NOTIFICATION
-    def isValidAcknowledge(self, id):
-        return id == CMD_ACK
+    def isError(self, res):
+        return self.getId(res) == CMD_ROBOT_CRASHED_NOTIFICATION
+    def isValidAcknowledge(self, res):
+        return self.getId(res) == CMD_ACK
     def getId(self, res):
         return res[3]
 
@@ -126,7 +121,6 @@ class McuCom(object):
         res = unpackagePayload(self.readUntilZero())
         if len(res) < len(generateHeader(0)):
             raise cobs.DecodeError()
-        id = self.getId(res)
         """
         last_res = res
 
@@ -138,7 +132,7 @@ class McuCom(object):
             res = last_res[0] + res[1:]
         """
 
-        if self.isError(id):
+        if self.isError(res):
             print("ERROR: ", res[1:])
         #elif self.isDebug(last_res):
         #    print("DEBUG: ", res[1:])

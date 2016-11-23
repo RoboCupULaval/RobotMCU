@@ -27,18 +27,25 @@ void command_movementCommand(const void *msg){
 }
 
 void command_setRegister(const void *msg) {
-	//hermes_sendAcknowledgment();
 
 	msg_set_register_t * registerMsg = (msg_set_register_t *) msg;
 	switch (registerMsg->registe) {
-	case CONTROL_LOOP_STATE:
-		if (registerMsg->value == 0) {
-			g_ctrlLoopState = OPEN_LOOP;
-		} else {
-			g_ctrlLoopState = CLOSE_LOOP;
-		}
-		break;
-	default:
-		LOG_ERROR("Unknown register");
+		case CONTROL_LOOP_STATE:
+			switch (registerMsg->value) {
+				case 0 :
+					g_ctrlLoopState = OPEN_LOOP;
+					break;
+				case 1:
+					g_ctrlLoopState = CLOSE_LOOP_WITHOUT_LOGGING;
+					break;
+				case 2:
+					g_ctrlLoopState = CLOSE_LOOP_WITH_LOGGING;
+					break;
+			}
+			break;
+		default:
+			LOG_ERROR("Unknown register");
 	}
+
+	hermes_sendAcknowledgment();
 }

@@ -16,6 +16,7 @@ quad_Handle quad_Init(chip_select pCSNPin){
 	lHandle.count1 = 0;
 	lHandle.delta_count0 = 0;
 	lHandle.delta_count1 = 0;
+
     quad_WriteRegister(QUAD_CONFIG0, 0x07, &lHandle);  //counter0 = 16 bits and counter1 = 16 bit (no counter2)
     quad_ReadRegister(QUAD_CONFIG0, &lHandle);  // counter TTL
     quad_WriteRegister(QUAD_CONFIG1, 0x80, &lHandle);  // counter TTL

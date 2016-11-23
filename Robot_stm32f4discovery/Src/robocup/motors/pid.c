@@ -40,34 +40,35 @@ PidWheel_t pid_init(float pKp, float pKi, float pKd, float pUmax, float pUmin){
 // This function computes the PID value and outputs the value to set the wheel with
 // Inputs:
 //   pWheel: A pointer to the wheel struct
-void pid_update(PidWheel_t *pWheel){
+void pid_update(PidWheel_t *pPid){
 
 	// the errors
-	pWheel->ePrevious = pWheel->e;
-	pWheel->e = pWheel->r - pWheel->fbk;
+	pPid->ePrevious = pPid->e;
+	pPid->e = pPid->r - pPid->fbk;
 
 	// the proportional component
-	pWheel->up = pWheel->Kp * pWheel->e;
+	pPid->up = pPid->Kp * pPid->e;
 
 	// the integral component, this is a rectangular approximation
-	pWheel->ui = pWheel->Ki * pWheel->e + pWheel->ui;
-	pWheel->ui = (pWheel->ui > pWheel->uMax) ? pWheel->uMax: pWheel->ui ; // prevent the explosion of the integral term
+	pPid->ui = pPid->Ki * pPid->e + pPid->ui;
+	pPid->ui = (pPid->ui > pPid->uMax) ? pPid->uMax: pPid->ui ; // prevent the explosion of the integral term
+	pPid->ui = (pPid->uMin > pPid->ui) ? pPid->uMin: pPid->ui ;
 
 	// the differential component
-	pWheel->ud = pWheel->Kd * (pWheel->e - pWheel->ePrevious);
+	pPid->ud = pPid->Kd * (pPid->e - pPid->ePrevious);
 
 	// the naive command
-	pWheel->u = pWheel->up + pWheel->ui + pWheel->ud;
+	pPid->u = pPid->up + pPid->ui + pPid->ud;
 
 	// the saturated command
-	if (pWheel->u >= pWheel->uMax) {
-		pWheel->output = pWheel->uMax;
+	if (pPid->u >= pPid->uMax) {
+		pPid->output = pPid->uMax;
 	}
-	else if (pWheel->u <= pWheel->uMin) {
-		pWheel->output = pWheel->uMin;
+	else if (pPid->u <= pPid->uMin) {
+		pPid->output = pPid->uMin;
 	}
 	else {
-		pWheel->output = pWheel->u;
+		pPid->output = pPid->u;
 	}
 }
 
