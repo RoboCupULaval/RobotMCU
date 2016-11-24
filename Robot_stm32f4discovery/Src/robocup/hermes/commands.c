@@ -24,6 +24,7 @@ void command_movementCommand(const void *msg){
     g_speedCommand.vx = movementMsg->vx;
     g_speedCommand.vy = movementMsg->vy;
     g_speedCommand.vtheta = movementMsg->vtheta;
+    g_speedCommand.tickSinceLastUpdate = xTaskGetTickCount();
 }
 
 void command_setRegister(const void *msg) {

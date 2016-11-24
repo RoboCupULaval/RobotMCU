@@ -40,7 +40,7 @@ static const uint8_t ADDR_ROBOT = 0x01; // Make it configurable with a switch
 
 #define CONTROL_LOOP_PERIOD_MS 10
 
-#define PID_P 59.0f //0.001102f
+#define PID_P 5.9f //0.001102f
 #define PID_I (0.07416f/100.0f) //0.000009f
 #define PID_D 0.0f
 

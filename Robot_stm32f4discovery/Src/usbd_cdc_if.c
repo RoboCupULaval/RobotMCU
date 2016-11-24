@@ -178,7 +178,7 @@ static int8_t CDC_DeInit_FS(void)
   * @retval Result of the operation: USBD_OK if all operations are OK else USBD_FAIL
   */
 static int8_t CDC_Control_FS  (uint8_t cmd, uint8_t* pbuf, uint16_t length)
-{ 
+{
   /* USER CODE BEGIN 5 */
   switch (cmd)
   {
@@ -220,7 +220,7 @@ static int8_t CDC_Control_FS  (uint8_t cmd, uint8_t* pbuf, uint16_t length)
   /* 6      | bDataBits  |   1   | Number Data bits (5, 6, 7, 8 or 16).          */
   /*******************************************************************************/
   case CDC_SET_LINE_CODING:   
-	
+
     break;
 
   case CDC_GET_LINE_CODING:     
@@ -282,12 +282,59 @@ uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len)
 {
   uint8_t result = USBD_OK;
   /* USER CODE BEGIN 7 */ 
-  USBD_CDC_HandleTypeDef *hcdc = (USBD_CDC_HandleTypeDef*)hUsbDeviceFS.pClassData;
-  if (hcdc->TxState != 0){
-    return USBD_BUSY;
-  }
-  USBD_CDC_SetTxBuffer(&hUsbDeviceFS, Buf, Len);
-  result = USBD_CDC_TransmitPacket(&hUsbDeviceFS);
+
+//  USBD_CDC_HandleTypeDef *hcdc = (USBD_CDC_HandleTypeDef*)hUsbDeviceFS.pClassData;
+//  if (hcdc->TxState != 0){
+//    return USBD_BUSY;
+//  }
+//  USBD_CDC_SetTxBuffer(&hUsbDeviceFS, Buf, Len);
+//  result = USBD_CDC_TransmitPacket(&hUsbDeviceFS);
+
+  // Check if USB interface is online and VCP connection is open.
+      // prior to send:
+      if ((hUsbDeviceFS.dev_state != USBD_STATE_CONFIGURED)
+              || (hUsbDeviceFS.ep0_state == USBD_EP0_STATUS_IN))
+      {
+          // The physical connection fails.
+          // Or: The phycical connection is open, but no VCP link up.
+          result = USBD_FAIL;
+      }
+      else
+      {
+
+          USBD_CDC_SetTxBuffer(&hUsbDeviceFS, Buf, Len);
+
+          // Busy wait if USB is busy or exit on success or disconnection happens
+          while(1)
+          {
+
+              //Check if USB went offline while retrying
+              if ((hUsbDeviceFS.dev_state != USBD_STATE_CONFIGURED)
+                          || (hUsbDeviceFS.ep0_state == USBD_EP0_STATUS_IN))
+              {
+                  result = USBD_FAIL;
+                  break;
+              }
+
+              // Try send
+              result = USBD_CDC_TransmitPacket(&hUsbDeviceFS);
+              if(result == USBD_OK)
+              {
+                  break;
+              }
+              else if(result == USBD_BUSY)
+              {
+                  // Retry until USB device free.
+              }
+              else
+              {
+                  // Any other failure
+                  result = USBD_FAIL;
+                  break;
+              }
+
+          }
+      }
   /* USER CODE END 7 */ 
   return result;
 }

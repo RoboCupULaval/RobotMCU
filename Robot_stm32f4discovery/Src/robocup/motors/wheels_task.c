@@ -2,8 +2,6 @@
 #include "wheels_UT.h"
 #include "wheels_config.h"
 
-#include "FreeRTOS.h"
-#include "cmsis_os.h"
 
 #ifdef USE_QUAD
 static quad_Handle quadA;
@@ -25,7 +23,7 @@ const size_t encodersLen = sizeof(s_encoders) / sizeof(EncoderTimerAssociation_t
 #endif
 
 volatile CtrlLoop_t g_ctrlLoopState = CLOSE_LOOP_WITH_LOGGING;
-volatile SpeedCommand_t g_speedCommand = {.vx = 0.0,.vy=0.0, .vtheta=0};
+volatile SpeedCommand_t g_speedCommand = {.vx = 0.0,.vy=0.0, .vtheta=0, .tickSinceLastUpdate=0};
 
 
 
@@ -61,12 +59,15 @@ void wheelTask(void) {
 		readQuadsSpeed(&wheelSpeed);
 
 		// Get the feedback and set it's value for each wheel
-
 		const float vx = g_speedCommand.vx;
 		const float vy = g_speedCommand.vy;
 		const float vt = g_speedCommand.vtheta;
 
 		// Compute the PID output for each wheel
+		bool speedCommandTimeout = hasSpeedCommandTimeout();
+		if (speedCommandTimeout) {
+			LOG_ERROR("Timeout on command");
+		}
 
 		for (int i = 0; i < wheelsLen; ++i) {
 			Wheel_t* pWheel = &g_wheels[i];
@@ -74,27 +75,30 @@ void wheelTask(void) {
 			float feedback = wheelSpeed[pWheel->quad];
 			float output = 0.0;
 
-			switch(g_ctrlLoopState) {
-				case OPEN_LOOP:
-					output = reference * pWheel->openLoopAttenuation;
+			if (!speedCommandTimeout) {
+				switch(g_ctrlLoopState) {
+					case OPEN_LOOP:
+						output = reference * pWheel->openLoopAttenuation;
 
-					motorDataLog_addWheelData(output, feedback);
-					break;
-				case CLOSE_LOOP_WITHOUT_LOGGING:
-				case CLOSE_LOOP_WITH_LOGGING:
-					// The speed reference and feedback must be absolute, since the pid ignore the wheel direction.
-					// This is done since the passage from one direction to another one cause an instability
-					pWheel->pid.r = fabs(reference);
-					pWheel->pid.fbk = fabs(feedback);
-					pid_update(&pWheel->pid);
+						motorDataLog_addWheelData(output, feedback);
+						break;
+					case CLOSE_LOOP_WITHOUT_LOGGING:
+					case CLOSE_LOOP_WITH_LOGGING:
+						// The speed reference and feedback must be absolute, since the pid ignore the wheel direction.
+						// This is done since the passage from one direction to another one cause an instability
+						pWheel->pid.r = fabs(reference);
+						pWheel->pid.fbk = fabs(feedback);
+						pid_update(&pWheel->pid);
 
-					output = pWheel->pid.output;
-					if (CLOSE_LOOP_WITH_LOGGING) {
-						motorDataLog_addCloseLoopData(&pWheel->pid);
-					}
-					break;
-				default:
-					LOG_ERROR("Implemented control loop state.");
+						output = pWheel->pid.output;
+						if (CLOSE_LOOP_WITH_LOGGING) {
+							motorDataLog_addCloseLoopData(&pWheel->pid);
+						}
+						break;
+					default:
+						LOG_ERROR("Implemented control loop state.");
+				}
+
 			}
 
 			// Pid uses absolute speed and does not know about wheel direction
@@ -151,3 +155,8 @@ void readQuadsSpeed(int16_t *wheelSpeed) {
 #endif
 }
 
+
+bool hasSpeedCommandTimeout() {
+	const TickType_t SPEED_COMMAND_TIMEOUT = 500;
+	return xTaskGetTickCount() - g_speedCommand.tickSinceLastUpdate > SPEED_COMMAND_TIMEOUT;
+}

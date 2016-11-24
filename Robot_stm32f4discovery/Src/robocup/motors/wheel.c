@@ -13,7 +13,7 @@ float wheel_setCommand(Wheel_t* wheel, const float vx, const float vy, const flo
 	// The wheel's angle is the position of the wheel axe
 	// The force angle is the angle of the force vector create by the rotation of the wheel
 	const float forceAngle = wheel->angle + M_PI_2;
-	const float result = magnitude * sinf(forceAngle + angle) + vt;
+	const float result = magnitude * cosf(forceAngle - angle) + vt;
 	return result;
 }
 

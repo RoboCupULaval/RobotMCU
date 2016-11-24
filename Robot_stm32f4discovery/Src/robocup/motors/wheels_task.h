@@ -4,6 +4,9 @@
 #include <stdio.h>
 #include <math.h>
 
+#include "FreeRTOS.h"
+#include "cmsis_os.h"
+
 #include "../util.h"
 #include "motor_data_log.h"
 #include "encoder_stm32.h"
@@ -17,6 +20,7 @@ typedef enum {
 
 typedef struct {
 	float vx, vy, vtheta;
+	TickType_t tickSinceLastUpdate;
 } SpeedCommand_t;
 
 
@@ -30,5 +34,6 @@ extern const size_t wheelsLen;
 void wheelTask(void);
 void initPwmAndQuad(void);
 void readQuadsSpeed(int16_t *wheelSpeed);
+bool hasSpeedCommandTimeout();
 
 #endif /* WHEEL_TASK_H_ */
