@@ -7,8 +7,8 @@
 
 #include "commands.h"
 
+#include "../motors/ctrl_task.h"
 #include "hermes_task.h"
-#include "../motors/wheels_task.h"
 
 void nop(const void *msg){}
 

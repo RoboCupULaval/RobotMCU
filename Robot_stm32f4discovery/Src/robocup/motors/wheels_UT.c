@@ -86,7 +86,7 @@ void test_logWheelSpining(bool successful, const char *pWheelDebugName, int16_t 
 }
 
 int16_t test_spinAndStopWheel(Wheel_t* pWheel, float speed) {
-  	int16_t wheelSpeed[4];
+  	int32_t wheelSpeed[4];
 	// Make it spins a little bit
 	wheel_setPWM(pWheel, speed);
 	osDelay(TIME_LEFT_SPINNING_MS);

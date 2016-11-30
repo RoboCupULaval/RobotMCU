@@ -62,7 +62,6 @@ void hermes_sendPayloadLessRespond(uint8_t packetType){
 
 void hermes_sendRespond(uint8_t packetType, char* pData, size_t dataLen){
 	size_t payloadLen =  sizeof(packetHeaderStruct_t) + dataLen;
-	size_t packetLen =  payloadLen + 2;
 
 	// Initialize temporary buffer
 	uint8_t payload[255];

@@ -57,8 +57,8 @@
 #include "robocup/robocup_define.h"
 #include "robocup/com_interfaces/bluetooth.h"
 #include "robocup/com_interfaces/usb.h"
-#include "robocup/motors/wheels_task.h"
 #include "robocup/hermes/hermes_task.h"
+#include "robocup/motors/ctrl_task.h"
 
 /* USER CODE END Includes */
 

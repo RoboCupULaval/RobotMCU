@@ -31,9 +31,10 @@ extern volatile SpeedCommand_t g_speedCommand;
 extern Wheel_t wheels[];
 extern const size_t wheelsLen;
 
-void wheelTask(void);
+void ctrl_taskEntryPoint(void);
+void ctrl_emergencyBreak(void);
 void initPwmAndQuad(void);
-void readQuadsSpeed(int16_t *wheelSpeed);
-bool hasSpeedCommandTimeout();
+void readQuadsSpeed(int32_t *wheelSpeed);
+bool hasSpeedCommandTimeout(void);
 
 #endif /* WHEEL_TASK_H_ */

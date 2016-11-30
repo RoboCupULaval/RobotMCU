@@ -1,4 +1,5 @@
-#include "wheels_task.h"
+#include "ctrl_task.h"
+
 #include "wheels_UT.h"
 #include "wheels_config.h"
 
@@ -23,25 +24,24 @@ const size_t encodersLen = sizeof(s_encoders) / sizeof(EncoderTimerAssociation_t
 #endif
 
 volatile CtrlLoop_t g_ctrlLoopState = CLOSE_LOOP_WITH_LOGGING;
-volatile SpeedCommand_t g_speedCommand = {.vx = 0.0,.vy=0.0, .vtheta=0, .tickSinceLastUpdate=0};
+volatile SpeedCommand_t g_speedCommand = {
+		.vx = 0.0,
+		.vy = 0.0,
+		.vtheta = 0,
+		.tickSinceLastUpdate = 0
+};
 
 
 
 
 // This tasks deals with the movements of the robot
-void wheelTask(void) {
+void ctrl_taskEntryPoint(void) {
 
-//  	TickType_t lastWakeTimeTest = xTaskGetTickCount();
-//	for(;;) {
-//		// Delay the loop to a fix frequency
-//		vTaskDelayUntil(&lastWakeTimeTest, CONTROL_LOOP_PERIOD_MS * portTICK_PERIOD_MS);
-//		//LOG_INFO("STOP messaging yourself! \r\n");
-//  	}
   	while(!test_startUp());
 	LOG_INFO("Starting!!!\r\n");
 	initPwmAndQuad();
 
-	int16_t wheelSpeed[4];
+	int32_t wheelSpeed[4];
   	TickType_t lastWakeTime = xTaskGetTickCount();
 	for(;;) {
 		// Delay the loop to a fix frequency
@@ -54,19 +54,17 @@ void wheelTask(void) {
 				LOG_INFO("ctrl\r\n");
 		}
 
-		// Get the command from communication and compute the wheel-wise command
-
 		readQuadsSpeed(&wheelSpeed);
 
-		// Get the feedback and set it's value for each wheel
 		const float vx = g_speedCommand.vx;
 		const float vy = g_speedCommand.vy;
 		const float vt = g_speedCommand.vtheta;
 
-		// Compute the PID output for each wheel
 		bool speedCommandTimeout = hasSpeedCommandTimeout();
 		if (speedCommandTimeout) {
 			LOG_ERROR("Timeout on command");
+			ctrl_emergencyBreak();
+			continue;
 		}
 
 		for (int i = 0; i < wheelsLen; ++i) {
@@ -75,30 +73,27 @@ void wheelTask(void) {
 			float feedback = wheelSpeed[pWheel->quad];
 			float output = 0.0;
 
-			if (!speedCommandTimeout) {
-				switch(g_ctrlLoopState) {
-					case OPEN_LOOP:
-						output = reference * pWheel->openLoopAttenuation;
+			switch(g_ctrlLoopState) {
+				case OPEN_LOOP:
+					output = reference * pWheel->openLoopAttenuation;
 
-						motorDataLog_addWheelData(output, feedback);
-						break;
-					case CLOSE_LOOP_WITHOUT_LOGGING:
-					case CLOSE_LOOP_WITH_LOGGING:
-						// The speed reference and feedback must be absolute, since the pid ignore the wheel direction.
-						// This is done since the passage from one direction to another one cause an instability
-						pWheel->pid.r = fabs(reference);
-						pWheel->pid.fbk = fabs(feedback);
-						pid_update(&pWheel->pid);
+					motorDataLog_addWheelData(output, feedback);
+					break;
+				case CLOSE_LOOP_WITHOUT_LOGGING:
+				case CLOSE_LOOP_WITH_LOGGING:
+					// The speed reference and feedback must be absolute, since the pid ignore the wheel direction.
+					// This is done since the passage from one direction to another one cause an instability
+					pWheel->pid.r = fabs(reference);
+					pWheel->pid.fbk = fabs(feedback);
+					pid_update(&pWheel->pid);
 
-						output = pWheel->pid.output;
-						if (CLOSE_LOOP_WITH_LOGGING) {
-							motorDataLog_addCloseLoopData(&pWheel->pid);
-						}
-						break;
-					default:
-						LOG_ERROR("Implemented control loop state.");
-				}
-
+					output = pWheel->pid.output;
+					if (CLOSE_LOOP_WITH_LOGGING) {
+						motorDataLog_addCloseLoopData(&pWheel->pid);
+					}
+					break;
+				default:
+					LOG_ERROR("Implemented control loop state.");
 			}
 
 			// Pid uses absolute speed and does not know about wheel direction
@@ -112,8 +107,13 @@ void wheelTask(void) {
 			motorDataLog_flushDataLine();
 		}
 
-		//LOG_INFO("STOP\r\n");
 	  }
+}
+
+void ctrl_emergencyBreak(void) {
+	for(size_t i = 0; i < wheelsLen; ++i) {
+		wheel_break(&g_wheels[i]);
+	}
 }
 
 void initPwmAndQuad(void) {
@@ -137,7 +137,7 @@ void initPwmAndQuad(void) {
 	}
 }
 
-void readQuadsSpeed(int16_t *wheelSpeed) {
+void readQuadsSpeed(int32_t *wheelSpeed) {
 
 #ifdef USE_QUAD
 	quad_ReadCounters(&quadA);
@@ -148,15 +148,15 @@ void readQuadsSpeed(int16_t *wheelSpeed) {
 	wheelSpeed[QuadEncoderB2] = quadB.delta_count1;
 #else
 	for(int i = 0; i < encodersLen; ++i) {
-		EncoderTimerAssociation_t* encoder = &s_encoders[i];
-		encoder_readCounters(&(encoder->encoder));
-		wheelSpeed[encoder->identifier] = encoder->encoder.deltaCount;
+		EncoderTimerAssociation_t* encoderTimerAsso = &s_encoders[i];
+		encoder_readCounters(&(encoderTimerAsso->encoder));
+		wheelSpeed[encoderTimerAsso->identifier] = encoderTimerAsso->encoder.deltaCount;
 	}
 #endif
 }
 
 
-bool hasSpeedCommandTimeout() {
-	const TickType_t SPEED_COMMAND_TIMEOUT = 500;
-	return xTaskGetTickCount() - g_speedCommand.tickSinceLastUpdate > SPEED_COMMAND_TIMEOUT;
+bool hasSpeedCommandTimeout(void) {
+	const TickType_t SPEED_COMMAND_TIMEOUT_TICK = 500;
+	return xTaskGetTickCount() - g_speedCommand.tickSinceLastUpdate > SPEED_COMMAND_TIMEOUT_TICK;
 }

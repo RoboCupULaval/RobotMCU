@@ -136,7 +136,7 @@ void wheelsTaskLoopFunction(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-	  wheelTask();
+	  ctrl_taskEntryPoint();
       osDelay(1);
   }
   /* USER CODE END wheelsTaskLoopFunction */

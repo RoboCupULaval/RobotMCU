@@ -41,6 +41,7 @@ size_t usb_write(const void *pBuffer, size_t length){
 	} while(res == USBD_BUSY);
 	return res == USBD_OK ? length16b : 0;
 #endif
+	return 0;
 }
 
 size_t usb_readUntilZero(__attribute__ ((unused)) void *pBuffer,
