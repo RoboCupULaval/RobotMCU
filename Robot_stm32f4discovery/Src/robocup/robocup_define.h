@@ -60,4 +60,9 @@ static const uint8_t ADDR_ROBOT = 0x01; // Make it configurable with a switch
 #define PMU_BATT_WARNING_TRESHOLD		14//V : Power stays on if already turned on, but impossible to enable it if disabled
 
 
+//PMU
+#define PMU_BATT_SHUTDOWN_TRESHOLD		13.2//V : Power is automatically turned off if Voltage is under this value
+#define PMU_BATT_WARNING_TRESHOLD		14//V : Power stays on if already turned on, but impossible to enable it if disabled
+
+
 #endif /* ROBOCUP_ROBOCUP_DEFINE_H_ */
