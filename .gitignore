@@ -6,9 +6,13 @@
 */Release/*
 */Drivers/*
 .mxproject
+.osx.project
 */.settings/*
 */SW4STM32/*
 *.ld
-
 .metadata/*
 RemoteSystemsTempFiles/
+
+*/__pycache__/*
+*/*/__pycache__/*
+*.DS_Store
