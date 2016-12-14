@@ -11,6 +11,7 @@ def getFirstSerialPort():
     ttyList = glob.glob('/dev/ttyACM*')
     ttyList +=  glob.glob('/dev/rfcomm*')
     ttyList +=  glob.glob('/dev/ttyUSB*')
+    ttyList +=  glob.glob('/dev/tty.Robot*')
 
     if len(ttyList) == 0:
         print('No serial device found! Exiting...')

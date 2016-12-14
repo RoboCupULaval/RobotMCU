@@ -178,7 +178,7 @@ static int8_t CDC_DeInit_FS(void)
   * @retval Result of the operation: USBD_OK if all operations are OK else USBD_FAIL
   */
 static int8_t CDC_Control_FS  (uint8_t cmd, uint8_t* pbuf, uint16_t length)
-{
+{ 
   /* USER CODE BEGIN 5 */
   switch (cmd)
   {

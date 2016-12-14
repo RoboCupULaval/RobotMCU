@@ -13,6 +13,9 @@ const int16_t MIN_TICK_FOR_MOVEMENT = 800;
 #elif defined (GAMMA)
 const float   NORMAL_SPEED          = 1.0;
 const int16_t MIN_TICK_FOR_MOVEMENT = 800;
+#elif defined (GAMMA2)
+const float   NORMAL_SPEED          = 1.0;
+const int16_t MIN_TICK_FOR_MOVEMENT = 800;
 #endif
 bool test_startUp(void) {
 	initPwmAndQuad();
