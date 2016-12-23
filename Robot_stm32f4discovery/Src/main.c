@@ -130,8 +130,8 @@ int main(void)
   	comHandle_t com = bluetooth_init();
   	//comHandle_t com = usb_init();
   	hermes_init(com);
-  	g_logHandle = usb_init();
-  	//g_logHandle= bluetooth_init();
+  	//g_logHandle = usb_init();
+  	g_logHandle= bluetooth_init();
 
   	log_init();
 
