@@ -53,6 +53,7 @@
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
+#include "stm32f4xx_hal_i2c.h"
 
 /* USER CODE END Includes */
 
@@ -67,7 +68,8 @@ extern void Error_Handler(void);
 void MX_I2C2_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
+void I2C_write(uint16_t deviceAddr, uint16_t regAddr, uint8_t * data, uint16_t size);
+void I2C_read(uint16_t deviceAddr, uint16_t regAddr, uint8_t * data, uint16_t size);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

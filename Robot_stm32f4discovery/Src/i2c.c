@@ -126,7 +126,21 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle)
 } 
 
 /* USER CODE BEGIN 1 */
+void I2C_write(uint16_t deviceAddr, uint16_t regAddr, uint8_t * data, uint16_t size)
+{
+	HAL_StatusTypeDef res;
+	do {
+		res = HAL_I2C_Mem_Write(&hi2c2, deviceAddr, regAddr, I2C_MEMADD_SIZE_8BIT, data, size, HAL_MAX_DELAY);
+	} while(res == HAL_BUSY || res == HAL_TIMEOUT);
+}
 
+void I2C_read(uint16_t deviceAddr, uint16_t regAddr, uint8_t * data, uint16_t size)
+{
+	HAL_StatusTypeDef res;
+	do {
+		res = HAL_I2C_Mem_Read(&hi2c2, deviceAddr, regAddr, I2C_MEMADD_SIZE_8BIT, data, size, HAL_MAX_DELAY);
+	} while(res == HAL_BUSY || res == HAL_TIMEOUT);
+}
 /* USER CODE END 1 */
 
 /**

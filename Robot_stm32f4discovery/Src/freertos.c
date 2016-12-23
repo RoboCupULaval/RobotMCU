@@ -46,6 +46,8 @@
 #include "task.h"
 #include "cmsis_os.h"
 
+#include "robocup/slow_task.h"
+
 /* USER CODE BEGIN Includes */     
 
 /* USER CODE END Includes */
@@ -54,6 +56,7 @@
 osThreadId defaultTaskHandle;
 osThreadId wheelsTaskHandle;
 osThreadId hermesTaskHandle;
+osThreadId slowTaskHandle;
 
 /* USER CODE BEGIN Variables */
 /* USER CODE END Variables */
@@ -62,6 +65,7 @@ osThreadId hermesTaskHandle;
 void StartDefaultTask(void const * argument);
 void wheelsTaskLoopFunction(void const * argument);
 void hermesTaskLoopFunction(void const * argument);
+void slowTaskFunction(void const * argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -103,6 +107,10 @@ void MX_FREERTOS_Init(void) {
   /* definition and creation of hermesTask */
   osThreadDef(hermesTask, hermesTaskLoopFunction, osPriorityNormal, 0, 1048);
   hermesTaskHandle = osThreadCreate(osThread(hermesTask), NULL);
+
+  /* definition and creation of slowTask */
+  osThreadDef(slowTask, slowTaskFunction, osPriorityBelowNormal, 0, 128);
+  slowTaskHandle = osThreadCreate(osThread(slowTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
 	/* add threads, ... */
@@ -147,9 +155,22 @@ void hermesTaskLoopFunction(void const * argument)
 {
   /* USER CODE BEGIN hermesTaskLoopFunction */
 	for (;;) {
-		hermesTask();
+		//hermes_taskEntryPoint();
+	    osDelay(100);
 	}
   /* USER CODE END hermesTaskLoopFunction */
+}
+
+/* slowTaskFunction function */
+void slowTaskFunction(void const * argument)
+{
+  /* USER CODE BEGIN slowTaskFunction */
+  /* Infinite loop */
+  for(;;)
+  {
+	  slow_taskEntryPoint();
+  }
+  /* USER CODE END slowTaskFunction */
 }
 
 /* USER CODE BEGIN Application */
