@@ -26,6 +26,7 @@ size_t bluetooth_read(void *pBuffer, size_t length){
 	return res == HAL_OK ? length : 0;
 }
 
+// Disclaimer: this fonction won't work for a multitask system
 size_t bluetooth_write(const void *pBuffer, size_t length){
 	uint16_t length16b = length & 0xFFFF;
 	HAL_StatusTypeDef res;
@@ -51,7 +52,9 @@ size_t bluetooth_readUntilZero(void *pBuffer, size_t length){
 	// The HAL_UART_RxCpltCallback callback handle the reception of the packet
 	// and the detection of the zero character
 	HAL_UART_Receive_IT(&huart5, s_rxSerialBuffer, 1);
-	while(!s_receivedPacket);
+	while(!s_receivedPacket){
+		osDelay(1);
+	}
 
 	// length == strlen(s_rxSerialBuffer), so it does not count the zero character
 	return s_rxSerialBufferLen;

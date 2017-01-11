@@ -9,6 +9,7 @@ import argparse
 
 from mcu_serial_com import *
 from open_loop_cli import *
+from joystick_cli import *
 from diagnostic import *
 
 
@@ -18,7 +19,7 @@ if __name__ == "__main__":
         raise "Must be python 3"
 
     main_parser = argparse.ArgumentParser(description='Communication utility between Robocup Robot and control station')
-    main_parser.add_argument('command', choices={"ping", "test"}, help='Type of utility')
+    main_parser.add_argument('command', choices={"ping", "test_open", "test_close", "joystick"}, help='Type of utility')
 
 
     """
@@ -32,7 +33,11 @@ if __name__ == "__main__":
 
     if args.command == "ping":
         diagnostic()
-    elif args.command == "test":
+    elif args.command == "test_open":
         open_loop_test()
+    elif args.command == "test_close":
+        close_loop_test()
+    elif args.command == "joystick":
+        joystick_cli()
 
 

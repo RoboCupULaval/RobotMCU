@@ -1,19 +1,29 @@
 #include "wheels_UT.h"
+#include "wheels_config.h"
 #include "cmsis_os.h"
 
-const float   NORMAL_SPEED          = 1.5;
+
 const float   BREAK_SPEED           = 0;
 const int     TIME_LEFT_SPINNING_MS = 100;
 const int     TIME_BREAKING_MS      = 700;
-const int16_t MIN_TICK_FOR_MOVEMENT = 800;
 
+#if defined (BETA)
+const float   NORMAL_SPEED          = 1.5;
+const int16_t MIN_TICK_FOR_MOVEMENT = 800;
+#elif defined (GAMMA)
+const float   NORMAL_SPEED          = 1.0;
+const int16_t MIN_TICK_FOR_MOVEMENT = 800;
+#elif defined (GAMMA2)
+const float   NORMAL_SPEED          = 1.0;
+const int16_t MIN_TICK_FOR_MOVEMENT = 800;
+#endif
 bool test_startUp(void) {
 	initPwmAndQuad();
 
 	bool success = true;
 	LOG_INFO("MOTORS - Each motor should remains immobile \r\n");
   	for (size_t i = 0; i < wheelsLen; ++i) {
-		Wheel_t* pWheel = &wheels[i];
+		Wheel_t* pWheel = &g_wheels[i];
 
 		int16_t nbTick = abs(test_spinAndStopWheel(pWheel, BREAK_SPEED));
 		// Check absolute value
@@ -27,7 +37,7 @@ bool test_startUp(void) {
 
 	LOG_INFO("MOTORS - Each motor turns the right encoder \r\n");
   	for (size_t i = 0; i < wheelsLen; ++i) {
-		Wheel_t* pWheel = &wheels[i];
+		Wheel_t* pWheel = &g_wheels[i];
 
 		int16_t nbTick = abs(test_spinAndStopWheel(pWheel, NORMAL_SPEED));
 		// Check absolute value
@@ -41,7 +51,7 @@ bool test_startUp(void) {
 
 	LOG_INFO("MOTORS - Each wheels turns clockwise \r\n");
   	for (size_t i = 0; i < wheelsLen; ++i) {
-		Wheel_t* pWheel = &wheels[i];
+		Wheel_t* pWheel = &g_wheels[i];
 
 		int16_t nbTick = test_spinAndStopWheel(pWheel, NORMAL_SPEED);
 
@@ -55,7 +65,7 @@ bool test_startUp(void) {
 
 	LOG_INFO("MOTORS - Each wheels turns anti-clockwise \r\n");
   	for (size_t i = 0; i < wheelsLen; ++i) {
-		Wheel_t* pWheel = &wheels[i];
+		Wheel_t* pWheel = &g_wheels[i];
 
 		int16_t nbTick = test_spinAndStopWheel(pWheel, -NORMAL_SPEED);
 
@@ -79,7 +89,7 @@ void test_logWheelSpining(bool successful, const char *pWheelDebugName, int16_t 
 }
 
 int16_t test_spinAndStopWheel(Wheel_t* pWheel, float speed) {
-  	int16_t wheelSpeed[4];
+  	int32_t wheelSpeed[4];
 	// Make it spins a little bit
 	wheel_setPWM(pWheel, speed);
 	osDelay(TIME_LEFT_SPINNING_MS);

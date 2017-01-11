@@ -12,17 +12,17 @@ void hermes_init(comHandle_t com){
 Result_t validPayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen) {
 	uint8_t id = currentPacketHeaderPtr->packetType;
 	if(currentPacketHeaderPtr->protocolVersion != PROTOCOL_VERSION){
-		LOG_INFO("Invalid protocol version\r\n");
+		LOG_ERROR("Invalid protocol version\r\n");
 		return FAILURE;
 	}
 
 	if(id >= g_packetsTableLen || g_packetsTable[id].callback == nop){
-		LOG_INFO("Invalid command\r\n");
+		LOG_ERROR("Invalid command\r\n");
 		return FAILURE;
 	}
 
 	if(g_packetsTable[id].len != payloadLen){
-		LOG_INFO("Too small payload\r\n");
+		LOG_ERROR("Too small payload\r\n");
 		return FAILURE;
 	}
 
@@ -54,7 +54,6 @@ void hermes_sendAcknowledgment(void) {
 void hermes_sendPayloadLessRespond(uint8_t packetType){
 	packetHeaderStruct_t payload = hermes_createHeader(packetType);
 	char buff[sizeof(packetHeaderStruct_t) + 2];
-	//char buff2[256]
 
 	//convertBytesToStr(&payload, sizeof(packetHeaderStruct_t), buff2);
 	cobifyData(&payload, sizeof(packetHeaderStruct_t), buff);
@@ -63,7 +62,6 @@ void hermes_sendPayloadLessRespond(uint8_t packetType){
 
 void hermes_sendRespond(uint8_t packetType, char* pData, size_t dataLen){
 	size_t payloadLen =  sizeof(packetHeaderStruct_t) + dataLen;
-	size_t packetLen =  payloadLen + 2;
 
 	// Initialize temporary buffer
 	uint8_t payload[255];

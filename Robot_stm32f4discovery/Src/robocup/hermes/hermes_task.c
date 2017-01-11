@@ -1,7 +1,7 @@
 #include "hermes_task.h"
 
 // This is the main task, it is intended to run indefinitely
-void hermesTask(void) {
+void hermes_taskEntryPoint(void) {
 	// We have a small stack, this is why they are static
 	static char packetBuffer[COBS_MAX_PAYLOAD_LEN];
 	static unsigned char dataBuffer[COBS_MAX_PACKET_LEN];
@@ -19,27 +19,22 @@ void hermesTask(void) {
 			continue;
 		}
 		if(bytesReceived < sizeof(encodedPacketHeaderStruct_t)){
-			static char packetHumanReadable[3*100]; // For each byte, three character needed
-			static char messageAndPacket[3*100+30];
-
-			convertBytesToStr(packetBuffer, bytesReceived, packetHumanReadable);
-
-			sprintf(messageAndPacket, "Too small packet %s\r\n", packetHumanReadable);
-			LOG_INFO(messageAndPacket);
+			LOG_ERROR_AND_BUFFER("Too small packet", packetBuffer, bytesReceived);
 			continue;
 	    }
 
 		// Check if our robot is recipient, before decoding
 		encodedPacketHeaderStruct_t* encodedHeader = (encodedPacketHeaderStruct_t *) packetBuffer;
 		if (encodedHeader->header.destAddress != ADDR_ROBOT && encodedHeader->header.destAddress != ADDR_BROADCAST) {
-			LOG_INFO("Wrong dest\r\n");
+			LOG_ERROR_AND_BUFFER("Wrong dest", packetBuffer, bytesReceived);
+			//LOG_INFO("Wrong dest\r\n");
 			continue;
 		}
 
 		// The packet is decoded
 		res = decobifyData(packetBuffer, bytesReceived, dataBuffer, &payloadLen);
 		if (res == FAILURE){
-			LOG_INFO("Fail decoding\r\n");
+			LOG_ERROR("Fail decoding\r\n");
 			continue;
 		}
 
@@ -53,7 +48,7 @@ void hermesTask(void) {
 		// Find the corresponding packet in the packet table
 		packet_t packet = g_packetsTable[(size_t) (currentPacketHeaderPtr->packetType)];
 
-		LOG_INFO("Success!!!\r\n");
+		LOG_ERROR("Success!!!\r\n");
 		// Call callback that handle the packet
 		packet.callback(dataBuffer);
 

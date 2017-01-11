@@ -1,7 +1,7 @@
 #include "usb.h"
 
-// Buffer used for the rev
-//static uint8_t s_usbRxBuffer[USB_MAX_PACKET_SIZE];
+//#define ACTIVATE_USB
+
 
 comHandle_t usb_init(void){
 	//MX_USB_DEVICE_Init();
@@ -33,12 +33,15 @@ size_t usb_read(__attribute__ ((unused)) void *pBuffer,
 }
 
 size_t usb_write(const void *pBuffer, size_t length){
+#ifdef ACTIVATE_USB
 	uint16_t length16b = length & 0xFFFF;
 	uint8_t res;
 	do {
 		res = CDC_Transmit_FS((uint8_t*)pBuffer, length16b);
 	} while(res == USBD_BUSY);
 	return res == USBD_OK ? length16b : 0;
+#endif
+	return 0;
 }
 
 size_t usb_readUntilZero(__attribute__ ((unused)) void *pBuffer,
