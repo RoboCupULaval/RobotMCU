@@ -14,20 +14,21 @@ uint8_t MyAddress[] = {
 	0xE7,
 	0xE7
 };
-/* Receiver address */
+
 uint8_t TxAddress[] = {
-	0x7E,
-	0x7E,
-	0x7E,
-	0x7E,
-	0x7E
+	0xE7,
+	0xE7,
+	0xE7,
+	0xE7,
+	0xE8
 };
 
 void nrfInit() {
-	TM_NRF24L01_Init(15, 32);
-	TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_2M, TM_NRF24L01_OutputPower_M18dBm);
+	TM_NRF24L01_Init(2, 15);
+	TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_1M, TM_NRF24L01_OutputPower_M18dBm);
 	TM_NRF24L01_SetMyAddress(MyAddress);
 	TM_NRF24L01_SetTxAddress(TxAddress);
+	TM_NRF24L01_PowerUpRx();
 }
 
 void nrfSend(uint8_t * dataOut) {

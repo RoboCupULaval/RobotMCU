@@ -17,20 +17,14 @@ uint8_t dataOut[32], dataIn[32];
 int main(void)
 {
 
-	uint8_t dataOut[32] = {8,0,7,0,6,0,5,0,0};
-    uint8_t dataIn[32] = {0,0,0,0,0,0,0,0,0};
+	//uint8_t dataOut[15] = {0, 1, 2, 3, 4, 42, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+    uint8_t dataIn[15] = {0};
     SystemInit();
-	//HAL_Init();
+	HAL_Init();
 	nrfInit();
-
-    int maVar = dataIn[7];
-    uint8_t maVar2;
-    uint8_t maVar3;
     while(1) {
-    	nrfSend(dataOut);
     	nrfReceive(dataIn);
-        maVar2 = nrfRetransmitCount();
-        maVar3 = nrfGetStatus();
+    	//for(int i=0; i<10000; i++);
+
     }
-	for(;;);
 }
