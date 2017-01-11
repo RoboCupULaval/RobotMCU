@@ -1,7 +1,20 @@
 #include "hermes_task.h"
+#include "../nrfDriver/nrfDriver.h"
 
 // This is the main task, it is intended to run indefinitely
 void hermes_taskEntryPoint(void) {
+
+	// DEBUG STUFF PLS REMOVE K THANKS
+    uint8_t dataIn[15] = {0};
+	nrfInit();
+
+
+    while(1) {
+    	nrfReceive(dataIn);
+
+    }
+	// FINISHES HERE K THX
+
 	// We have a small stack, this is why they are static
 	static char packetBuffer[COBS_MAX_PAYLOAD_LEN];
 	static unsigned char dataBuffer[COBS_MAX_PACKET_LEN];

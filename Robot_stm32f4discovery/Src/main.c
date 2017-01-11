@@ -4,7 +4,7 @@
   * Description        : Main program body
   ******************************************************************************
   *
-  * Copyright (c) 2016 STMicroelectronics International N.V. 
+  * Copyright (c) 2017 STMicroelectronics International N.V. 
   * All rights reserved.
   *
   * Redistribution and use in source and binary forms, with or without 
@@ -56,7 +56,7 @@
 // Local includes
 #include "robocup/robocup_define.h"
 #include "robocup/com_interfaces/bluetooth.h"
-#include "robocup/com_interfaces/usb.h"
+#include "robocup/com_interfaces/nrf.h"
 #include "robocup/hermes/hermes_task.h"
 #include "robocup/motors/ctrl_task.h"
 
@@ -129,9 +129,10 @@ int main(void)
 
   	// Init communication
   	//comHandle_t com = bluetooth_init();
-  	comHandle_t comUsb = usb_init();
+  	//comHandle_t comUsb = usb_init();
   	comHandle_t comBluetooth = bluetooth_init();
-  	hermes_init(comUsb);
+  	comHandle_t comNrf = nrf_init();
+  	hermes_init(comNrf);
   	//g_logHandle = usb_init();
   	g_logHandle = comBluetooth;
   	log_init();
