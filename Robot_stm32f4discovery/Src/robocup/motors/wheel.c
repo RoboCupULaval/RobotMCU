@@ -26,9 +26,9 @@ void wheel_setPWM(const Wheel_t *wheel, float speed) {
 	// TODO put in own function
 
 #if defined (BETA)
-	int command = ((int) fabs(speed* 24000.0)) + 18000;
+	int command = ((int) fabs(speed * 24000.0)) + 18000;
 #elif defined (GAMMA)
-	int command = (int) fabs(_speed * 30000) + 6000;
+	int command = (int) fabs(speed * 30000) + 6000;
 #elif defined (GAMMA2)
 	float _speed = 1.0f - fabs(speed);
 	int command = ((int) (fabs(_speed) * 65535.0f));

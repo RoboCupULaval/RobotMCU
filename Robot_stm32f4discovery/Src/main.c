@@ -66,7 +66,6 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-comHandle_t g_logHandle;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -122,20 +121,24 @@ int main(void)
   	HAL_TIM_Base_Start(&htim8);
   	HAL_TIM_Base_Start(&htim12);
 
+
+	HAL_GPIO_WritePin(EN_POWER_GPIO_Port, EN_POWER_Pin, GPIO_PIN_SET);
     //HAL_GPIO_WritePin(EN_POWER_GPIO_Port, EN_POWER_Pin, 1);
     //HAL_GPIO_WritePin(KICKER_SELECT_GPIO_Port, KICKER_SELECT_Pin, 1);
 
   	//demux_Init(GPIOE, GPIO_PIN_4, GPIO_PIN_5, GPIO_PIN_6, CS_0);
 
   	// Init communication
-  	//comHandle_t com = bluetooth_init();
   	comHandle_t comUsb = usb_init();
   	comHandle_t comBluetooth = bluetooth_init();
-  	hermes_init(comUsb);
-  	//g_logHandle = usb_init();
-  	g_logHandle = comBluetooth;
-  	log_init();
 
+#ifdef GAMMA
+  	hermes_init(comBluetooth);
+  	log_init(comUsb);
+#elif defined (GAMMA2)
+  	hermes_init(comUsb);
+  	log_init(comBluetooth);
+#endif
 
 
   /* USER CODE END 2 */
