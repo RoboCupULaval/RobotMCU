@@ -6,8 +6,9 @@ void slow_taskEntryPoint(void) {
 	pmu_init();
 	dribbler_init();
 	led_init();
-	led_swipingLedTest();
+	kicker_init();
 
+	led_swipingLedTest();
 
 	uint8_t dribblerState = 0;
 	uint8_t id = robot_getID();
@@ -23,7 +24,8 @@ void slow_taskEntryPoint(void) {
 		}
 
 		if(robot_isBtnPressed() == 1) {
-			//Dribbler
+			kicker_kick();
+			/*//Dribbler
 			if(dribblerState == 1) {
 				dribbler_setPWM(0.0f);
 				dribblerState = 0;
@@ -31,13 +33,16 @@ void slow_taskEntryPoint(void) {
 				dribbler_setPWM(0.2f);
 				dribblerState = 1;
 			}
-			HAL_Delay(1000);
+			HAL_Delay(1000);*/
 		}
+
+		kicker_update();
 
 		log_setBatteryVoltage(pmu_getBattVoltage());
 
 		slow_handleBattProtection();
-		HAL_Delay(50);
+
+		HAL_Delay(30);
 	}
 }
 
