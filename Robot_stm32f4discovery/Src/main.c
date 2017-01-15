@@ -122,7 +122,7 @@ int main(void)
   	HAL_TIM_Base_Start(&htim12);
 
 
-	HAL_GPIO_WritePin(EN_POWER_GPIO_Port, EN_POWER_Pin, GPIO_PIN_SET);
+
     //HAL_GPIO_WritePin(EN_POWER_GPIO_Port, EN_POWER_Pin, 1);
     //HAL_GPIO_WritePin(KICKER_SELECT_GPIO_Port, KICKER_SELECT_Pin, 1);
 
@@ -135,9 +135,11 @@ int main(void)
 #ifdef GAMMA
   	hermes_init(comBluetooth);
   	log_init(comUsb);
+  	HAL_GPIO_WritePin(EN_POWER_GPIO_Port, EN_POWER_Pin, GPIO_PIN_SET);
 #elif defined (GAMMA2)
   	hermes_init(comUsb);
   	log_init(comBluetooth);
+	ctrl_emergencyBreak();
 #endif
 
 

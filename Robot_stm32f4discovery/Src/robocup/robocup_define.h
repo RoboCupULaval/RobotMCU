@@ -42,8 +42,8 @@ typedef enum {
 static const uint8_t ADDR_ROBOT = 0x01; // Make it configurable with a switch
 
 //#define BETA
-#define GAMMA
-//#define GAMMA2
+//#define GAMMA
+#define GAMMA2
 
 #ifdef BETA
 #define USE_QUAD

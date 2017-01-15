@@ -37,8 +37,10 @@ volatile SpeedCommand_t g_speedCommand = {
 // This tasks deals with the movements of the robot
 void ctrl_taskEntryPoint(void) {
 	//test_startUp();
-  	while(!test_startUp());
-	LOG_INFO("Starting!!!\r\n");
+	if (robot_isDebug()) {
+		while(!test_startUp());
+	}
+  	LOG_INFO("Starting!!!\r\n");
 	initPwmAndQuad();
 
 	int32_t wheelSpeed[4];
