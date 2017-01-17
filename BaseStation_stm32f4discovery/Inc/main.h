@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
-  * @file           : usbd_cdc_if.h
-  * @brief          : Header for usbd_cdc_if file.
+  * File Name          : main.h
+  * Description        : This file contains the common defines of the application
   ******************************************************************************
   *
   * Copyright (c) 2017 STMicroelectronics International N.V. 
@@ -39,97 +39,75 @@
   * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *
   ******************************************************************************
-*/
-
-/* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __USBD_CDC_IF_H
-#define __USBD_CDC_IF_H
-
-#ifdef __cplusplus
- extern "C" {
-#endif
-/* Includes ------------------------------------------------------------------*/
-#include "usbd_cdc.h"
-/* USER CODE BEGIN INCLUDE */
-/* USER CODE END INCLUDE */
-
-/** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
-  * @{
   */
-  
-/** @defgroup USBD_CDC_IF
-  * @brief header 
-  * @{
-  */ 
+/* Define to prevent recursive inclusion -------------------------------------*/
+#ifndef __MAIN_H
+#define __MAIN_H
+  /* Includes ------------------------------------------------------------------*/
 
-/** @defgroup USBD_CDC_IF_Exported_Defines
-  * @{
-  */ 
-/* USER CODE BEGIN EXPORTED_DEFINES */
-/* USER CODE END EXPORTED_DEFINES */
+/* USER CODE BEGIN Includes */
 
-/**
-  * @}
-  */ 
+/* USER CODE END Includes */
 
-/** @defgroup USBD_CDC_IF_Exported_Types
-  * @{
-  */  
-/* USER CODE BEGIN EXPORTED_TYPES */
-/* USER CODE END EXPORTED_TYPES */
+/* Private define ------------------------------------------------------------*/
 
-/**
-  * @}
-  */ 
+#define CS_I2C_SPI_Pin GPIO_PIN_3
+#define CS_I2C_SPI_GPIO_Port GPIOE
+#define PC15_OSC32_OUT_Pin GPIO_PIN_15
+#define PC15_OSC32_OUT_GPIO_Port GPIOC
+#define PH0_OSC_IN_Pin GPIO_PIN_0
+#define PH0_OSC_IN_GPIO_Port GPIOH
+#define PH1_OSC_OUT_Pin GPIO_PIN_1
+#define PH1_OSC_OUT_GPIO_Port GPIOH
+#define B1_Pin GPIO_PIN_0
+#define B1_GPIO_Port GPIOA
+#define SPI1_CE_Pin GPIO_PIN_4
+#define SPI1_CE_GPIO_Port GPIOC
+#define SPI1_IRQ_Pin GPIO_PIN_5
+#define SPI1_IRQ_GPIO_Port GPIOC
+#define BOOT1_Pin GPIO_PIN_2
+#define BOOT1_GPIO_Port GPIOB
+#define LD4_Pin GPIO_PIN_12
+#define LD4_GPIO_Port GPIOD
+#define LD3_Pin GPIO_PIN_13
+#define LD3_GPIO_Port GPIOD
+#define LD5_Pin GPIO_PIN_14
+#define LD5_GPIO_Port GPIOD
+#define LD6_Pin GPIO_PIN_15
+#define LD6_GPIO_Port GPIOD
+#define VBUS_FS_Pin GPIO_PIN_9
+#define VBUS_FS_GPIO_Port GPIOA
+#define OTG_FS_ID_Pin GPIO_PIN_10
+#define OTG_FS_ID_GPIO_Port GPIOA
+#define OTG_FS_DM_Pin GPIO_PIN_11
+#define OTG_FS_DM_GPIO_Port GPIOA
+#define OTG_FS_DP_Pin GPIO_PIN_12
+#define OTG_FS_DP_GPIO_Port GPIOA
+#define SWDIO_Pin GPIO_PIN_13
+#define SWDIO_GPIO_Port GPIOA
+#define SWCLK_Pin GPIO_PIN_14
+#define SWCLK_GPIO_Port GPIOA
+#define nRF2_CS_Pin GPIO_PIN_0
+#define nRF2_CS_GPIO_Port GPIOD
+#define nRF2_IRQ_Pin GPIO_PIN_1
+#define nRF2_IRQ_GPIO_Port GPIOD
+#define Audio_RST_Pin GPIO_PIN_4
+#define Audio_RST_GPIO_Port GPIOD
+#define OTG_FS_OverCurrent_Pin GPIO_PIN_5
+#define OTG_FS_OverCurrent_GPIO_Port GPIOD
+#define SWO_Pin GPIO_PIN_3
+#define SWO_GPIO_Port GPIOB
+/* USER CODE BEGIN Private defines */
 
-/** @defgroup USBD_CDC_IF_Exported_Macros
-  * @{
-  */ 
-/* USER CODE BEGIN EXPORTED_MACRO */
-/* USER CODE END EXPORTED_MACRO */
-
-/**
-  * @}
-  */ 
-
-/** @defgroup USBD_AUDIO_IF_Exported_Variables
-  * @{
-  */ 
-extern USBD_CDC_ItfTypeDef  USBD_Interface_fops_FS;
-
-/* USER CODE BEGIN EXPORTED_VARIABLES */
-/* USER CODE END EXPORTED_VARIABLES */
-
-/**
-  * @}
-  */ 
-
-/** @defgroup USBD_CDC_IF_Exported_FunctionsPrototype
-  * @{
-  */ 
-uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len);
-
-/* USER CODE BEGIN EXPORTED_FUNCTIONS */
-int SerialRead(uint8_t* Buf, uint32_t Len);
-
-void SerialWrite(uint8_t* Buf, uint32_t Len);
-/* USER CODE END EXPORTED_FUNCTIONS */
-/**
-  * @}
-  */ 
-
-/**
-  * @}
-  */ 
+/* USER CODE END Private defines */
 
 /**
   * @}
   */ 
-  
-#ifdef __cplusplus
-}
-#endif
-  
-#endif /* __USBD_CDC_IF_H */
 
+/**
+  * @}
+*/ 
+
+#endif /* __MAIN_H */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

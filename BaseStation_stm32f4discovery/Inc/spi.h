@@ -1,7 +1,8 @@
 /**
   ******************************************************************************
-  * @file           : usbd_cdc_if.h
-  * @brief          : Header for usbd_cdc_if file.
+  * File Name          : SPI.h
+  * Description        : This file provides code for the configuration
+  *                      of the SPI instances.
   ******************************************************************************
   *
   * Copyright (c) 2017 STMicroelectronics International N.V. 
@@ -39,97 +40,49 @@
   * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *
   ******************************************************************************
-*/
-
+  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __USBD_CDC_IF_H
-#define __USBD_CDC_IF_H
-
+#ifndef __spi_H
+#define __spi_H
 #ifdef __cplusplus
  extern "C" {
 #endif
+
 /* Includes ------------------------------------------------------------------*/
-#include "usbd_cdc.h"
-/* USER CODE BEGIN INCLUDE */
-/* USER CODE END INCLUDE */
+#include "stm32f4xx_hal.h"
+#include "main.h"
 
-/** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
-  * @{
-  */
-  
-/** @defgroup USBD_CDC_IF
-  * @brief header 
-  * @{
-  */ 
+/* USER CODE BEGIN Includes */
 
-/** @defgroup USBD_CDC_IF_Exported_Defines
-  * @{
-  */ 
-/* USER CODE BEGIN EXPORTED_DEFINES */
-/* USER CODE END EXPORTED_DEFINES */
+/* USER CODE END Includes */
 
-/**
-  * @}
-  */ 
+extern SPI_HandleTypeDef hspi1;
+extern SPI_HandleTypeDef hspi2;
 
-/** @defgroup USBD_CDC_IF_Exported_Types
-  * @{
-  */  
-/* USER CODE BEGIN EXPORTED_TYPES */
-/* USER CODE END EXPORTED_TYPES */
+/* USER CODE BEGIN Private defines */
 
-/**
-  * @}
-  */ 
+/* USER CODE END Private defines */
 
-/** @defgroup USBD_CDC_IF_Exported_Macros
-  * @{
-  */ 
-/* USER CODE BEGIN EXPORTED_MACRO */
-/* USER CODE END EXPORTED_MACRO */
+extern void Error_Handler(void);
 
-/**
-  * @}
-  */ 
+void MX_SPI1_Init(void);
+void MX_SPI2_Init(void);
 
-/** @defgroup USBD_AUDIO_IF_Exported_Variables
-  * @{
-  */ 
-extern USBD_CDC_ItfTypeDef  USBD_Interface_fops_FS;
+/* USER CODE BEGIN Prototypes */
 
-/* USER CODE BEGIN EXPORTED_VARIABLES */
-/* USER CODE END EXPORTED_VARIABLES */
+/* USER CODE END Prototypes */
 
-/**
-  * @}
-  */ 
-
-/** @defgroup USBD_CDC_IF_Exported_FunctionsPrototype
-  * @{
-  */ 
-uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len);
-
-/* USER CODE BEGIN EXPORTED_FUNCTIONS */
-int SerialRead(uint8_t* Buf, uint32_t Len);
-
-void SerialWrite(uint8_t* Buf, uint32_t Len);
-/* USER CODE END EXPORTED_FUNCTIONS */
-/**
-  * @}
-  */ 
-
-/**
-  * @}
-  */ 
-
-/**
-  * @}
-  */ 
-  
 #ifdef __cplusplus
 }
 #endif
-  
-#endif /* __USBD_CDC_IF_H */
+#endif /*__ spi_H */
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
