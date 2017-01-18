@@ -80,7 +80,7 @@ typedef struct simpleCB {
 	int readIndex; // index of next item to read
 	int writeIndex; // index of next item to write
 } simpleCB;
-simpleCB myCircularBuffer;
+volatile simpleCB myCircularBuffer;
 /* USER CODE END PRIVATE_DEFINES */
 /**
   * @}
@@ -325,17 +325,19 @@ uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len)
 // not private, but I don't know in which file they should go
 // This function reads a single cobs-encoded packet that was previously read through USB
 // It returns 0 if success. If no packet, then it returns -1
-int SerialRead(uint8_t* Buf) {
+int SerialRead(uint8_t* dataBuffer) {
 	// check if there is a packet available
 	// copy the indexes
-	int currReadIndex = myCircularBuffer.readIndex;
-	int currWriteIndex = myCircularBuffer.writeIndex;
-	if(currReadIndex == currWriteIndex) return -1;
+	const int currReadIndex = myCircularBuffer.readIndex;
+	const int currWriteIndex = myCircularBuffer.writeIndex;
+	if (currReadIndex == currWriteIndex) {
+		return -1;
+	}
 	else {
 		// careful: a packet reception might happen anywhere in this function!
 
 		// copy the packet into the buffer, must be cobs-encoded!!!
-		strcpy(myCircularBuffer.dataTable[currReadIndex], Buf);
+		strcpy(dataBuffer, myCircularBuffer.dataTable[currReadIndex]);
 
 		// check if we need to upgrade the read index
 		myCircularBuffer.readIndex = (myCircularBuffer.readIndex + 1) % CBPACKETNUMBER;
@@ -346,7 +348,7 @@ int SerialRead(uint8_t* Buf) {
 // This function writes a single (preferably) cobs-encoded packet and sends it through USB
 void SerialWrite(uint8_t* Buf, uint32_t Len) {
 	uint8_t result;
-	CDC_Transmit_FS ((uint8_t*)("123456 "),7);
+	//CDC_Transmit_FS ((uint8_t*)("123456 "),7);
 	result = CDC_Transmit_FS(Buf, Len);
 }
 /* USER CODE END PRIVATE_FUNCTIONS_IMPLEMENTATION */

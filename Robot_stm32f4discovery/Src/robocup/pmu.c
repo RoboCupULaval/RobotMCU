@@ -52,8 +52,9 @@ double pmu_getCurrent(void) {
 //Manually enables motors power if PowerStatus is OK
 //Returns 1 if power enabled
 uint8_t pmu_enablePower(void) {
-	if(pmu_checkBattVoltage() == POWER_OK)
+	if (pmu_checkBattVoltage() == POWER_OK) {
 		HAL_GPIO_WritePin(EN_POWER_GPIO_Port, EN_POWER_Pin, GPIO_PIN_SET);
+	}
 	return pmu_isPowerEnabled();
 }
 
@@ -81,12 +82,15 @@ uint8_t pmu_isPowerEnabled(void) {
 //Returns the power state
 powerState pmu_checkBattVoltage(void) {
 	double battVoltage = pmu_getBattVoltage();
-	if(battVoltage < PMU_BATT_SHUTDOWN_TRESHOLD)
+	if (battVoltage < PMU_BATT_SHUTDOWN_TRESHOLD) {
 		return POWER_CRITICAL;
-	else if(battVoltage < PMU_BATT_WARNING_TRESHOLD)
+	}
+	else if (battVoltage < PMU_BATT_WARNING_TRESHOLD) {
 		return POWER_WARNING;
-	else
+	}
+	else {
 		return POWER_OK;
+	}
 }
 
 

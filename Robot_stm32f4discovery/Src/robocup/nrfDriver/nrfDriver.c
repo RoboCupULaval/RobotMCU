@@ -37,9 +37,9 @@ void nrfSend(uint8_t * dataOut) {
 	TM_NRF24L01_Transmit(dataOut);
 
 	do {
-						/* Get transmission status */
-						transmissionStatus = TM_NRF24L01_GetTransmissionStatus();
-		} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Sending);
+		/* Get transmission status */
+		transmissionStatus = TM_NRF24L01_GetTransmissionStatus();
+	} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Sending);
     //Get back into RX mode
 	TM_NRF24L01_PowerUpRx();
 }

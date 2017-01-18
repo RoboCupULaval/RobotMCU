@@ -47,7 +47,7 @@
 #include "cmsis_os.h"
 
 /* USER CODE BEGIN Includes */     
-
+#include "robocup/robocup_define.h"
 /* USER CODE END Includes */
 
 /* Variables -----------------------------------------------------------------*/
@@ -166,7 +166,12 @@ void slowTaskFunction(void const * argument)
   /* Infinite loop */
   for(;;)
   {
+#ifdef GAMMA2
 	  slow_taskEntryPoint();
+#elif defined (GAMMA)
+	  pmu_forceEnablePower(); // On the GAMMA, the battery voltage can not be read, thus the motor are always activated
+#endif
+	  osDelay(1000);
   }
   /* USER CODE END slowTaskFunction */
 }

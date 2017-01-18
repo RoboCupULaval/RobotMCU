@@ -110,6 +110,9 @@ extern USBD_CDC_ItfTypeDef  USBD_Interface_fops_FS;
 uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len);
 
 /* USER CODE BEGIN EXPORTED_FUNCTIONS */
+// TODO: We need that since it's call by freertos.c
+extern USBD_HandleTypeDef hUsbDeviceFS;
+
 int SerialRead(uint8_t* Buf);
 
 void SerialWrite(uint8_t* Buf, uint32_t Len);

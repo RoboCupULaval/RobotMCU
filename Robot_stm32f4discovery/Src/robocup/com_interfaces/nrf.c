@@ -28,5 +28,6 @@ size_t nrf_readUntilZero(void *pBuffer,
 
 	// TODO modify nrfReceive to take maxLength into account
 	nrfReceive(pBuffer);
+	LOG_INFO_AND_BUFFER("PACKET RECEIVE GLORY TO CHUTCHUL", pBuffer, 20);
 	return strlen(pBuffer);
 }

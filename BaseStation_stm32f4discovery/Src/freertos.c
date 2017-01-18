@@ -118,13 +118,29 @@ void communicationTask(void const * argument)
   uint8_t packetBytesToSend[260] = {0};
   unsigned int REMOVETHISVARIABLEITSUSELESS = 0;
   int receivedLen;
+
+  TickType_t lastWakeTime = xTaskGetTickCount();
   for(;;)
   {
+	  if (xTaskGetTickCount() - lastWakeTime > 1000) {
+		  USBD_CDC_ReceivePacket(&hUsbDeviceFS);
+		  lastWakeTime = xTaskGetTickCount();
+		  SerialWrite("hello", strlen("hello"));
+	  }
 	  //Read a packet from usb
-	  if (!SerialRead(packetBytesReceived)) {
+	  if (SerialRead(packetBytesReceived) >= 0) {
 		  // Uncobs the packet
-		  int receivedLen = strlen(packetBytesReceived);
-		  decobifyData(packetBytesReceived, 260, decobifiedPacketBytes, &REMOVETHISVARIABLEITSUSELESS);
+		  size_t receivedLen = strlen(packetBytesReceived);
+		  if (receivedLen == 0) {
+			  continue;
+		  }
+
+		  int result = decobifyData(packetBytesReceived, receivedLen +1, decobifiedPacketBytes, &REMOVETHISVARIABLEITSUSELESS);
+
+		  // Check if decobification was successful
+		  if (result == -1) {
+			  continue;
+		  }
 		  // Extract useful info
 
 		  // Recob it if necessary
@@ -133,21 +149,25 @@ void communicationTask(void const * argument)
 		  // Send to Destination through NRF if necessary
 		  nrfSend(packetBytesToSend);
 	  }
+	  /*
+	  if (nrfReceiveReady()) {
+		  //Read a packet from nrf
+		  nrfReceive(packetBytesToSend);
 
-	  //Read a packet from nrf
-	  nrfReceive(packetBytesToSend);
+		  /
+		  // Uncobs the packet
+		  receivedLen = strlen(packetBytesReceived);
+		  decobifyData(packetBytesReceived, 260, decobifiedPacketBytes, &REMOVETHISVARIABLEITSUSELESS);
 
-	  // Uncobs the packet
-	  receivedLen = strlen(packetBytesReceived);
-	  decobifyData(packetBytesReceived, 260, decobifiedPacketBytes, &REMOVETHISVARIABLEITSUSELESS);
+		  // Extract useful info
+cobifyData
+		  // Recob it if necessary
+		  cobifyData(decobifiedPacketBytes, receivedLen-1, packetBytesToSend);
 
-	  // Extract useful info
 
-	  // Recob it if necessary
-	  cobifyData(decobifiedPacketBytes, receivedLen-1, packetBytesToSend);
-
-	  // Send to Destination through USB if necessary
-	  SerialRead(packetBytesToSend);
+		  // Send to Destination through USB if necessary
+		  SerialWrite(packetBytesToSend, strlen(packetBytesToSend));
+	  }*/
 
   }
   /* USER CODE END communicationTask */

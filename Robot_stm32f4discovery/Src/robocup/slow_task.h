@@ -5,6 +5,7 @@
 #include "pmu.h"
 #include "led.h"
 #include "util.h"
+#include "kicker.h"
 
 void slow_taskEntryPoint(void);
 

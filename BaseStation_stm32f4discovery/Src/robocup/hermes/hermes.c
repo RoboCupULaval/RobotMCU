@@ -41,9 +41,10 @@ int cobifyData(const void *data, size_t msg_len, char *dstOut) {
  * dst_len : Number of byte in the payload, should alway be payload's len -1
  */
 int  decobifyData(const char *msg, size_t len, void *dstOut, size_t *dst_len) {
-	if(len >= COBS_MAX_PAYLOAD_LEN)
+	if (len >= COBS_MAX_PAYLOAD_LEN) {
 		return -1;
-	unsigned char *ptr = (unsigned char*) msg;
+	}
+	const unsigned char *ptr = (unsigned char*) msg;
 	unsigned char *dst = (unsigned char*) dstOut;
 	const unsigned char *end = ptr + len;
 	*dst_len = 0;
@@ -51,8 +52,9 @@ int  decobifyData(const char *msg, size_t len, void *dstOut, size_t *dst_len) {
 		int i, code = *ptr++;
 		for (i = 1; i < code; i++) {
 			// If we get to the end too soon, the pack is invalid
-			if (ptr >= end)
+			if (ptr >= end) {
 				return -1;
+			}
 			*dst++ = *ptr++;
 			(*dst_len)++;
 

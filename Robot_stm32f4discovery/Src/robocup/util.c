@@ -19,11 +19,13 @@ void convertBytesToStr(const void * ptr, size_t len, char* str){
   *str = '\0';
 }
 
-static SemaphoreHandle_t mutex = NULL;
+static comHandle_t s_logHandle;
+static SemaphoreHandle_t s_logLock = NULL;
 static volatile double s_batteryVoltage = 0.0;
 
-void log_init(void) {
-	mutex = xSemaphoreCreateMutex();
+void log_init(comHandle_t comInterface) {
+	s_logHandle = comInterface;
+	s_logLock = xSemaphoreCreateMutex();
 }
 
 void log_setBatteryVoltage(const double batteryVoltage) {
@@ -37,13 +39,13 @@ void log_broadcast(const char *pLogType, const char *pMessage){
 	snprintf(metaData, MAX_METADATA_LEN, "%s|%06u|R%d|B%2.1f|", pLogType, (unsigned)msSinceStartup, ADDR_ROBOT, s_batteryVoltage);
 
 	// Start of critical zone
-	xSemaphoreTake(mutex, portMAX_DELAY);
+	xSemaphoreTake(s_logLock, portMAX_DELAY);
 
-	g_logHandle.write(metaData, strlen(metaData));
-	g_logHandle.write(pMessage, strlen(pMessage));
+	s_logHandle.write(metaData, strlen(metaData));
+	s_logHandle.write(pMessage, strlen(pMessage));
 
 	// End of critical zone
-	xSemaphoreGive(mutex);
+	xSemaphoreGive(s_logLock);
 
 }
 

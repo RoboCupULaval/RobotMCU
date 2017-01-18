@@ -13,7 +13,7 @@
 
 #define MAX_METADATA_LEN 128
 
-void log_init(void);
+void log_init(comHandle_t comInterface);
 void log_setBatteryVoltage(const double batteryVoltage);
 void LOG_INFO(const char * pMessage);
 void LOG_ERROR(const char * pMessage);

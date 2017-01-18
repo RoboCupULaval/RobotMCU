@@ -6,6 +6,7 @@
  */
 #include "nrfDriver.h"
 #include "tm_stm32_nrf24l01.h"
+#include "stdbool.h"
 
 uint8_t MyAddress[] = {
 	0xE7,
@@ -37,11 +38,15 @@ void nrfSend(uint8_t * dataOut) {
 	TM_NRF24L01_Transmit(dataOut);
 
 	do {
-						/* Get transmission status */
-						transmissionStatus = TM_NRF24L01_GetTransmissionStatus();
-		} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Sending);
+		/* Get transmission status */
+		transmissionStatus = TM_NRF24L01_GetTransmissionStatus();
+	} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Sending);
     //Get back into RX mode
 	TM_NRF24L01_PowerUpRx();
+}
+
+bool nrfReceiveReady() {
+	return TM_NRF24L01_DataReady();
 }
 
 void nrfReceive(uint8_t * dataIn) {

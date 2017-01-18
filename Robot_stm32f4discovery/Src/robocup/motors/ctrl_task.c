@@ -36,9 +36,11 @@ volatile SpeedCommand_t g_speedCommand = {
 
 // This tasks deals with the movements of the robot
 void ctrl_taskEntryPoint(void) {
-
-  	while(!test_startUp());
-	LOG_INFO("Starting!!!\r\n");
+	//test_startUp();
+	if (robot_isDebug()) {
+		while(!test_startUp());
+	}
+  	LOG_INFO("Starting!!!\r\n");
 	initPwmAndQuad();
 
 	int32_t wheelSpeed[4];
@@ -62,7 +64,8 @@ void ctrl_taskEntryPoint(void) {
 
 		bool speedCommandTimeout = hasSpeedCommandTimeout();
 		if (speedCommandTimeout) {
-			LOG_ERROR("Timeout on command");
+			if (c == 0)
+				LOG_ERROR("Timeout on command\r\n");
 			ctrl_emergencyBreak();
 			continue;
 		}
