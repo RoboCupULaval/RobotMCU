@@ -128,7 +128,9 @@ void communicationTask(void const * argument)
 
 		  // Recob it if necessary
 		  cobifyData(decobifiedPacketBytes, receivedLen-1, packetBytesToSend);
+
 		  // Send to Destination through NRF if necessary
+		  nrfSend(packetBytesToSend);
 	  }
 
 	  //Read a packet from nrf
