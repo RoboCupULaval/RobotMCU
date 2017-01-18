@@ -33,17 +33,17 @@
 								<option defaultValue="gnu.c.optimization.level.none" id="fr.ac6.managedbuild.gnu.c.compiler.option.optimization.level.720762699" name="Optimization Level" superClass="fr.ac6.managedbuild.gnu.c.compiler.option.optimization.level" useByScannerDiscovery="false" value="fr.ac6.managedbuild.gnu.c.optimization.level.size" valueType="enumerated" />
 								<option id="gnu.c.compiler.option.debugging.level.409251809" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated" />
 								<option id="gnu.c.compiler.option.include.paths.2002614422" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="/home/znuxor/Documents/robocup/RobotMCU/BaseStation_stm32f4discovery/Inc" />
-									<listOptionValue builtIn="false" value="/home/znuxor/Documents/robocup/RobotMCU/BaseStation_stm32f4discovery/Drivers/STM32F4xx_HAL_Driver/Inc" />
-									<listOptionValue builtIn="false" value="/home/znuxor/Documents/robocup/RobotMCU/BaseStation_stm32f4discovery/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" />
-									<listOptionValue builtIn="false" value="/home/znuxor/Documents/robocup/RobotMCU/BaseStation_stm32f4discovery/Drivers/CMSIS/Include" />
-									<listOptionValue builtIn="false" value="/home/znuxor/Documents/robocup/RobotMCU/BaseStation_stm32f4discovery/Drivers/CMSIS/Device/ST/STM32F4xx/Include" />
-									<listOptionValue builtIn="false" value="/home/znuxor/Documents/robocup/RobotMCU/BaseStation_stm32f4discovery/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" />
-									<listOptionValue builtIn="false" value="/home/znuxor/Documents/robocup/RobotMCU/BaseStation_stm32f4discovery/Middlewares/Third_Party/FreeRTOS/Source/include" />
-									<listOptionValue builtIn="false" value="/home/znuxor/Documents/robocup/RobotMCU/BaseStation_stm32f4discovery/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" />
-									<listOptionValue builtIn="false" value="/home/znuxor/Documents/robocup/RobotMCU/BaseStation_stm32f4discovery/Middlewares/ST/STM32_USB_Device_Library/Core/Inc" />
-									<listOptionValue builtIn="false" value="/home/znuxor/Documents/robocup/RobotMCU/BaseStation_stm32f4discovery/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc" />
-									<listOptionValue builtIn="false" value="/home/znuxor/Documents/robocup/RobotMCU/BaseStation_stm32f4discovery/Debug/" />
+									<listOptionValue builtIn="false" value="../Inc" />
+									<listOptionValue builtIn="false" value="../Drivers/STM32F4xx_HAL_Driver/Inc" />
+									<listOptionValue builtIn="false" value="../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" />
+									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Include" />
+									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32F4xx/Include" />
+									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" />
+									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/include" />
+									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" />
+									<listOptionValue builtIn="false" value="../Middlewares/ST/STM32_USB_Device_Library/Core/Inc" />
+									<listOptionValue builtIn="false" value="../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc" />
+									<listOptionValue builtIn="false" value="../Debug/" />
 								<listOptionValue builtIn="false" value="../Inc" /><listOptionValue builtIn="false" value="../Drivers/STM32F4xx_HAL_Driver/Inc" /><listOptionValue builtIn="false" value="../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" /></option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.187782670" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__weak=&quot;__attribute__((weak))&quot;" />
@@ -73,17 +73,17 @@
 							<tool id="fr.ac6.managedbuild.tool.gnu.archiver.962718401" name="MCU GCC Archiver" superClass="fr.ac6.managedbuild.tool.gnu.archiver" />
 							<tool id="fr.ac6.managedbuild.tool.gnu.cross.assembler.729426196" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler">
 								<option id="gnu.both.asm.option.include.paths.1786229197" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="/home/znuxor/Documents/robocup/RobotMCU/BaseStation_stm32f4discovery/Inc" />
-									<listOptionValue builtIn="false" value="/home/znuxor/Documents/robocup/RobotMCU/BaseStation_stm32f4discovery/Drivers/STM32F4xx_HAL_Driver/Inc" />
-									<listOptionValue builtIn="false" value="/home/znuxor/Documents/robocup/RobotMCU/BaseStation_stm32f4discovery/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" />
-									<listOptionValue builtIn="false" value="/home/znuxor/Documents/robocup/RobotMCU/BaseStation_stm32f4discovery/Drivers/CMSIS/Include" />
-									<listOptionValue builtIn="false" value="/home/znuxor/Documents/robocup/RobotMCU/BaseStation_stm32f4discovery/Drivers/CMSIS/Device/ST/STM32F4xx/Include" />
-									<listOptionValue builtIn="false" value="/home/znuxor/Documents/robocup/RobotMCU/BaseStation_stm32f4discovery/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" />
-									<listOptionValue builtIn="false" value="/home/znuxor/Documents/robocup/RobotMCU/BaseStation_stm32f4discovery/Middlewares/Third_Party/FreeRTOS/Source/include" />
-									<listOptionValue builtIn="false" value="/home/znuxor/Documents/robocup/RobotMCU/BaseStation_stm32f4discovery/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" />
-									<listOptionValue builtIn="false" value="/home/znuxor/Documents/robocup/RobotMCU/BaseStation_stm32f4discovery/Middlewares/ST/STM32_USB_Device_Library/Core/Inc" />
-									<listOptionValue builtIn="false" value="/home/znuxor/Documents/robocup/RobotMCU/BaseStation_stm32f4discovery/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc" />
-									<listOptionValue builtIn="false" value="/home/znuxor/Documents/robocup/RobotMCU/BaseStation_stm32f4discovery/Debug/" />
+									<listOptionValue builtIn="false" value="../Inc" />
+									<listOptionValue builtIn="false" value="../Drivers/STM32F4xx_HAL_Driver/Inc" />
+									<listOptionValue builtIn="false" value="../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" />
+									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Include" />
+									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32F4xx/Include" />
+									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" />
+									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/include" />
+									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" />
+									<listOptionValue builtIn="false" value="../Middlewares/ST/STM32_USB_Device_Library/Core/Inc" />
+									<listOptionValue builtIn="false" value="../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc" />
+									<listOptionValue builtIn="false" value="../Debug/" />
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.555793753" superClass="cdt.managedbuild.tool.gnu.assembler.input" />
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.154633471" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input" />
