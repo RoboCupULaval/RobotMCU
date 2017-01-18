@@ -49,7 +49,6 @@
 #include "gpio.h"
 
 /* USER CODE BEGIN Includes */
-#include "robocup/exampleTask.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/

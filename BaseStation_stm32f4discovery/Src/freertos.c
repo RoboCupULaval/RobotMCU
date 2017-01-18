@@ -48,6 +48,7 @@
 
 /* USER CODE BEGIN Includes */     
 #include "../../../Src/robocup/nrfDriver/nrfDriver.h"
+#include "../../../Src/robocup/hermes/hermes.h"
 #include "usbd_cdc_if.h"
 /* USER CODE END Includes */
 
@@ -110,15 +111,32 @@ void communicationTask(void const * argument)
   MX_USB_DEVICE_Init();
 
   /* USER CODE BEGIN communicationTask */
+  nrfInit();
   /* Infinite loop */
-  uint8_t packetBytes[1] = {0};
+  uint8_t packetBytesReceived[260] = {0};
+  uint8_t decobifiedPacketBytes[260] = {0};
+  uint8_t packetBytesToSend[260] = {0};
+  unsigned int REMOVETHISVARIABLEITSUSELESS = 0;
   for(;;)
   {
-	  //SerialRead(&packetBytes[1], 1);
-	  SerialWrite("1234\n", strlen("1234\n"));
-	  SerialRead(packetBytes, 1);
-	  //SerialWrite("lol", strlen("lol"));
-      osDelay(1);
+	  //Read a packet from usb
+	  if (!SerialRead(packetBytesReceived)) {
+		  // Uncobs the packet
+		  int receivedLen = strlen(packetBytesReceived);
+		  decobifyData(packetBytesReceived, 260, decobifiedPacketBytes, &REMOVETHISVARIABLEITSUSELESS);
+		  // Extract useful info
+
+		  // Recob it if necessary
+		  cobifyData(decobifiedPacketBytes, receivedLen-1, packetBytesToSend);
+		  // Send to Destination through NRF if necessary
+	  }
+
+	  //Read a packet from nrf
+	  // Uncobs the packet
+	  // Extract useful info
+	  // Recob it if necessary
+	  // Send to Destination through USB if necessary
+
   }
   /* USER CODE END communicationTask */
 }
