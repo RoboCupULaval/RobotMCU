@@ -117,6 +117,7 @@ void communicationTask(void const * argument)
   uint8_t decobifiedPacketBytes[260] = {0};
   uint8_t packetBytesToSend[260] = {0};
   unsigned int REMOVETHISVARIABLEITSUSELESS = 0;
+  int receivedLen;
   for(;;)
   {
 	  //Read a packet from usb
@@ -134,10 +135,19 @@ void communicationTask(void const * argument)
 	  }
 
 	  //Read a packet from nrf
+	  nrfReceive(packetBytesToSend);
+
 	  // Uncobs the packet
+	  receivedLen = strlen(packetBytesReceived);
+	  decobifyData(packetBytesReceived, 260, decobifiedPacketBytes, &REMOVETHISVARIABLEITSUSELESS);
+
 	  // Extract useful info
+
 	  // Recob it if necessary
+	  cobifyData(decobifiedPacketBytes, receivedLen-1, packetBytesToSend);
+
 	  // Send to Destination through USB if necessary
+	  SerialRead(packetBytesToSend);
 
   }
   /* USER CODE END communicationTask */
