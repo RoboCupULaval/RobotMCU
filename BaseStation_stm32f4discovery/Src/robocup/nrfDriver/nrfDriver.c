@@ -6,14 +6,13 @@
  */
 #include "nrfDriver.h"
 #include "tm_stm32_nrf24l01.h"
-#include "stdbool.h"
 
 uint8_t MyAddress[] = {
 	0xE7,
 	0xE7,
 	0xE7,
 	0xE7,
-	0xE7
+	0xE8
 };
 
 uint8_t TxAddress[] = {
@@ -21,7 +20,7 @@ uint8_t TxAddress[] = {
 	0xE7,
 	0xE7,
 	0xE7,
-	0xE8
+	0xE7
 };
 
 void nrfInit() {
