@@ -401,8 +401,8 @@ TM_SPI_DataSize_t TM_SPI_SetDataSize(SPI_TypeDef* SPIx, TM_SPI_DataSize_t DataSi
  * @param  data: 8-bit data size to send over SPI
  * @retval Received byte from slave device
  */
-static __INLINE uint8_t TM_SPI_Send(SPI_TypeDef* SPIx, uint8_t data) {
 	/* Check if SPI is enabled */
+static __INLINE uint8_t TM_SPI_Send(SPI_TypeDef* SPIx, uint8_t data) {
 	SPI_CHECK_ENABLED_RESP(SPIx, 0);
 	
 	/* Wait for previous transmissions to complete if DMA TX enabled for SPI */

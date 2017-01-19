@@ -27,7 +27,7 @@
 
 /* NRF24L01+ registers*/
 #define NRF24L01_REG_CONFIG			0x00	//Configuration Register
-#define NRF24L01_REG_EN_AA			0x01	//Enable ‘Auto Acknowledgment’ Function
+#define NRF24L01_REG_EN_AA			0x01	//Enable ï¿½Auto Acknowledgmentï¿½ Function
 #define NRF24L01_REG_EN_RXADDR		0x02	//Enabled RX Addresses
 #define NRF24L01_REG_SETUP_AW		0x03	//Setup of Address Widths (common for all data pipes)
 #define NRF24L01_REG_SETUP_RETR		0x04	//Setup of Automatic Retransmission
@@ -447,9 +447,16 @@ uint8_t TM_NRF24L01_GetStatus(void) {
 	return status;
 }
 
+static magic = 0;
 TM_NRF24L01_Transmit_Status_t TM_NRF24L01_GetTransmissionStatus(void) {
 	uint8_t status = TM_NRF24L01_GetStatus();
-	if (NRF24L01_CHECK_BIT(status, NRF24L01_TX_DS)) {
+	uint8_t foo = TM_NRF24L01_ReadRegister(NRF24L01_REG_FIFO_STATUS);
+
+	if(foo == 0) {
+		magic++;
+	}
+
+ 	if (NRF24L01_CHECK_BIT(status, NRF24L01_TX_DS)) {
 		/* Successfully sent */
 		return TM_NRF24L01_Transmit_Status_Ok;
 	} else if (NRF24L01_CHECK_BIT(status, NRF24L01_MAX_RT)) {
