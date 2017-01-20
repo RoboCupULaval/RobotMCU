@@ -59,8 +59,8 @@
 #define PH0_OSC_IN_GPIO_Port GPIOH
 #define PH1_OSC_OUT_Pin GPIO_PIN_1
 #define PH1_OSC_OUT_GPIO_Port GPIOH
-#define SPI2_CE_Pin GPIO_PIN_1
-#define SPI2_CE_GPIO_Port GPIOC
+#define NRF_CE_Pin GPIO_PIN_1
+#define NRF_CE_GPIO_Port GPIOC
 #define B1_Pin GPIO_PIN_0
 #define B1_GPIO_Port GPIOA
 #define SPI1_CE_Pin GPIO_PIN_4
@@ -69,6 +69,8 @@
 #define SPI1_IRQ_GPIO_Port GPIOC
 #define BOOT1_Pin GPIO_PIN_2
 #define BOOT1_GPIO_Port GPIOB
+#define NRF_CS_Pin GPIO_PIN_12
+#define NRF_CS_GPIO_Port GPIOB
 #define LD4_Pin GPIO_PIN_12
 #define LD4_GPIO_Port GPIOD
 #define LD3_Pin GPIO_PIN_13
