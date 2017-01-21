@@ -9,12 +9,10 @@
 #define NRFDRIVER_NRFDRIVER_H_
 
 #include "stm32f4xx.h"
-#include "stdbool.h"
 
 void nrfInit();
 void nrfSend(uint8_t * dataOut);
 void nrfReceive(uint8_t * dataIn);
-bool nrfReceiveReady();
 uint8_t nrfRetransmitCount();
 uint8_t nrfGetStatus();
 

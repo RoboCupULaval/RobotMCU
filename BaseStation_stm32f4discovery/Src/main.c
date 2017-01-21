@@ -76,7 +76,6 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -93,6 +92,8 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
 
+
+  communicationTask();
 
   /* USER CODE END 2 */
 
@@ -111,9 +112,6 @@ int main(void)
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-  uint8_t HiMsg[]="hello\r\n";
-  CDC_Transmit_FS(HiMsg,strlen(HiMsg));
-  HAL_Delay(200);
   }
   /* USER CODE END 3 */
 

@@ -232,10 +232,10 @@ void TM_NRF24L01_InitPins(void) {
 
 uint8_t TM_NRF24L01_Init(uint8_t channel, uint8_t payload_size) {
 	/* Initialize CE and CSN pins */
-	TM_NRF24L01_InitPins();
+	//TM_NRF24L01_InitPins();
 	
 	/* Initialize SPI */
-	TM_SPI_Init(NRF24L01_SPI, NRF24L01_SPI_PINS);
+	TM_SPI_Init(NRF24L01_SPI);
 	
 	/* Max payload is 32bytes */
 	if (payload_size > 32) {
@@ -447,16 +447,9 @@ uint8_t TM_NRF24L01_GetStatus(void) {
 	return status;
 }
 
-static magic = 0;
 TM_NRF24L01_Transmit_Status_t TM_NRF24L01_GetTransmissionStatus(void) {
 	uint8_t status = TM_NRF24L01_GetStatus();
-	uint8_t foo = TM_NRF24L01_ReadRegister(NRF24L01_REG_FIFO_STATUS);
-
-	if(foo == 0) {
-		magic++;
-	}
-
- 	if (NRF24L01_CHECK_BIT(status, NRF24L01_TX_DS)) {
+	if (NRF24L01_CHECK_BIT(status, NRF24L01_TX_DS)) {
 		/* Successfully sent */
 		return TM_NRF24L01_Transmit_Status_Ok;
 	} else if (NRF24L01_CHECK_BIT(status, NRF24L01_MAX_RT)) {

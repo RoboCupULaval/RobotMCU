@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 
 # To install dependency : 
 # pip install cobs bitstring pyserial

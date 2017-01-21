@@ -6,13 +6,15 @@
  */
 #include "nrfDriver.h"
 #include "tm_stm32_nrf24l01.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 uint8_t MyAddress[] = {
 	0xE7,
 	0xE7,
 	0xE7,
 	0xE7,
-	0xE8
+	0xE7
 };
 
 uint8_t TxAddress[] = {
@@ -20,7 +22,7 @@ uint8_t TxAddress[] = {
 	0xE7,
 	0xE7,
 	0xE7,
-	0xE7
+	0xE8
 };
 
 void nrfInit() {
@@ -33,19 +35,18 @@ void nrfInit() {
 
 void nrfSend(uint8_t * dataOut) {
 	TM_NRF24L01_Transmit_Status_t transmissionStatus;
+	uint8_t myStatus;
 
 	TM_NRF24L01_Transmit(dataOut);
+	vTaskDelay(1); // Don't delete this, it's like embedded jesus for us desperate programmers!
 
 	do {
-		/* Get transmission status */
-		transmissionStatus = TM_NRF24L01_GetTransmissionStatus();
+						/* Get transmission status */
+						transmissionStatus = TM_NRF24L01_GetTransmissionStatus();
+						myStatus = TM_NRF24L01_GetStatus();
 	} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Sending);
     //Get back into RX mode
 	TM_NRF24L01_PowerUpRx();
-}
-
-bool nrfReceiveReady() {
-	return TM_NRF24L01_DataReady();
 }
 
 void nrfReceive(uint8_t * dataIn) {
