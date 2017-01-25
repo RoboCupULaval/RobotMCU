@@ -17,9 +17,10 @@ void led_init(void) {
 	I2C_write(LED_ADDRESS, LED_REG_SHUTDOWN, &data, 1); //Turn on device
 
 	data = LED_PWM;
-	int i = 0;
+	uint16_t i = 0;
 	for(i = 0; i < 9; i++) {
-		I2C_write(LED_ADDRESS, LED_REG_PWM+i, &data, 1);
+		const uint16_t reg = (uint16_t)(LED_REG_PWM + i);
+		I2C_write(LED_ADDRESS, reg, &data, 1);
 	}
 
 	I2C_write(LED_ADDRESS, LED_REG_CTRL1, &led_CTRL1_value, 1); //LED off
@@ -45,13 +46,16 @@ void led_swipingLedTest(void) {
 
 void led_turnOn(uint8_t ledId) {
 	if(ledId >= 0 && ledId <= 2) {
-		led_CTRL1_value |= (1 << ledId);
+		const uint8_t bitOfLed = (uint8_t)(1 << ledId);
+		led_CTRL1_value |= bitOfLed;
 		I2C_write(LED_ADDRESS, LED_REG_CTRL1, &led_CTRL1_value, 1);
 	} else if(ledId >= 3 && ledId <= 5) {
-		led_CTRL1_value |= (1 << (ledId + 1));
+		const uint8_t bitOfLed = (uint8_t)(1 << (ledId + 1));
+		led_CTRL1_value |= bitOfLed;
 		I2C_write(LED_ADDRESS, LED_REG_CTRL1, &led_CTRL1_value, 1);
 	} else if(ledId <= 8) {
-		led_CTRL2_value |= (1 << (ledId-6));
+		const uint8_t bitOfLed =  (uint8_t)(1 << (ledId-6));
+		led_CTRL2_value |= bitOfLed;
 		I2C_write(LED_ADDRESS, LED_REG_CTRL2, &led_CTRL2_value, 1);
 	}
 	uint8_t data = 0x00;
@@ -60,13 +64,16 @@ void led_turnOn(uint8_t ledId) {
 
 void led_turnOff(uint8_t ledId) {
 	if(ledId >= 0 && ledId <= 2) {
-		led_CTRL1_value &= ~(1 << ledId);
+		const uint8_t mask = (uint8_t)(1 << ledId);
+		led_CTRL1_value &= (uint8_t)~mask;
 		I2C_write(LED_ADDRESS, LED_REG_CTRL1, &led_CTRL1_value, 1);
 	} else if(ledId >= 3 && ledId <= 5) {
-		led_CTRL1_value &= ~(1 << (ledId + 1));
+		const uint8_t mask = (uint8_t)(1 << (ledId + 1));
+		led_CTRL1_value &= (uint8_t)~mask;
 		I2C_write(LED_ADDRESS, LED_REG_CTRL1, &led_CTRL1_value, 1);
 	} else if(ledId <= 8) {
-		led_CTRL2_value &= ~(1 << (ledId-6));
+		const uint8_t mask = (uint8_t)(1 << (ledId-6));
+		led_CTRL2_value &= (uint8_t)~mask;
 		I2C_write(LED_ADDRESS, LED_REG_CTRL2, &led_CTRL2_value, 1);
 	}
 	uint8_t data = 0x00;

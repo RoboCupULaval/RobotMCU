@@ -12,7 +12,7 @@ float wheel_setCommand(Wheel_t* wheel, const float vx, const float vy, const flo
 	const float angle = atan2f(vy, vx);
 	// The wheel's angle is the position of the wheel axe
 	// The force angle is the angle of the force vector create by the rotation of the wheel
-	const float forceAngle = wheel->angle + M_PI_2;
+	const float forceAngle = wheel->angle + (float)M_PI_2;
 	const float result = magnitude * cosf(forceAngle - angle) + vt;
 	return result;
 }
@@ -30,19 +30,19 @@ void wheel_setPWM(const Wheel_t *wheel, float speed) {
 #elif defined (GAMMA)
 	int command = (int) fabs(speed * 30000) + 6000;
 #elif defined (GAMMA2)
-	float _speed = 1.0f - fabs(speed);
-	int command = ((int) (fabs(_speed) * 65535.0f));
+	float _speed = 1.0f - (float)fabs(speed);
+	int command = ((int) ((float)fabs(_speed) * 65535.0f));
 #endif
 	// Less then 4% of power we break
-	if(fabs(speed) < 0.09){
+	if((float)fabs(speed) < 0.09){
 		command = 0;
 #if defined (GAMMA2)
 		command = 65535;
 #endif
 	}
 
-
-  	__HAL_TIM_SetCompare(wheel->pTimer, wheel->timerChannel, command);
+	uint32_t timerValue = (uint32_t)command;
+  	__HAL_TIM_SetCompare(wheel->pTimer, wheel->timerChannel, timerValue);
 
   	//static char buffer[128];
 	//snprintf(buffer, 128, "fbk: %d err: %d out: %d ", (int)wheel->pid.fbk, (int)wheel->pid.e, (int)(wheel->pid.output *100.0));

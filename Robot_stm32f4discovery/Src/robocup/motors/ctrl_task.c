@@ -73,7 +73,7 @@ void ctrl_taskEntryPoint(void) {
 		for (int i = 0; i < wheelsLen; ++i) {
 			Wheel_t* pWheel = &g_wheels[i];
 			float reference = wheel_setCommand(pWheel, vx, vy, vt);
-			float feedback = wheelSpeed[pWheel->quad];
+			float feedback = (float)wheelSpeed[pWheel->quad];
 			float output = 0.0;
 
 			switch(g_ctrlLoopState) {
@@ -86,8 +86,8 @@ void ctrl_taskEntryPoint(void) {
 				case CLOSE_LOOP_WITH_LOGGING:
 					// The speed reference and feedback must be absolute, since the pid ignore the wheel direction.
 					// This is done since the passage from one direction to another one cause an instability
-					pWheel->pid.r = fabs(reference);
-					pWheel->pid.fbk = fabs(feedback);
+					pWheel->pid.r = (float)fabs(reference);
+					pWheel->pid.fbk = (float)fabs(feedback);
 					pid_update(&pWheel->pid);
 
 					output = pWheel->pid.output;

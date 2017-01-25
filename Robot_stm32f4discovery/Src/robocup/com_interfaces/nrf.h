@@ -10,6 +10,7 @@
 
 #include "stddef.h"
 
+#include "../util.h"
 #include "com_interface.h"
 
 

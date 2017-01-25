@@ -10,10 +10,10 @@
 
 #include "stm32f4xx.h"
 
-void nrfInit();
-void nrfSend(uint8_t * dataOut);
+void nrfInit(void);
+void nrfSend(const void * dataOut);
 void nrfReceive(uint8_t * dataIn);
-uint8_t nrfRetransmitCount();
-uint8_t nrfGetStatus();
+uint8_t nrfRetransmitCount(void);
+uint8_t nrfGetStatus(void);
 
 #endif /* NRFDRIVER_NRFDRIVER_H_ */

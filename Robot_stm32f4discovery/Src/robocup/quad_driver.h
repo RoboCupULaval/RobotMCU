@@ -21,33 +21,33 @@
 /****************************************************************************
  *   MD quadrature decoder Register
  *****************************************************************************/
-static const uint16_t QUAD_CONFIG0 = 0x00u;
-static const uint16_t QUAD_CONFIG1 = 0x01u;
-static const uint16_t QUAD_CONFIG2 = 0x02u;
-static const uint16_t QUAD_CONFIG3 = 0x03u;
-static const uint16_t QUAD_CONFIG4 = 0x04u;
-static const uint16_t QUAD_CTRL    = 0x30u;    //mainly used to set counter to zero
-static const uint16_t QUAD_COUNTER = 0x08u;
+static const uint8_t QUAD_CONFIG0 = 0x00u;
+static const uint8_t QUAD_CONFIG1 = 0x01u;
+static const uint8_t QUAD_CONFIG2 = 0x02u;
+static const uint8_t QUAD_CONFIG3 = 0x03u;
+static const uint8_t QUAD_CONFIG4 = 0x04u;
+static const uint8_t QUAD_CTRL    = 0x30u;    //mainly used to set counter to zero
+static const uint8_t QUAD_COUNTER = 0x08u;
 /****************************************************************************
  *   MD quadrature decoder Command
  *****************************************************************************/
-static const uint16_t QUAD_RESETCNT0 = 0x01u;  // used with CTRL register to reset counter
-static const uint16_t QUAD_RESETCNT1 = 0x02u;
-static const uint16_t QUAD_RESETCNT2 = 0x04u;
-static const uint16_t QUAD_READ	     = 0x80u;  //these two are probably not used
-static const uint16_t QUAD_WRITE     = ~(uint16_t)(0x80u); //modification needed
+static const uint8_t QUAD_RESETCNT0 = 0x01u;  // used with CTRL register to reset counter
+static const uint8_t QUAD_RESETCNT1 = 0x02u;
+static const uint8_t QUAD_RESETCNT2 = 0x04u;
+static const uint8_t QUAD_READ	     = 0x80u;  //these two are probably not used
+static const uint8_t QUAD_WRITE     = (uint8_t)~(uint8_t)(0x80u); // The double cast is to prevent a -Wconversion warning
 
 typedef struct quad_Handle {
 	chip_select structCSNPin;
-	int16_t count0;
-	int16_t count1;
-	int16_t delta_count0;
-	int16_t delta_count1;
+	int32_t count0;
+	int32_t count1;
+	int32_t delta_count0;
+	int32_t delta_count1;
 	float wheelVelocity[2];
 }quad_Handle;
 
 quad_Handle quad_Init(chip_select pCSNPin);
-uint16_t quad_ReadRegister(uint16_t pReg,quad_Handle *pQuad);
+uint16_t quad_ReadRegister(uint8_t pReg,quad_Handle *pQuad);
 void quad_WriteRegister(uint8_t pReg, uint8_t pValue,quad_Handle *pQuad);
 void quad_ReadCounters(quad_Handle *pQuad);
 void quad_CalculateSpeed(quad_Handle *pQuad);

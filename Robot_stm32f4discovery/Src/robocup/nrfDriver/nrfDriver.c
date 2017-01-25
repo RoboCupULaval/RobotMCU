@@ -23,7 +23,7 @@ uint8_t TxAddress[] = {
 	0xE8
 };
 
-void nrfInit() {
+void nrfInit(void) {
 	TM_NRF24L01_Init(2, 15);
 	TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_1M, TM_NRF24L01_OutputPower_M18dBm);
 	TM_NRF24L01_SetMyAddress(MyAddress);
@@ -31,10 +31,11 @@ void nrfInit() {
 	TM_NRF24L01_PowerUpRx();
 }
 
-void nrfSend(uint8_t * dataOut) {
+void nrfSend(const void * dataOut) {
+	uint8_t *data = (uint8_t *)dataOut;
 	TM_NRF24L01_Transmit_Status_t transmissionStatus;
 
-	TM_NRF24L01_Transmit(dataOut);
+	TM_NRF24L01_Transmit(data);
 
 	do {
 		/* Get transmission status */
@@ -49,7 +50,7 @@ void nrfReceive(uint8_t * dataIn) {
 	TM_NRF24L01_GetData(dataIn);
 }
 
-uint8_t nrfRetransmitCount() {
+uint8_t nrfRetransmitCount(void) {
 	return TM_NRF24L01_GetRetransmissionsCount();
 }
 

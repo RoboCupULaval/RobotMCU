@@ -17,9 +17,9 @@ quad_Handle quad_Init(chip_select pCSNPin){
 	lHandle.delta_count0 = 0;
 	lHandle.delta_count1 = 0;
 
-    quad_WriteRegister(QUAD_CONFIG0, 0x07, &lHandle);  //counter0 = 16 bits and counter1 = 16 bit (no counter2)
+    quad_WriteRegister(QUAD_CONFIG0, (uint8_t)0x07, &lHandle);  //counter0 = 16 bits and counter1 = 16 bit (no counter2)
     quad_ReadRegister(QUAD_CONFIG0, &lHandle);  // counter TTL
-    quad_WriteRegister(QUAD_CONFIG1, 0x80, &lHandle);  // counter TTL
+    quad_WriteRegister(QUAD_CONFIG1, (uint8_t)0x80, &lHandle);  // counter TTL
     quad_ReadRegister(QUAD_CONFIG1, &lHandle);  // counter TTL
 
     // Init count with the value in the encoder register
@@ -27,7 +27,7 @@ quad_Handle quad_Init(chip_select pCSNPin){
     return lHandle;
 }
 
-uint16_t quad_ReadRegister(uint16_t pReg,quad_Handle *pQuad){
+uint16_t quad_ReadRegister(uint8_t pReg,quad_Handle *pQuad){
 	uint16_t answer = 0;
 	demux_ConnectTo(pQuad->structCSNPin);
 	SPI_write_8bits(pReg | QUAD_READ); //put a 1 on the first
@@ -58,8 +58,8 @@ void quad_ReadCounters(quad_Handle *pQuad){
 	cnt0_lsb = SPI_read();
 	demux_Disconnect();
 
-	const int16_t old_count0 = pQuad->count0;
-	const int16_t old_count1 = pQuad->count1;
+	const int32_t old_count0 = pQuad->count0;
+	const int32_t old_count1 = pQuad->count1;
 
 	//const int16_t count2  = (cnt2_msb << 8) | cnt2_lsb;		 // not used
 	pQuad->count0 = (cnt1_msb << 8) | cnt1_lsb;
