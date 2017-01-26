@@ -26,8 +26,8 @@ uint8_t TxAddress[] = {
 };
 
 void nrfInit() {
-	TM_NRF24L01_Init(2, 15);
-	TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_1M, TM_NRF24L01_OutputPower_M18dBm);
+	TM_NRF24L01_Init(2, 20);
+	TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_1M, TM_NRF24L01_OutputPower_0dBm);
 	TM_NRF24L01_SetMyAddress(MyAddress);
 	TM_NRF24L01_SetTxAddress(TxAddress);
 	TM_NRF24L01_PowerUpRx();

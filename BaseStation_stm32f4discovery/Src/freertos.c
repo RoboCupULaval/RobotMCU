@@ -119,10 +119,10 @@ void communicationTask(void const * argument)
   unsigned int REMOVETHISVARIABLEITSUSELESS = 0;
   int receivedLen;
 
-  while (1) {
-	uint8_t dataOut[15] = {0, 1, 2, 3, 4, 42, 6, 7, 8, 9, 10, 11, 12, 13, 14};
-	nrfSend(dataOut);
-  }
+//  while (1) {
+//	uint8_t dataOut[15] = {0x04, 0x01, 0xfe, 0xff, 0x01, 0x01, 0x00};
+//	nrfSend(dataOut);
+//  }
 
   TickType_t lastWakeTime = xTaskGetTickCount();
   for(;;)
@@ -132,6 +132,12 @@ void communicationTask(void const * argument)
 		  lastWakeTime = xTaskGetTickCount();
 		  SerialWrite("hello", strlen("hello"));
 	  }
+
+//	    while (1) {
+//	  	uint8_t dataOut[15] = {0x04, 0x01, 0xfe, 0xff, 0x01, 0x01, 0x00};
+//	  	nrfSend(dataOut);
+//	    }
+
 	  //Read a packet from usb
 	  if (SerialRead(packetBytesReceived) >= 0) {
 		  // Uncobs the packet
@@ -153,7 +159,7 @@ void communicationTask(void const * argument)
 
 		  // Send to Destination through NRF if necessary
 
-		  //nrfSend(packetBytesToSend);
+		  nrfSend(packetBytesToSend);
 	  }
 	  /*
 	  if (nrfReceiveReady()) {
