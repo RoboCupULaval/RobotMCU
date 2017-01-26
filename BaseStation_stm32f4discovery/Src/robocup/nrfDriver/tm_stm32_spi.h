@@ -175,7 +175,7 @@ typedef enum {
 //----- SPI2 options start -------
 //Options can be overwriten in defines.h file
 #ifndef TM_SPI2_PRESCALER
-#define TM_SPI2_PRESCALER	SPI_BAUDRATEPRESCALER_2
+#define TM_SPI2_PRESCALER	SPI_BAUDRATEPRESCALER_32
 #endif
 //Specify datasize
 #ifndef TM_SPI2_DATASIZE
