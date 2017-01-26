@@ -119,10 +119,10 @@ void communicationTask(void const * argument)
   unsigned int REMOVETHISVARIABLEITSUSELESS = 0;
   int receivedLen;
 
-  while (1) {
-	uint8_t dataOut[15] = {0, 1, 2, 3, 4, 42, 6, 7, 8, 9, 10, 11, 12, 13, 14};
-	nrfSend(dataOut);
-  }
+//  while (1) {
+//	uint8_t dataOut[15] = {0, 1, 2, 3, 4, 42, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+//	nrfSend(dataOut);
+//  }
 
   TickType_t lastWakeTime = xTaskGetTickCount();
   for(;;)
@@ -153,7 +153,7 @@ void communicationTask(void const * argument)
 
 		  // Send to Destination through NRF if necessary
 
-		  //nrfSend(packetBytesToSend);
+		  nrfSend(packetBytesToSend);
 	  }
 	  /*
 	  if (nrfReceiveReady()) {

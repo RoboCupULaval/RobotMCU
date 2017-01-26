@@ -38,12 +38,12 @@ void nrfSend(uint8_t * dataOut) {
 	uint8_t myStatus;
 
 	TM_NRF24L01_Transmit(dataOut);
-	vTaskDelay(1); // Don't delete this, it's like embedded jesus for us desperate programmers!
+	vTaskDelay(5); // Don't delete this, it's like embedded jesus for us desperate programmers!
 
 	do {
-						/* Get transmission status */
-						transmissionStatus = TM_NRF24L01_GetTransmissionStatus();
-						myStatus = TM_NRF24L01_GetStatus();
+		/* Get transmission status */
+		transmissionStatus = TM_NRF24L01_GetTransmissionStatus();
+		myStatus = TM_NRF24L01_GetStatus();
 	} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Sending);
     //Get back into RX mode
 	TM_NRF24L01_PowerUpRx();
