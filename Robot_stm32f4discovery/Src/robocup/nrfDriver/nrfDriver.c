@@ -6,16 +6,10 @@
  */
 #include "nrfDriver.h"
 #include "tm_stm32_nrf24l01.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 uint8_t MyAddress[] = {
-	0xE7,
-	0xE7,
-	0xE7,
-	0xE7,
-	0xE7
-};
-
-uint8_t TxAddress[] = {
 	0xE7,
 	0xE7,
 	0xE7,
@@ -23,26 +17,36 @@ uint8_t TxAddress[] = {
 	0xE8
 };
 
-void nrfInit(void) {
-	TM_NRF24L01_Init(2, 15);
+uint8_t TxAddress[] = {
+	0xE7,
+	0xE7,
+	0xE7,
+	0xE7,
+	0xE7
+};
+
+void nrfInit(const size_t packetSize) {
+	TM_NRF24L01_Init(2, packetSize);
 	TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_1M, TM_NRF24L01_OutputPower_M18dBm);
 	TM_NRF24L01_SetMyAddress(MyAddress);
 	TM_NRF24L01_SetTxAddress(TxAddress);
 	TM_NRF24L01_PowerUpRx();
 }
 
-void nrfSend(const void * dataOut) {
-	uint8_t *data = (uint8_t *)dataOut;
-	TM_NRF24L01_Transmit_Status_t transmissionStatus;
+void nrfSend(uint8_t * dataOut) {
+	/*TM_NRF24L01_Transmit_Status_t transmissionStatus;
+	uint8_t myStatus;
 
-	TM_NRF24L01_Transmit(data);
+	TM_NRF24L01_Transmit(dataOut);
+	vTaskDelay(5); // Don't delete this, it's like embedded jesus for us desperate programmers!
 
 	do {
-		/* Get transmission status */
+		// Get transmission status
 		transmissionStatus = TM_NRF24L01_GetTransmissionStatus();
+		myStatus = TM_NRF24L01_GetStatus();
 	} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Sending);
     //Get back into RX mode
-	TM_NRF24L01_PowerUpRx();
+	TM_NRF24L01_PowerUpRx();*/
 }
 
 void nrfReceive(uint8_t * dataIn) {
@@ -50,7 +54,7 @@ void nrfReceive(uint8_t * dataIn) {
 	TM_NRF24L01_GetData(dataIn);
 }
 
-uint8_t nrfRetransmitCount(void) {
+uint8_t nrfRetransmitCount() {
 	return TM_NRF24L01_GetRetransmissionsCount();
 }
 

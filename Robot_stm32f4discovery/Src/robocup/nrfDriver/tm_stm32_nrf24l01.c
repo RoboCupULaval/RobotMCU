@@ -27,7 +27,7 @@
 
 /* NRF24L01+ registers*/
 #define NRF24L01_REG_CONFIG			0x00	//Configuration Register
-#define NRF24L01_REG_EN_AA			0x01	//Enable ‘Auto Acknowledgment’ Function
+#define NRF24L01_REG_EN_AA			0x01	//Enable ï¿½Auto Acknowledgmentï¿½ Function
 #define NRF24L01_REG_EN_RXADDR		0x02	//Enabled RX Addresses
 #define NRF24L01_REG_SETUP_AW		0x03	//Setup of Address Widths (common for all data pipes)
 #define NRF24L01_REG_SETUP_RETR		0x04	//Setup of Automatic Retransmission
@@ -232,10 +232,10 @@ void TM_NRF24L01_InitPins(void) {
 
 uint8_t TM_NRF24L01_Init(uint8_t channel, uint8_t payload_size) {
 	/* Initialize CE and CSN pins */
-	TM_NRF24L01_InitPins();
+	//TM_NRF24L01_InitPins();
 	
 	/* Initialize SPI */
-	TM_SPI_Init(NRF24L01_SPI, NRF24L01_SPI_PINS);
+	TM_SPI_Init(NRF24L01_SPI);
 	
 	/* Max payload is 32bytes */
 	if (payload_size > 32) {

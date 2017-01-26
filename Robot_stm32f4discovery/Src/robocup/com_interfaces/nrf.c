@@ -3,8 +3,10 @@
 #include "nrf.h"
 #include "../nrfDriver/nrfDriver.h"
 
+#define PACKET_SIZE 20
 comHandle_t nrf_init(void){
-	nrfInit();
+
+	nrfInit(PACKET_SIZE);
 
 	comHandle_t com;
 	com.read = nrf_read;
@@ -31,6 +33,6 @@ size_t nrf_readUntilZero(void *pBuffer,
 	// TODO modify nrfReceive to take maxLength into account
 	// TODO this strlen will kill us one day
 	nrfReceive(pBuffer);
-	LOG_INFO_AND_BUFFER("PACKET RECEIVE GLORY TO CHUTCHUL", pBuffer, 20);
+	LOG_INFO_AND_BUFFER("PACKET RECEIVE", pBuffer, 20);
 	return strlen(pBuffer);
 }
