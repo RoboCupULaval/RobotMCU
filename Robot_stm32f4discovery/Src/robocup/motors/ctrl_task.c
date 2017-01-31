@@ -23,7 +23,7 @@ static EncoderTimerAssociation_t s_encoders[] = {
 const size_t encodersLen = sizeof(s_encoders) / sizeof(EncoderTimerAssociation_t);
 #endif
 
-volatile CtrlLoop_t g_ctrlLoopState = CLOSE_LOOP_WITH_LOGGING;
+volatile CtrlLoop_t g_ctrlLoopState = CLOSE_LOOP_WITHOUT_LOGGING;
 volatile SpeedCommand_t g_speedCommand = {
 		.vx = 0.0,
 		.vy = 0.0,

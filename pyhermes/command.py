@@ -12,6 +12,7 @@ CMD_ROBOT_CRASHED_NOTIFICATION = 0x26
 
 # Register type
 REG_CTRL_LOOP_STATE            = 0x00;
+REG_KICK_COMMAND               = 0x01;
 
 PROTOCOL_VERSION  = 0x01
 

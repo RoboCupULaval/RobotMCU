@@ -74,6 +74,9 @@ class McuCom(object):
         #res = self.retreiveRespond()
         #res = self.retreiveRespond()
 
+    def kick(self):
+        self.setRegister(REG_KICK_COMMAND, 0);
+
     def setRegister(self, register, value):
         cmd = create2BytesCommand(CMD_SET_REGISTER, register, value)
         print("Cmd ask: ", cmd)
