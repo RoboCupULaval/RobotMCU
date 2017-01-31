@@ -77,7 +77,8 @@ class McuCom(object):
     def setRegister(self, register, value):
         cmd = create2BytesCommand(CMD_SET_REGISTER, register, value)
         print("Cmd ask: ", cmd)
-        self.sendCommandAndWaitAcknowledge(cmd)
+        #self.sendCommandAndWaitAcknowledge(cmd)
+        self.sendCommand(cmd)
 
     def sendCommand(self, cmd):
         self.ser.write(cmd)

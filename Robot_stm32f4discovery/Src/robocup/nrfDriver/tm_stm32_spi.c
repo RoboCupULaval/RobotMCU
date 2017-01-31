@@ -1,4 +1,9 @@
 #include "tm_stm32_spi.h"
+
+// Used for taskYield()
+#include "FreeRTOS.h"
+#include "task.h"
+
 #define STM32F4xx
 
 /* Defines for alternate functions */
@@ -43,6 +48,7 @@ void TM_SPI_SendMulti(SPI_TypeDef* SPIx, uint8_t* dataOut, uint8_t* dataIn, uint
 		
 		/* Read data register */
 		*dataIn++ = *(__IO uint8_t *)&SPIx->DR;
+		taskYIELD();
 	}
 }
 

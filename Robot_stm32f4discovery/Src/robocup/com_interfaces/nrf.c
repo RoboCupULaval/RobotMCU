@@ -23,7 +23,7 @@ size_t nrf_read(__attribute__ ((unused)) void *pBuffer,
 }
 
 size_t nrf_write(const void *pBuffer, size_t length){
-	nrfSend(pBuffer);
+	//nrfSend(pBuffer);
 	return length;
 }
 
@@ -33,6 +33,6 @@ size_t nrf_readUntilZero(void *pBuffer,
 	// TODO modify nrfReceive to take maxLength into account
 	// TODO this strlen will kill us one day
 	nrfReceive(pBuffer);
-	LOG_INFO_AND_BUFFER("PACKET RECEIVE", pBuffer, 20);
+	//LOG_DEBUG_AND_BUFFER("PACKET RECEIVE", pBuffer, 20);
 	return strlen(pBuffer);
 }

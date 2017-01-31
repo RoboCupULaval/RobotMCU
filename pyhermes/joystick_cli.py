@@ -4,7 +4,7 @@ import time
 from joystick.jstick import *
 from math import *
 
-MAX_SPEED = 400.0
+MAX_SPEED = 1200.0
 JOYSTICK_DEAD_ZONE = 0.1
 
 def joystick_cli():
@@ -21,9 +21,9 @@ def joystick_cli():
     	mag = mag if abs(mag) > JOYSTICK_DEAD_ZONE else 0
     	x =  MAX_SPEED * mag * cos(angle)
     	y =  -MAX_SPEED * mag * sin(angle)
-    	theta =  -MAX_SPEED * t
+    	theta =  -MAX_SPEED * t / 3.0
 
     	com.sendSpeed(x, y, theta)
 
     	print("x:{: 3.3f} y:{: 3.3f} t:{: 3.3f}".format(x, y, t))
-    	sleep(0.01)
+    	sleep(0.05)

@@ -48,5 +48,6 @@ void command_setRegister(const void *msg) {
 			LOG_ERROR("Unknown register");
 	}
 
-	hermes_sendAcknowledgment();
+	// TODO: Uncomment when bidirectional implemented
+	//hermes_sendAcknowledgment();
 }

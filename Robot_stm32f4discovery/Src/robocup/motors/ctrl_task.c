@@ -45,6 +45,7 @@ void ctrl_taskEntryPoint(void) {
 
 	int32_t wheelSpeed[4];
   	TickType_t lastWakeTime = xTaskGetTickCount();
+  	bool speedCommandTimeout = true;
 	for(;;) {
 		// Delay the loop to a fix frequency
 		vTaskDelayUntil(&lastWakeTime, CONTROL_LOOP_PERIOD_MS * portTICK_PERIOD_MS);
@@ -62,9 +63,10 @@ void ctrl_taskEntryPoint(void) {
 		const float vy = g_speedCommand.vy;
 		const float vt = g_speedCommand.vtheta;
 
-		bool speedCommandTimeout = hasSpeedCommandTimeout();
+		const bool lastSpeedCommandTimeout = speedCommandTimeout;
+		speedCommandTimeout = hasSpeedCommandTimeout();
 		if (speedCommandTimeout) {
-			if (c == 0)
+			if (c == 0 || speedCommandTimeout != lastSpeedCommandTimeout)
 				LOG_ERROR("Timeout on command\r\n");
 			ctrl_emergencyBreak();
 			continue;
@@ -91,6 +93,11 @@ void ctrl_taskEntryPoint(void) {
 					pid_update(&pWheel->pid);
 
 					output = pWheel->pid.output;
+
+					// Pid uses absolute speed and does not know about wheel direction
+					// If the speed command is negative we change the pid output to be negative
+					// and thus the motor will spin in the correct direction
+					output *= (reference >= 0.0 ? 1.0f : -1.0f);
 					if (CLOSE_LOOP_WITH_LOGGING) {
 						motorDataLog_addCloseLoopData(&pWheel->pid);
 					}
@@ -98,11 +105,6 @@ void ctrl_taskEntryPoint(void) {
 				default:
 					LOG_ERROR("Implemented control loop state.");
 			}
-
-			// Pid uses absolute speed and does not know about wheel direction
-			// If the speed command is negative we change the pid output to be negative
-			// and thus the motor will spin in the correct direction
-			output *= reference >= 0.0 ? 1.0f : -1.0f;
 			wheel_setPWM(pWheel, output);
 		}
 
@@ -161,5 +163,5 @@ void readQuadsSpeed(int32_t *wheelSpeed) {
 
 bool hasSpeedCommandTimeout(void) {
 	const TickType_t SPEED_COMMAND_TIMEOUT_TICK = 500;
-	return xTaskGetTickCount() - g_speedCommand.tickSinceLastUpdate > SPEED_COMMAND_TIMEOUT_TICK;
+	return xTaskGetTickCount() - g_speedCommand.tickSinceLastUpdate > SPEED_COMMAND_TIMEOUT_TICK * portTICK_PERIOD_MS;
 }

@@ -34,11 +34,11 @@ void nrfInit(const size_t packetSize) {
 }
 
 void nrfSend(uint8_t * dataOut) {
-	/*TM_NRF24L01_Transmit_Status_t transmissionStatus;
+	TM_NRF24L01_Transmit_Status_t transmissionStatus;
 	uint8_t myStatus;
 
 	TM_NRF24L01_Transmit(dataOut);
-	vTaskDelay(5); // Don't delete this, it's like embedded jesus for us desperate programmers!
+	vTaskDelay(10); // Don't delete this, it's like embedded jesus for us desperate programmers!
 
 	do {
 		// Get transmission status
@@ -46,11 +46,13 @@ void nrfSend(uint8_t * dataOut) {
 		myStatus = TM_NRF24L01_GetStatus();
 	} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Sending);
     //Get back into RX mode
-	TM_NRF24L01_PowerUpRx();*/
+	TM_NRF24L01_PowerUpRx();
 }
 
 void nrfReceive(uint8_t * dataIn) {
-	while (!TM_NRF24L01_DataReady());
+	while (!TM_NRF24L01_DataReady()) {
+		osDelay(1);// Prevent active wait
+	}
 	TM_NRF24L01_GetData(dataIn);
 }
 
