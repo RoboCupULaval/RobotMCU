@@ -9,6 +9,7 @@
 
 void kicker_init(void);
 void kicker_kick(void);
+void kicker_charge(void);
 void kicker_update(void);
 
 void kicker_chargeOn(void);

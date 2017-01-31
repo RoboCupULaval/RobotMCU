@@ -3,7 +3,8 @@
 typedef enum  {
 	KICKER_IDLE,
 	KICKER_CHARGING,
-	KICKER_KICKING
+	KICKER_KICKING,
+	KICKER_READY_TO_KICK
 } KickerState_t;
 
 #define KICKING_TIME_IN_TICK 50
@@ -17,15 +18,21 @@ void kicker_init(void) {
 	kicker_kickOff();
 }
 
-void kicker_kick(void) {
+void kicker_charge(void) {
 	if (s_kicker_state == KICKER_IDLE) {
 		s_kicker_state = KICKER_CHARGING;
 	}
+}
 
+void kicker_kick(void) {
+	if (s_kicker_state == KICKER_READY_TO_KICK) {
+		s_kicker_state = KICKER_KICKING;
+	}
 }
 
 void kicker_update(void) {
 	switch(s_kicker_state) {
+		case KICKER_READY_TO_KICK:
 		case KICKER_IDLE:
 			kicker_chargeOff();
 			kicker_kickOff();
@@ -34,7 +41,7 @@ void kicker_update(void) {
 			kicker_chargeOn();
 			kicker_kickOff();
 			if (kicker_isBankFull()) {
-				s_kicker_state = KICKER_KICKING;
+				s_kicker_state = KICKER_READY_TO_KICK;
 				s_tickWhenStartKicking = xTaskGetTickCount();
 			}
 			break;

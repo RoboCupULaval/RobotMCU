@@ -32,6 +32,10 @@ void command_setRegister(const void *msg) {
 
 	msg_set_register_t * registerMsg = (msg_set_register_t *) msg;
 	switch (registerMsg->registe) {
+		case CHARGE_KICKER_COMMAND:
+			LOG_INFO("Charging!!\r\n");
+			kicker_charge();
+			break;
 		case KICK_COMMAND:
 			LOG_INFO("Kicking!!\r\n");
 			kicker_kick();

@@ -27,7 +27,12 @@ def joystick_cli():
     	com.sendSpeed(x, y, theta)
 
     	if joy.buttons['a'].value:
+    		print("kick")
     		com.kick()
+    		sleep(0.1)
+    	if joy.buttons['y'].value:
+    		print("charge")
+    		com.charge()
     		sleep(0.1)
     	if joy.buttons['b'].value:
     		print("slow mod")

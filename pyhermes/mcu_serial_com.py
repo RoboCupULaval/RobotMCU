@@ -77,6 +77,9 @@ class McuCom(object):
     def kick(self):
         self.setRegister(REG_KICK_COMMAND, 0);
 
+    def charge(self):
+        self.setRegister(REG_CHARGE_KICKER_COMMAND, 0);
+        
     def setRegister(self, register, value):
         cmd = create2BytesCommand(CMD_SET_REGISTER, register, value)
         print("Cmd ask: ", cmd)
