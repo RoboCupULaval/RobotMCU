@@ -8,6 +8,7 @@
 #include "tm_stm32_nrf24l01.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "util.h"
 
 uint8_t MyAddress[] = {
 	0xE7,
@@ -22,12 +23,13 @@ uint8_t TxAddress[] = {
 	0xE7,
 	0xE7,
 	0xE7,
-	0xE7
+	0xEA
 };
 
 void nrfInit(const size_t packetSize) {
 	TM_NRF24L01_Init(2, packetSize);
 	TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_1M, TM_NRF24L01_OutputPower_M18dBm);
+	MyAddress[4] = robot_getID();
 	TM_NRF24L01_SetMyAddress(MyAddress);
 	TM_NRF24L01_SetTxAddress(TxAddress);
 	TM_NRF24L01_PowerUpRx();
