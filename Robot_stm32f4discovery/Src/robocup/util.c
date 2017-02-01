@@ -74,6 +74,10 @@ void LOG_ERROR_AND_BUFFER(const char * pMessage, void * pBuffer, size_t length) 
 	log_messageWithBufferDump("ERROR", pMessage, pBuffer, length);
 }
 
+void LOG_DEBUG_AND_BUFFER(const char * pMessage, void * pBuffer, size_t length) {
+	log_messageWithBufferDump("DEBUG", pMessage, pBuffer, length);
+}
+
 void LOG_INFO(const char * pMessage){
 	log_broadcast("INFO", pMessage);
 }

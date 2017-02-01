@@ -9,6 +9,7 @@
 
 #include "../motors/ctrl_task.h"
 #include "hermes_task.h"
+#include "../kicker.h"
 
 void nop(const void *msg){}
 
@@ -31,6 +32,14 @@ void command_setRegister(const void *msg) {
 
 	msg_set_register_t * registerMsg = (msg_set_register_t *) msg;
 	switch (registerMsg->registe) {
+		case CHARGE_KICKER_COMMAND:
+			LOG_INFO("Charging!!\r\n");
+			kicker_charge();
+			break;
+		case KICK_COMMAND:
+			LOG_INFO("Kicking!!\r\n");
+			kicker_kick();
+			break;
 		case CONTROL_LOOP_STATE:
 			switch (registerMsg->value) {
 				case 0 :
@@ -48,5 +57,6 @@ void command_setRegister(const void *msg) {
 			LOG_ERROR("Unknown register");
 	}
 
-	hermes_sendAcknowledgment();
+	// TODO: Uncomment when bidirectional implemented
+	//hermes_sendAcknowledgment();
 }
