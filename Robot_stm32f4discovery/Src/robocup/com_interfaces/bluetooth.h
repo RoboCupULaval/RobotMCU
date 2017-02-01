@@ -8,13 +8,15 @@
 #ifndef ROBOCUP_BLUETOOTH_BLUETOOTH_H_
 #define ROBOCUP_BLUETOOTH_BLUETOOTH_H_
 
+#include <stdbool.h>
 #include "usart.h"
+#include "stm32f4xx_hal_conf.h"
 
-#include "../hermes/com_interface.h"
+#include "com_interface.h"
 
-comHandle_t bluetooth_init();
-size_t      bluetooth_read(const void *pBuffer, size_t length);
+comHandle_t bluetooth_init(void);
+size_t      bluetooth_read(void *pBuffer, size_t length);
 size_t      bluetooth_write(const void *pBuffer, size_t length);
-size_t      bluetooth_readUntilZero(const void *pBuffer, size_t length);
+size_t      bluetooth_readUntilZero(void *pBuffer, size_t length);
 
 #endif /* ROBOCUP_BLUETOOTH_BLUETOOTH_H_ */

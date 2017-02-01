@@ -9,73 +9,20 @@ void hermes_init(comHandle_t com){
 }
 
 
-// This is the main task, it is intended to run indefinitely
-void hermesTask(void * pvParameters) {
-	char packetBuffer[COBS_MAX_PACKET_LEN];
-	unsigned char dataBuffer[COBS_MAX_PACKET_LEN + 2];
-	packetHeaderStruct_t *currentPacketHeaderPtr;
-	size_t payloadLen = 0;
-	Result_t res;
-	while (1) {
-		// Get data from device
-
-		size_t bytesReceived = g_hermesHandle.com.readUntilZero(packetBuffer, COBS_MAX_PACKET_LEN);
-
-		if(bytesReceived == 0){
-			Debug_Print("Timeout on receiving\r\n");
-			continue;
-		}
-		if(bytesReceived < sizeof(packetHeaderStruct_t)){
-			Debug_Print("Too small packet\r\n");
-			continue;
-	    }
-
-		// Extract destination address without decoding the packet and
-		// check if our robot is recipient
-		// TODO switch the litteral '4' to a more elegant solution
-		if(packetBuffer[4] != ADDR_ROBOT && packetBuffer[4] != ADDR_BROADCAST){
-			continue;
-		}
-
-		// The data is treated
-		res = decobifyData(packetBuffer, bytesReceived, dataBuffer, &payloadLen);
-		if (res == FAILURE){
-			Debug_Print("Fail decoding\r\n");
-			continue;
-		}
-
-		// we "extract" the packet header
-		// This is done here because we need the size for the checksum.
-		currentPacketHeaderPtr = (packetHeaderStruct_t *) dataBuffer;
-		res = validPayload(currentPacketHeaderPtr, payloadLen);
-
-		if (res == FAILURE) {
-			// Send a warning packet to control tower
-			Debug_Print("Invalid packet\r\n");
-			continue;
-		}
-		packet_t packet = g_packetsTable[(size_t) currentPacketHeaderPtr->packetType];
-
-		hermes_sendError("Success!!!\r\n");
-		// Call callback that handle the packet
-		packet.callback(dataBuffer);
-	}
-}
-
 Result_t validPayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen) {
 	uint8_t id = currentPacketHeaderPtr->packetType;
 	if(currentPacketHeaderPtr->protocolVersion != PROTOCOL_VERSION){
-		Debug_Print("Invalid protocol\r\n");
+		LOG_ERROR("Invalid protocol version\r\n");
 		return FAILURE;
 	}
 
 	if(id >= g_packetsTableLen || g_packetsTable[id].callback == nop){
-		Debug_Print("Invalid command\r\n");
+		LOG_ERROR("Invalid command\r\n");
 		return FAILURE;
 	}
 
 	if(g_packetsTable[id].len != payloadLen){
-		Debug_Print("Too small packet\r\n");
+		LOG_ERROR("Too small payload\r\n");
 		return FAILURE;
 	}
 
@@ -84,6 +31,7 @@ Result_t validPayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t paylo
 	return SUCCESS;
 }
 
+//
 void hermes_sendError(char * pStr){
 	hermes_sendRespond(RobotCrashedNotification, pStr, strlen(pStr));
 }
@@ -99,10 +47,13 @@ packetHeaderStruct_t hermes_createHeader(uint8_t packetType){
 	return header;
 }
 
+void hermes_sendAcknowledgment(void) {
+	hermes_sendPayloadLessRespond(Ack);
+}
+
 void hermes_sendPayloadLessRespond(uint8_t packetType){
 	packetHeaderStruct_t payload = hermes_createHeader(packetType);
 	char buff[sizeof(packetHeaderStruct_t) + 2];
-	//char buff2[256]
 
 	//convertBytesToStr(&payload, sizeof(packetHeaderStruct_t), buff2);
 	cobifyData(&payload, sizeof(packetHeaderStruct_t), buff);
@@ -111,7 +62,6 @@ void hermes_sendPayloadLessRespond(uint8_t packetType){
 
 void hermes_sendRespond(uint8_t packetType, char* pData, size_t dataLen){
 	size_t payloadLen =  sizeof(packetHeaderStruct_t) + dataLen;
-	size_t packetLen =  payloadLen + 2;
 
 	// Initialize temporary buffer
 	uint8_t payload[255];
@@ -170,7 +120,7 @@ Result_t cobifyData(const void *data, size_t msg_len, char *dstOut) {
  * dst_len : Number of byte in the payload, should alway be payload's len -1
  */
 Result_t decobifyData(const char *msg, size_t len, void *dstOut, size_t *dst_len) {
-	if(len >= COBS_MAX_PACKET_LEN)
+	if(len >= COBS_MAX_PAYLOAD_LEN)
 		return FAILURE;
 	unsigned char *ptr = (unsigned char*) msg;
 	unsigned char *dst = (unsigned char*) dstOut;

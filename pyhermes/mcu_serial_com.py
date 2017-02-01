@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from cobs import cobs
 from command import *
 import serial
 import io
@@ -10,6 +11,7 @@ def getFirstSerialPort():
     ttyList = glob.glob('/dev/ttyACM*')
     ttyList +=  glob.glob('/dev/rfcomm*')
     ttyList +=  glob.glob('/dev/ttyUSB*')
+    ttyList +=  glob.glob('/dev/tty.Robot*')
 
     if len(ttyList) == 0:
         print('No serial device found! Exiting...')
@@ -30,57 +32,55 @@ def getFirstSerialPort():
     return ttyList[inputNumber]
 
 class McuCom(object):
-    """Handle communication between the microcontroller and the computer"""
-    def __init__(self, port, baudrate, time_out=5):
+    """Handle communication between the robot and the computer"""
+    def __init__(self, port, baudrate=115200, time_out=0.2):
         self.port = port
         self.baudrate = baudrate
+        self.timeout = time_out
         self.ser = serial.Serial(port, baudrate, timeout=time_out)
         # Set escape caracter to \0
 
     def testHeartBeat(self):
-        cmd = createNoArgCommand(HEART_BEAT_REQUEST_ID)
+        cmd = createNoArgCommand(CMD_HEART_BEAT_REQUEST)
         print("Cmd ask: ", cmd)
         #self.sendCommandAndWaitAcknowledge(cmd)
         self.sendCommand(cmd)
         try:
             res = self.retreiveRespond()
+        except cobs.DecodeError:
+            print("No Robot detected (invalid response)")
+            return False
         except serial.SerialTimeoutException:
             print("No Robot detected")
-            return
+            return False
 
-        if res[3] == HEART_BEAT_RESPOND_ID:
+        if self.getId(res) == CMD_HEART_BEAT_RESPOND:
             print("Robot {} is alive".format(res[1]))
+            return True
+        else:
+            print("Invalid response {}".format(res))
+            return False
+
 
         #print 'Header', ":".join("{:02x}".format(ord(c)) for c in res)
         #return res[0] == CMD_ASK_ROBOT_NAME and  res[1] == ROBOT_NAME
 
 
     def sendSpeed(self, vx, vy, vz):
-        cmd = create3FloatCommand(MOVEMENT_COMMAND_ID, vx, vy, vz)
+        cmd = create3FloatCommand(CMD_MOVEMENT_COMMAND, vx, vy, vz)
         #print("Cmd ask: ", cmd)
         #self.sendCommandAndWaitAcknowledge(cmd)
         self.sendCommand(cmd)
         #res = self.retreiveRespond()
         #res = self.retreiveRespond()
 
-    """
-    def setPid(self, m, p, i, d):
-        cmd = createCommandSetPid(m, p, i, d)
+    def setRegister(self, register, value):
+        cmd = create2BytesCommand(CMD_SET_REGISTER, register, value)
         print("Cmd ask: ", cmd)
         self.sendCommandAndWaitAcknowledge(cmd)
-        self.retreiveRespond()
 
-    def listCommand(self):
-        cmd = createCommandListCommand()
-        print("Cmd ask: ", cmd)
-        self.sendCommandAndWaitAcknowledge(cmd)
-        res = self.retreiveRespond()
-        print "List of command on MCU:"
-        print res[1:]
-    """
     def sendCommand(self, cmd):
         self.ser.write(cmd)
-        self.ser.write(b'\0')
         self.ser.flush()
 
     def sendCommandAndWaitAcknowledge(self, cmd):
@@ -89,42 +89,39 @@ class McuCom(object):
         Also print error and debug message receive before awk
         :param cmd: packaged command
         """
-        self.ser.write(cmd)
-        self.ser.write(b'\0')
-        self.ser.flush()
         while True:
-            res = unpackagePayload(self.readUntilZero())
-            if res is []:
-                print("Empty packet ????")
-            elif self.isValidAcknowledge(res):
-                return res
-            elif self.isNack(res):
-                # Resend the package in the case of Nack
-                self.ser.write(cmd)
-                self.ser.write(b'\0')
-                self.ser.flush()
+            self.sendCommand(cmd)
+            try:
+                res = self.retreiveRespond()
+            except cobs.DecodeError:
+                print("No response, sending again (invalid response)")
+                continue
+            except serial.SerialTimeoutException:
+                print("No response, sending again")
+                continue
+
+            if self.isValidAcknowledge(res):
+                print("Awknownledge!")
+                break
             elif self.isError(res):
                 print("ERROR: ", res[1:])
-            elif self.isDebug(res):
-                print("DEBUG: ", res[1:])
+            else:
+                print("Unexpected id response")
 
+            #elif self.isDebug(res):
+            #    print("DEBUG: ", res[1:])
 
-    def isValidAcknowledge(self, pack):
-        return pack[0] == CMD_ACK
-    def isNack(self, pack):
-        return pack[0] == CMD_NACK
-    def isError(self, id):
-        return id == ROBOT_CRASHED_NOTIFICATION_ID
-    def isDebug(self, res):
-        return res[0] == CMD_DEBUG
-    def isMultiPartPacket(self, res):
-        return res[0] == CMD_MULTI_PART
+    def isError(self, res):
+        return self.getId(res) == CMD_ROBOT_CRASHED_NOTIFICATION
+    def isValidAcknowledge(self, res):
+        return self.getId(res) == CMD_ACK
     def getId(self, res):
         return res[3]
 
     def retreiveRespond(self):
         res = unpackagePayload(self.readUntilZero())
-        id = self.getId(res)
+        if len(res) < len(generateHeader(0)):
+            raise cobs.DecodeError()
         """
         last_res = res
 
@@ -136,7 +133,7 @@ class McuCom(object):
             res = last_res[0] + res[1:]
         """
 
-        if self.isError(id):
+        if self.isError(res):
             print("ERROR: ", res[1:])
         #elif self.isDebug(last_res):
         #    print("DEBUG: ", res[1:])
@@ -153,7 +150,7 @@ class McuCom(object):
             bytesToRead = self.ser.inWaiting()
             if bytesToRead > 0:
                 buf += self.ser.read(1)
-            elif time.time() - start_time > 1:
+            elif (time.time() - start_time) > self.timeout:
                 raise serial.SerialTimeoutException("Timeout on serial communication")
         return buf
 

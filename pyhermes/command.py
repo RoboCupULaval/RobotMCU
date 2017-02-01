@@ -2,37 +2,21 @@ from cobs import cobs
 import bitstring
 import struct
 
-
-CMD_MULTI_PART        = '\x00'
-CMD_ACK               = '\x01'
-CMD_ERROR             = '\x02'
-CMD_NACK              = '\x03'
-CMD_ASK_ROBOT_NAME    = '\x04'
-CMD_GET_STATUS        = '\x05'
-CMD_SET_SPEED         = '\x06'
-CMD_SET_MODE          = '\x07'
-CMD_GET_MANCHESTER    = '\x08'
-CMD_ACTIVATE_MAGNET   = '\x09'
-CMD_DEBUG             = '\x0A'
-CMD_LIST_COMMANDS     = '\x0B'
-CMD_SET_PID           = '\x0C'
-CMD_SET_MAGNET        = '\x0D'
-CMD_SET_BREAK_TRIGGER = '\x0E'
-CMD_SET_MOVE_SERVO    = '\x0F'
-CMD_SET_CHARGE        = '\x10'
-CMD_FETCH_LETTER      = '\x11'
-
 # Command type
-HEART_BEAT_REQUEST_ID         = 0x00
-HEART_BEAT_RESPOND_ID         = 0x01
-MOVEMENT_COMMAND_ID           = 0x02
-ROBOT_CRASHED_NOTIFICATION_ID = 0x26
+CMD_HEART_BEAT_REQUEST         = 0x00
+CMD_HEART_BEAT_RESPOND         = 0x01
+CMD_MOVEMENT_COMMAND           = 0x02
+CMD_SET_REGISTER               = 0x03
+CMD_ACK                        = 0x04
+CMD_ROBOT_CRASHED_NOTIFICATION = 0x26
 
+# Register type
+REG_CTRL_LOOP_STATE            = 0x00;
 
 PROTOCOL_VERSION  = 0x01
 
 #address
-ADDR_BASE_STATION = 0x00
+ADDR_BASE_STATION = 0xFE
 ADDR_BROADCAST    = 0xFF
 
 
@@ -48,12 +32,12 @@ def unpackagePayload(pack):
     if pack == "\0":
         return "\0"
     pack = pack[0:-1] # Remove zero byte
-    try:
-        return cobs.decode(pack)
-    except cobs.DecodeError:
-        pay = ''
-        pay += CMD_ERROR
-        return pay + "Invalid respond from mcu"
+    #try:
+    return cobs.decode(pack)
+    #except cobs.DecodeError:
+    #    pay = ''
+    #    pay += CMD_ERROR
+    #    return pay + "Invalid respond from mcu"
         #print("payload len %d data=" % len(pack) + ":".join("{:02x}".format(ord(c)) for c in pack))
 
 def generateHeader(packet_type, dest_addres=ADDR_BROADCAST):
@@ -76,11 +60,13 @@ def packagePayload(id, payload):
 def createNoArgCommand(id):
     return packagePayloadLess(id)
 
-def createCommandAskRobotName():
-    return packagePayloadLess(CMD_ASK_ROBOT_NAME)
-
 def createCommandGetStatus():
     return packagePayloadLess(CMD_GET_STATUS)
+
+def create2BytesCommand(id, b0, b1):
+    payload = bytes([b0, b1])
+    
+    return packagePayload(id, payload)
 
 def create3FloatCommand(id, vx, vy, vz):
     vel = [vx, vy, vz]

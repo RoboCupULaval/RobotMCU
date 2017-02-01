@@ -11,46 +11,46 @@
 void test_hermes() {
 	Result_t res;
 
-	Debug_Print("HERMES - Test encoding and decoding of normal string... ");
+	LOG_INFO("HERMES - Test encoding and decoding of normal string... ");
 	const char testStr[] = "hello world";
 	res = test_hermes_try_encode_decode(testStr, strlen(testStr));
 	if(res)
-		Debug_Print("[OK]\r\n");
+		LOG_INFO("[OK]\r\n");
 	else
-		Debug_Print("[FAIL]\r\n");
+		LOG_INFO("[FAIL]\r\n");
 
-	Debug_Print("HERMES - Test encoding and decoding of string with escape character... ");
+	LOG_INFO("HERMES - Test encoding and decoding of string with escape character... ");
 	const char testStrWithZeroChar[] = "hello\0world";
 	res = test_hermes_try_encode_decode(testStrWithZeroChar, strlen(testStr));
 	if(res)
-		Debug_Print("[OK]\r\n");
+		LOG_INFO("[OK]\r\n");
 	else
-		Debug_Print("[FAIL]\r\n");
+		LOG_INFO("[FAIL]\r\n");
 
-	Debug_Print("HERMES - Test encoding and decoding of empty string");
+	LOG_INFO("HERMES - Test encoding and decoding of empty string");
 	res = test_hermes_try_encode_decode('\0', (size_t)0);
 	if(res)
-		Debug_Print("[OK]\r\n");
+		LOG_INFO("[OK]\r\n");
 	else
-		Debug_Print("[FAIL]\r\n");
+		LOG_INFO("[FAIL]\r\n");
 
-	Debug_Print("HERMES - Test encoding and decoding of a packet of more than 255 characters");
-	char *buffer = (char *)malloc(300);
+	LOG_INFO("HERMES - Test encoding and decoding of a packet of more than 255 characters");
+	char buffer[300];
 	memset(buffer, 'a', 300);
 	buffer[299] = '\0';
 	res = test_hermes_try_encode_decode(buffer, strlen(buffer));
 	if(res == FAILURE)
-		Debug_Print("[OK]\r\n");
+		LOG_INFO("[OK]\r\n");
 	else
-		Debug_Print("[FAIL]\r\n");
+		LOG_INFO("[FAIL]\r\n");
 
-	Debug_Print("HERMES - Test decoding invalid packet (too long)");
+	LOG_INFO("HERMES - Test decoding invalid packet (too long)");
 	const char testStrInvalidPacket[] = "\fhello world too long before a zero char";
 	res = test_hermes_invalid_packet(testStrInvalidPacket, sizeof(testStrInvalidPacket));
 	if(res == FAILURE)
-		Debug_Print("[OK]\r\n");
+		LOG_INFO("[OK]\r\n");
 	else
-		Debug_Print("[FAIL]\r\n");
+		LOG_INFO("[FAIL]\r\n");
 
 }
 

@@ -27,6 +27,9 @@ enum packetTypes_t {
 	HeartbeatRequest = 0,
 	HeartbeatResponse,
 	MovementCommand,
+	SetRegister,
+	Ack,
+
 	EmergencyStopRequest,
 	UnitTestCommand,
 	UnitTestResultRequest,
@@ -84,6 +87,9 @@ static const packet_t g_packetsTable[] = {
 		{HeartbeatRequest,                   command_heartbeatRequest, sizeof(msg_no_arg_t)},
 		{HeartbeatResponse,                  nop, (size_t)0},
 		{MovementCommand,                    command_movementCommand,  sizeof(msg_set_speed_t)},
+		{SetRegister,                        command_setRegister,      sizeof(msg_set_register_t)},
+		{Ack,                                nop,                      (size_t)0},
+
 		{EmergencyStopRequest,               nop, (size_t)0},
 		{UnitTestCommand,                    nop, (size_t)0},
 		{UnitTestResultRequest,              nop, (size_t)0},

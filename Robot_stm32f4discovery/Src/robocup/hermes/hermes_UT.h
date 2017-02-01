@@ -9,7 +9,7 @@
 #define ROBOCUP_HERMES_HERMES_UT_H_
 
 #include "../robocup_define.h"
-#include "hermes.h"
+#include "hermes_task.h"
 
 
 

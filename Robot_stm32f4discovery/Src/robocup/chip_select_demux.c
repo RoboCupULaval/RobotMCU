@@ -59,6 +59,6 @@ void demux_ConnectTo(chip_select CS){
 }
 
 // this function use the unassigned pin when there is no communication
-void demux_Disconnect(){
+void demux_Disconnect(void){
 	demux_ConnectTo(HandleDemux.notConnect_pin);
 }

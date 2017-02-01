@@ -1,35 +1,45 @@
 /**
- ******************************************************************************
- * File Name          : freertos.c
- * Description        : Code for freertos applications
- ******************************************************************************
- *
- * COPYRIGHT(c) 2016 STMicroelectronics
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *   1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
- *   2. Redistributions in binary form must reproduce the above copyright notice,
- *      this list of conditions and the following disclaimer in the documentation
- *      and/or other materials provided with the distribution.
- *   3. Neither the name of STMicroelectronics nor the names of its contributors
- *      may be used to endorse or promote products derived from this software
- *      without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * File Name          : freertos.c
+  * Description        : Code for freertos applications
+  ******************************************************************************
+  *
+  * Copyright (c) 2017 STMicroelectronics International N.V. 
+  * All rights reserved.
+  *
+  * Redistribution and use in source and binary forms, with or without 
+  * modification, are permitted, provided that the following conditions are met:
+  *
+  * 1. Redistribution of source code must retain the above copyright notice, 
+  *    this list of conditions and the following disclaimer.
+  * 2. Redistributions in binary form must reproduce the above copyright notice,
+  *    this list of conditions and the following disclaimer in the documentation
+  *    and/or other materials provided with the distribution.
+  * 3. Neither the name of STMicroelectronics nor the names of other 
+  *    contributors to this software may be used to endorse or promote products 
+  *    derived from this software without specific written permission.
+  * 4. This software, including modifications and/or derivative works of this 
+  *    software, must execute solely and exclusively on microcontroller or
+  *    microprocessor devices manufactured by or for STMicroelectronics.
+  * 5. Redistribution and use of this software other than as permitted under 
+  *    this license is void and will automatically terminate your rights under 
+  *    this license. 
+  *
+  * THIS SOFTWARE IS PROVIDED BY STMICROELECTRONICS AND CONTRIBUTORS "AS IS" 
+  * AND ANY EXPRESS, IMPLIED OR STATUTORY WARRANTIES, INCLUDING, BUT NOT 
+  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+  * PARTICULAR PURPOSE AND NON-INFRINGEMENT OF THIRD PARTY INTELLECTUAL PROPERTY
+  * RIGHTS ARE DISCLAIMED TO THE FULLEST EXTENT PERMITTED BY LAW. IN NO EVENT 
+  * SHALL STMICROELECTRONICS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+  * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, 
+  * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
+  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
+  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  *
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "FreeRTOS.h"
@@ -38,24 +48,22 @@
 
 /* USER CODE BEGIN Includes */     
 #include "robocup/robocup_define.h"
-#include "robocup/hermes/hermes.h"
 /* USER CODE END Includes */
 
 /* Variables -----------------------------------------------------------------*/
 osThreadId defaultTaskHandle;
-osThreadId sendMessageTaskHandle;
-osThreadId speedTaskHandle;
-osThreadId controlLoopHandle;
+osThreadId wheelsTaskHandle;
+osThreadId hermesTaskHandle;
+osThreadId slowTaskHandle;
 
 /* USER CODE BEGIN Variables */
-extern quad_Handle quadA;
 /* USER CODE END Variables */
 
 /* Function prototypes -------------------------------------------------------*/
 void StartDefaultTask(void const * argument);
-void sendMessageTaskFunction(void const * argument);
-void speedTaskFunction(void const * argument);
-void controlLoopTaskFunction(void const * argument);
+void wheelsTaskLoopFunction(void const * argument);
+void hermesTaskLoopFunction(void const * argument);
+void slowTaskFunction(void const * argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -69,123 +77,103 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 /* Init FreeRTOS */
 
 void MX_FREERTOS_Init(void) {
-	/* USER CODE BEGIN Init */
+  /* USER CODE BEGIN Init */
 
-	/* USER CODE END Init */
+  /* USER CODE END Init */
 
-	/* USER CODE BEGIN RTOS_MUTEX */
+  /* USER CODE BEGIN RTOS_MUTEX */
 	/* add mutexes, ... */
-	/* USER CODE END RTOS_MUTEX */
+  /* USER CODE END RTOS_MUTEX */
 
-	/* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
 	/* add semaphores, ... */
-	/* USER CODE END RTOS_SEMAPHORES */
+  /* USER CODE END RTOS_SEMAPHORES */
 
-	/* USER CODE BEGIN RTOS_TIMERS */
+  /* USER CODE BEGIN RTOS_TIMERS */
 	/* start timers, add new ones, ... */
-	/* USER CODE END RTOS_TIMERS */
+  /* USER CODE END RTOS_TIMERS */
 
-	/* Create the thread(s) */
-	/* definition and creation of defaultTask */
-	osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
-	defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+  /* Create the thread(s) */
+  /* definition and creation of defaultTask */
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityRealtime, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
-	/* definition and creation of sendMessageTask */
-	osThreadDef(sendMessageTask, sendMessageTaskFunction, osPriorityNormal, 0, 128);
-	sendMessageTaskHandle = osThreadCreate(osThread(sendMessageTask), NULL);
+  /* definition and creation of wheelsTask */
+  osThreadDef(wheelsTask, wheelsTaskLoopFunction, osPriorityRealtime, 0, 1048);
+  wheelsTaskHandle = osThreadCreate(osThread(wheelsTask), NULL);
 
-	/* definition and creation of speedTask */
-	osThreadDef(speedTask, speedTaskFunction, osPriorityIdle, 0, 1024);
-	speedTaskHandle = osThreadCreate(osThread(speedTask), NULL);
+  /* definition and creation of hermesTask */
+  osThreadDef(hermesTask, hermesTaskLoopFunction, osPriorityNormal, 0, 1048);
+  hermesTaskHandle = osThreadCreate(osThread(hermesTask), NULL);
 
-	/* definition and creation of controlLoop */
-	osThreadDef(controlLoop, controlLoopTaskFunction, osPriorityNormal, 0, 128);
-	controlLoopHandle = osThreadCreate(osThread(controlLoop), NULL);
+  /* definition and creation of slowTask */
+  osThreadDef(slowTask, slowTaskFunction, osPriorityBelowNormal, 0, 128);
+  slowTaskHandle = osThreadCreate(osThread(slowTask), NULL);
 
-	/* USER CODE BEGIN RTOS_THREADS */
+  /* USER CODE BEGIN RTOS_THREADS */
 	/* add threads, ... */
-	/* USER CODE END RTOS_THREADS */
+  /* USER CODE END RTOS_THREADS */
 
-	/* USER CODE BEGIN RTOS_QUEUES */
+  /* USER CODE BEGIN RTOS_QUEUES */
 	/* add queues, ... */
-	/* USER CODE END RTOS_QUEUES */
+  /* USER CODE END RTOS_QUEUES */
 }
 
 /* StartDefaultTask function */
 void StartDefaultTask(void const * argument)
 {
-	/* init code for USB_DEVICE */
-	MX_USB_DEVICE_Init();
+  /* init code for USB_DEVICE */
+  MX_USB_DEVICE_Init();
 
-	/* USER CODE BEGIN StartDefaultTask */
+  /* USER CODE BEGIN StartDefaultTask */
+  	vTaskSuspend(NULL); // Suspend the task forever
 	/* Infinite loop */
 	for(;;)
 	{
-		osDelay(1);
+		osDelay(10000);
 	}
-	/* USER CODE END StartDefaultTask */
+  /* USER CODE END StartDefaultTask */
 }
 
-/* sendMessageTaskFunction function */
-void sendMessageTaskFunction(void const * argument)
+/* wheelsTaskLoopFunction function */
+void wheelsTaskLoopFunction(void const * argument)
 {
-	/* USER CODE BEGIN sendMessageTaskFunction */
-
-	/* Infinite loop */
-	for(;;)
-	{
-		//	osDelay(1900);
-		//	HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_SET);
-		//	HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Hello World!",12);
-		//	CDC_Transmit_FS(Buf, 18);
-		//	//HAL_SPI_Transmit_IT(&hspi2,(uint8_t *)"Hello World!",12);
-		//	osDelay(100);
-		//	HAL_UART_Transmit_IT(&huart2,(uint8_t *)"\n\r",2);
-		//	HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_RESET);
-		osDelay(500);
-		//	  bool succes = quad_Test(&quadA);
-		//	  if (succes==true){
-		//	  	   HAL_UART_Transmit_IT(&huart2,(uint8_t *)"Success\r\n",9);
-		//	  }else{
-		//	  	   HAL_UART_Transmit_IT(&huart2,(uint8_t *)"No\r\n",4);
-		//	  }
-		////////  quad_ReadCounters(&quadA);
-		//	  sprintf(bufferGlobalDebug,"COUNT %x, %x, %i, %i \n\r", quadA.count0, quadA.count1, quadA.count0, quadA.count1);
-		//	  HAL_UART_Transmit_IT(&huart2,(uint8_t*)bufferGlobalDebug, strlen(bufferGlobalDebug));
-		//
-	}
-	/* USER CODE END sendMessageTaskFunction */
+  /* USER CODE BEGIN wheelsTaskLoopFunction */
+  /* Infinite loop */
+  for(;;)
+  {
+	  ctrl_taskEntryPoint();
+      osDelay(1);
+  }
+  /* USER CODE END wheelsTaskLoopFunction */
 }
 
-/* speedTaskFunction function */
-void speedTaskFunction(void const * argument)
+/* hermesTaskLoopFunction function */
+void hermesTaskLoopFunction(void const * argument)
 {
-
-	//HAL_UART_Transmit_IT(&huart2,(uint8_t *)"ab", 2);
-	/* USER CODE BEGIN speedTaskFunction */
-	/* Infinite loop */
-	for(;;)
-	{
-
-		//HAL_UART_Transmit_IT(&huart2,(uint8_t *)"cd", 2);
-		//test_hermes();
-		hermesTask(NULL);
-		osDelay(1000);
+  /* USER CODE BEGIN hermesTaskLoopFunction */
+	for (;;) {
+		//hermes_taskEntryPoint();
+	    osDelay(100);
 	}
-	/* USER CODE END speedTaskFunction */
+  /* USER CODE END hermesTaskLoopFunction */
 }
 
-/* controlLoopTaskFunction function */
-void controlLoopTaskFunction(void const * argument)
+/* slowTaskFunction function */
+void slowTaskFunction(void const * argument)
 {
-	/* USER CODE BEGIN controlLoopTaskFunction */
-	/* Infinite loop */
-	for(;;)
-	{
-		//	  HAL_SPI_Transmit_IT(&hspi2, a, 1);
-		osDelay(100);
-	}
-	/* USER CODE END controlLoopTaskFunction */
+  /* USER CODE BEGIN slowTaskFunction */
+  /* Infinite loop */
+  for(;;)
+  {
+#ifdef GAMMA2
+	  slow_taskEntryPoint();
+#elif defined (GAMMA)
+	  pmu_forceEnablePower(); // On the GAMMA, the battery voltage can not be read, thus the motor are always activated
+#endif
+	  osDelay(1000);
+  }
+  /* USER CODE END slowTaskFunction */
 }
 
 /* USER CODE BEGIN Application */
