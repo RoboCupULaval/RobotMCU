@@ -8,7 +8,7 @@
 #include "tm_stm32_nrf24l01.h"
 #include "FreeRTOS.h"
 #include "task.h"
-#include "util.h"
+#include "../util.h"
 
 uint8_t MyAddress[] = {
 	0xE7,
