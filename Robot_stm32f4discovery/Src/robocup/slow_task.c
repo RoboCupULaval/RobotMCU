@@ -10,8 +10,9 @@ void slow_taskEntryPoint(void) {
 
 	dribbler_setPWM(0.1f);
 
-	if (robot_isDebug())
+	if (robot_isDebug()) {
 		led_swipingLedTest();
+	}
 
 	uint8_t dribblerState = 0;
 	uint8_t id = robot_getID();

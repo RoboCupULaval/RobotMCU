@@ -44,7 +44,7 @@ def unpackagePayload(pack):
     #    return pay + "Invalid respond from mcu"
         #print("payload len %d data=" % len(pack) + ":".join("{:02x}".format(ord(c)) for c in pack))
 
-def generateHeader(packet_type, dest_addres=ADDR_ROBOT3):
+def generateHeader(packet_type, dest_addres=ADDR_ROBOT1):
     header = bytes([PROTOCOL_VERSION,
                     ADDR_BASE_STATION,
                     dest_addres,

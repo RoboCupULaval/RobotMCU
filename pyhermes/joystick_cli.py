@@ -11,7 +11,11 @@ def joystick_cli():
     port = getFirstSerialPort()
     com = McuCom(port)
 
-    joy = Joystick()
+    try:
+        joy = Joystick()
+    except FileNotFoundError:
+        print("Please plug a joystick *facepalm*")
+        return
 
     while True:
     	x, y = joy.buttons['stick1'].coords

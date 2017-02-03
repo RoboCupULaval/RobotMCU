@@ -15,6 +15,15 @@
 // Packet = Offset(1 byte) + Payload + \0(1 byte)
 #define COBS_MAX_PACKET_LEN 257
 
+typedef struct __attribute__((__packed__)) {
+	uint8_t protocolVersion;
+	uint8_t srcAddress;
+	uint8_t destAddress;
+	uint8_t packetType;
+	uint8_t checksum;
+} packetHeaderStruct_t;
+
+
 int cobifyData(const void *ptr, size_t msg_len,   char *dst);
 int decobifyData(const char *ptr, size_t len, void *dst, size_t *dst_len);
 

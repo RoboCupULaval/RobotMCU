@@ -37,6 +37,7 @@ class Joystick:
     buttons = {}
 
     def __init__(self):
+        self.jstick_file = None
         self.jstick_file = open("/dev/input/js0", "rb")
         self.thread = threading.Thread(target=self.updateCoords)
         self.thread.start()
@@ -62,4 +63,5 @@ class Joystick:
             time.sleep(0)
 
     def __del__(self):
-        file.close()
+        if self.jstick_file:
+            self.jstick_file.close()
