@@ -130,7 +130,7 @@ void communicationTask(void const * argument)
 	  if (xTaskGetTickCount() - lastWakeTime > 1000) {
 		  USBD_CDC_ReceivePacket(&hUsbDeviceFS);
 		  lastWakeTime = xTaskGetTickCount();
-		  SerialWrite("hello", strlen("hello"));
+		  //SerialWrite("hello", strlen("hello"));
 	  }
 
 //	    while (1) {
@@ -159,27 +159,17 @@ void communicationTask(void const * argument)
 
 		  // Send to Destination through NRF if necessary
 
+		  nrfSetRobotTX(decobifiedPacketBytes[2]);
 		  nrfSend(packetBytesToSend);
 	  }
-	  /*
+
 	  if (nrfReceiveReady()) {
 		  //Read a packet from nrf
 		  nrfReceive(packetBytesToSend);
 
-		  /
-		  // Uncobs the packet
-		  receivedLen = strlen(packetBytesReceived);
-		  decobifyData(packetBytesReceived, 260, decobifiedPacketBytes, &REMOVETHISVARIABLEITSUSELESS);
-
-		  // Extract useful info
-cobifyData
-		  // Recob it if necessary
-		  cobifyData(decobifiedPacketBytes, receivedLen-1, packetBytesToSend);
-
-
 		  // Send to Destination through USB if necessary
 		  SerialWrite(packetBytesToSend, strlen(packetBytesToSend));
-	  }*/
+	  }
 
   }
   /* USER CODE END communicationTask */

@@ -20,6 +20,8 @@ PROTOCOL_VERSION  = 0x01
 #address
 ADDR_BASE_STATION = 0xFE
 ADDR_BROADCAST    = 0xFF
+ADDR_ROBOT1    = 0x01
+ADDR_ROBOT3    = 0x03
 
 
 def intToByteString(i):
@@ -42,7 +44,7 @@ def unpackagePayload(pack):
     #    return pay + "Invalid respond from mcu"
         #print("payload len %d data=" % len(pack) + ":".join("{:02x}".format(ord(c)) for c in pack))
 
-def generateHeader(packet_type, dest_addres=ADDR_BROADCAST):
+def generateHeader(packet_type, dest_addres=ADDR_ROBOT3):
     header = bytes([PROTOCOL_VERSION,
                     ADDR_BASE_STATION,
                     dest_addres,

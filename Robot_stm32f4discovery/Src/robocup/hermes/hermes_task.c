@@ -28,7 +28,7 @@ void hermes_taskEntryPoint(void) {
 
 		// Check if our robot is recipient, before decoding
 		encodedPacketHeaderStruct_t* encodedHeader = (encodedPacketHeaderStruct_t *) packetBuffer;
-		if (encodedHeader->header.destAddress != ADDR_ROBOT && encodedHeader->header.destAddress != ADDR_BROADCAST) {
+		if (encodedHeader->header.destAddress != robot_getID() && encodedHeader->header.destAddress != ADDR_BROADCAST) {
 			LOG_ERROR_AND_BUFFER("Wrong dest", packetBuffer, bytesReceived);
 			//LOG_INFO("Wrong dest\r\n");
 			continue;

@@ -8,13 +8,14 @@
 #include "tm_stm32_nrf24l01.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "stdbool.h"
 
 uint8_t MyAddress[] = {
 	0xE7,
 	0xE7,
 	0xE7,
 	0xE7,
-	0xE7
+	0xEA
 };
 
 uint8_t TxAddress[] = {
@@ -31,6 +32,12 @@ void nrfInit() {
 	TM_NRF24L01_SetMyAddress(MyAddress);
 	TM_NRF24L01_SetTxAddress(TxAddress);
 	TM_NRF24L01_PowerUpRx();
+}
+
+void nrfSetRobotTX(uint8_t robotNumber) {
+	TxAddress[4] = robotNumber;
+    TM_NRF24L01_SetTxAddress(TxAddress);
+
 }
 
 void nrfSend(uint8_t * dataOut) {
@@ -52,6 +59,10 @@ void nrfSend(uint8_t * dataOut) {
 void nrfReceive(uint8_t * dataIn) {
 	while (!TM_NRF24L01_DataReady());
 	TM_NRF24L01_GetData(dataIn);
+}
+
+bool nrfReceiveReady(void) {
+	return TM_NRF24L01_DataReady();
 }
 
 uint8_t nrfRetransmitCount() {
