@@ -23,7 +23,7 @@ void motorDataLog_addCloseLoopData(PidWheel_t* pPid) {
 void motorDataLog_flushDataLine(void){
 	// Add line return at the end of buffer
 	snprintf(s_dataLineBuffer + s_dataLineBufferLen, 255 - s_dataLineBufferLen, "\r\n");
-	LOG_INFO(s_dataLineBuffer);
+	LOG_DATA(s_dataLineBuffer);
 	// Reset position in buffer
 	s_dataLineBufferLen = 0;
 }

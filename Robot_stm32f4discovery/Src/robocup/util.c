@@ -87,6 +87,9 @@ void LOG_ERROR(const char * pMessage){
 void LOG_DEBUG(const char * pMessage){
 	log_broadcast("DEBUG", pMessage);
 }
+void LOG_DATA(const char * pMessage){
+	log_broadcast("DATA", pMessage);
+}
 
 //Return 1 when in debug mode (switch), else no
 uint8_t robot_isDebug(void) {
