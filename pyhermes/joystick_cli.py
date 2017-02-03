@@ -38,6 +38,14 @@ def joystick_cli():
     		print("charge")
     		com.charge()
     		sleep(0.1)
+    	if joy.buttons['l'].value:
+    		print("Dribbleur n")
+    		com.turnOnDribbler()
+    		sleep(0.1)
+    	if joy.buttons['r'].value:
+    		print("Dribbleur off")
+    		com.turnOffDribbler()
+    		sleep(0.1)
     	if joy.buttons['b'].value:
     		print("slow mod")
     		MAX_SPEED = 400.0

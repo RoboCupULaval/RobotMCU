@@ -85,6 +85,13 @@ class McuCom(object):
         #res = self.retreiveRespond()
         #res = self.retreiveRespond()
 
+    def turnOnDribbler(self):
+        self.setRegister(REG_SET_DRIBBLER_SPEED_COMMAND, 1);
+
+    def turnOffDribbler(self):
+        self.setRegister(REG_SET_DRIBBLER_SPEED_COMMAND, 0);
+
+    
     def kick(self):
         self.setRegister(REG_KICK_COMMAND, 0);
 

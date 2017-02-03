@@ -53,6 +53,24 @@ void command_setRegister(const void *msg) {
 					break;
 			}
 			break;
+		case SET_DRIBBLER_SPEED_COMMAND:
+			LOG_INFO("New dribbleur speed\r\n");
+			float newSpeed = 0.0;
+			switch (registerMsg->value) {
+				case 1:
+					newSpeed = 0.1f;
+					break;
+				case 2:
+					newSpeed = 0.2f;
+					break;
+				case 3:
+					newSpeed = 0.3f;
+					break;
+				default:
+					newSpeed = 0.0f;
+			}
+			dribbler_setPWM(newSpeed);
+			break;
 		default:
 			LOG_ERROR("Unknown register");
 	}

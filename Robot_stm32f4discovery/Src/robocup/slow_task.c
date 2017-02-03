@@ -8,7 +8,7 @@ void slow_taskEntryPoint(void) {
 	led_init();
 	kicker_init();
 
-	dribbler_setPWM(0.1f);
+	dribbler_setPWM(0.0f);
 
 	if (robot_isDebug()) {
 		led_swipingLedTest();
