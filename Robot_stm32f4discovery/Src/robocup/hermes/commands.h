@@ -52,8 +52,9 @@ typedef struct __attribute__((__packed__)) {
 
 enum registerTypes_t {
 	CONTROL_LOOP_STATE = 0,
-	KICK_COMMAND,
-	CHARGE_KICKER_COMMAND
+	KICK_COMMAND = 1,
+	CHARGE_KICKER_COMMAND = 2,
+	SET_DRIBBLER_SPEED_COMMAND = 3
 };
 
 void nop(const void *msg);

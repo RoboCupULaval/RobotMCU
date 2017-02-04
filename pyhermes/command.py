@@ -14,6 +14,7 @@ CMD_ROBOT_CRASHED_NOTIFICATION = 0x26
 REG_CTRL_LOOP_STATE            = 0x00;
 REG_KICK_COMMAND               = 0x01;
 REG_CHARGE_KICKER_COMMAND      = 0x02;
+REG_SET_DRIBBLER_SPEED_COMMAND = 0x03;
 
 PROTOCOL_VERSION  = 0x01
 
@@ -44,7 +45,7 @@ def unpackagePayload(pack):
     #    return pay + "Invalid respond from mcu"
         #print("payload len %d data=" % len(pack) + ":".join("{:02x}".format(ord(c)) for c in pack))
 
-def generateHeader(packet_type, dest_addres=ADDR_ROBOT3):
+def generateHeader(packet_type, dest_addres=ADDR_ROBOT1):
     header = bytes([PROTOCOL_VERSION,
                     ADDR_BASE_STATION,
                     dest_addres,

@@ -6,9 +6,12 @@ import io
 import time
 import glob
 
+from time import sleep
+
 def getFirstSerialPort():
     #ttyListA = glob.glob('/dev/cu.usb*')
     ttyList = glob.glob('/dev/ttyACM*')
+    ttyList +=  glob.glob('/dev/ttyBaseStation')
     ttyList +=  glob.glob('/dev/rfcomm*')
     ttyList +=  glob.glob('/dev/ttyUSB*')
     ttyList +=  glob.glob('/dev/tty.Robot*')
@@ -37,7 +40,15 @@ class McuCom(object):
         self.port = port
         self.baudrate = baudrate
         self.timeout = time_out
-        self.ser = serial.Serial(port, baudrate, timeout=time_out)
+        
+        while True:
+            try:
+                self.ser = serial.Serial(port, baudrate, timeout=time_out)
+            except serial.serialutil.SerialException:
+                print("Fail to open port")
+                sleep(1)
+                continue
+            break
         # Set escape caracter to \0
 
     def testHeartBeat(self):
@@ -74,6 +85,13 @@ class McuCom(object):
         #res = self.retreiveRespond()
         #res = self.retreiveRespond()
 
+    def turnOnDribbler(self):
+        self.setRegister(REG_SET_DRIBBLER_SPEED_COMMAND, 1);
+
+    def turnOffDribbler(self):
+        self.setRegister(REG_SET_DRIBBLER_SPEED_COMMAND, 0);
+
+    
     def kick(self):
         self.setRegister(REG_KICK_COMMAND, 0);
 

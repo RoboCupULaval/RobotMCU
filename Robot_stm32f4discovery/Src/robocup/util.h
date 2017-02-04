@@ -18,6 +18,7 @@ void log_setBatteryVoltage(const double batteryVoltage);
 void LOG_INFO(const char * pMessage);
 void LOG_ERROR(const char * pMessage);
 void LOG_DEBUG(const char * pMessage);
+void LOG_DATA(const char * pMessage);
 void LOG_INFO_AND_BUFFER(const char * pMessage, void * pBuffer, size_t length);
 void LOG_ERROR_AND_BUFFER(const char * pMessage, void * pBuffer, size_t length);
 void LOG_DEBUG_AND_BUFFER(const char * pMessage, void * pBuffer, size_t length);

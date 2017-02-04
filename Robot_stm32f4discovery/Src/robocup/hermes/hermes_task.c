@@ -51,7 +51,7 @@ void hermes_taskEntryPoint(void) {
 		// Find the corresponding packet in the packet table
 		packet_t packet = g_packetsTable[(size_t) (currentPacketHeaderPtr->packetType)];
 
-		LOG_ERROR("Success!!!\r\n");
+		LOG_INFO("Success!!!\r\n");
 		// Call callback that handle the packet
 		packet.callback(dataBuffer);
 

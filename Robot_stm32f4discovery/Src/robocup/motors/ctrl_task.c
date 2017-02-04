@@ -48,13 +48,13 @@ void ctrl_taskEntryPoint(void) {
   	bool speedCommandTimeout = true;
 	for(;;) {
 		// Delay the loop to a fix frequency
-		vTaskDelayUntil(&lastWakeTime, CONTROL_LOOP_PERIOD_MS * portTICK_PERIOD_MS);
+		vTaskDelayUntil(&lastWakeTime, CONTROL_LOOP_PERIOD_MS / portTICK_PERIOD_MS);
 
 		static int c = 0;
 		if(++c >= 100){
 			c = 0;
-			if(g_ctrlLoopState == CLOSE_LOOP_WITHOUT_LOGGING)
-				LOG_INFO("ctrl\r\n");
+			//if(g_ctrlLoopState == CLOSE_LOOP_WITHOUT_LOGGING)
+				//LOG_INFO("ctrl\r\n");
 		}
 
 		readQuadsSpeed(&wheelSpeed);
@@ -103,7 +103,7 @@ void ctrl_taskEntryPoint(void) {
 					}
 					break;
 				default:
-					LOG_ERROR("Implemented control loop state.");
+					LOG_ERROR("Unimplemented control loop state.\r\n");
 			}
 			wheel_setPWM(pWheel, output);
 		}
@@ -163,5 +163,5 @@ void readQuadsSpeed(int32_t *wheelSpeed) {
 
 bool hasSpeedCommandTimeout(void) {
 	const TickType_t SPEED_COMMAND_TIMEOUT_TICK = 500;
-	return xTaskGetTickCount() - g_speedCommand.tickSinceLastUpdate > SPEED_COMMAND_TIMEOUT_TICK * portTICK_PERIOD_MS;
+	return xTaskGetTickCount() - g_speedCommand.tickSinceLastUpdate > SPEED_COMMAND_TIMEOUT_TICK / portTICK_PERIOD_MS;
 }
