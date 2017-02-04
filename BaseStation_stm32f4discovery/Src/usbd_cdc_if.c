@@ -282,6 +282,7 @@ static int8_t CDC_Receive_FS (uint8_t* Buf, uint32_t *Len)
 	// reject the packet and warn the computer that we lost a packet.
     if (((myCircularBuffer.readIndex + 1) % CBPACKETNUMBER) == myCircularBuffer.writeIndex) {
     	// Send warning packet TODO
+    	USBD_CDC_ReceivePacket(&hUsbDeviceFS);
     	return USBD_FAIL;
     }
     else {
