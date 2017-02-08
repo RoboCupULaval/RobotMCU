@@ -36,10 +36,11 @@ def getFirstSerialPort():
 
 class McuCom(object):
     """Handle communication between the robot and the computer"""
-    def __init__(self, port, baudrate=115200, time_out=0.2):
+    def __init__(self, port, robot_id, baudrate=115200, time_out=0.2):
         self.port = port
         self.baudrate = baudrate
         self.timeout = time_out
+        self.robot_id = robot_id
         
         while True:
             try:
@@ -52,7 +53,7 @@ class McuCom(object):
         # Set escape caracter to \0
 
     def testHeartBeat(self):
-        cmd = createNoArgCommand(CMD_HEART_BEAT_REQUEST)
+        cmd = createNoArgCommand(self.robot_id, CMD_HEART_BEAT_REQUEST)
         print("Cmd ask: ", cmd)
         #self.sendCommandAndWaitAcknowledge(cmd)
         self.sendCommand(cmd)
@@ -78,7 +79,7 @@ class McuCom(object):
 
 
     def sendSpeed(self, vx, vy, vz):
-        cmd = create3FloatCommand(CMD_MOVEMENT_COMMAND, vx, vy, vz)
+        cmd = create3FloatCommand(self.robot_id, CMD_MOVEMENT_COMMAND, vx, vy, vz)
         #print("Cmd ask: ", cmd)
         #self.sendCommandAndWaitAcknowledge(cmd)
         self.sendCommand(cmd)
@@ -86,7 +87,7 @@ class McuCom(object):
         #res = self.retreiveRespond()
 
     def turnOnDribbler(self):
-        self.setRegister(REG_SET_DRIBBLER_SPEED_COMMAND, 1);
+        self.setRegister(REG_SET_DRIBBLER_SPEED_COMMAND, 3);
 
     def turnOffDribbler(self):
         self.setRegister(REG_SET_DRIBBLER_SPEED_COMMAND, 0);
@@ -99,7 +100,7 @@ class McuCom(object):
         self.setRegister(REG_CHARGE_KICKER_COMMAND, 0);
         
     def setRegister(self, register, value):
-        cmd = create2BytesCommand(CMD_SET_REGISTER, register, value)
+        cmd = create2BytesCommand(self.robot_id, CMD_SET_REGISTER, register, value)
         print("Cmd ask: ", cmd)
         #self.sendCommandAndWaitAcknowledge(cmd)
         self.sendCommand(cmd)
@@ -145,7 +146,7 @@ class McuCom(object):
 
     def retreiveRespond(self):
         res = unpackagePayload(self.readUntilZero())
-        if len(res) < len(generateHeader(0)):
+        if len(res) < len(generateHeader(self.robot_id, 0)):
             raise cobs.DecodeError()
         """
         last_res = res

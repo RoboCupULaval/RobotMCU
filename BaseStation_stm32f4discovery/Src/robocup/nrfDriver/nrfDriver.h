@@ -8,7 +8,7 @@
 #ifndef NRFDRIVER_NRFDRIVER_H_
 #define NRFDRIVER_NRFDRIVER_H_
 
-#include "stm32f4xx.h"
+#include <stm32f4xx.h>
 #include <stdbool.h>
 
 void nrfInit();

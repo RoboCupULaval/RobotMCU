@@ -4,25 +4,25 @@ import time
 
 current_milli_time = lambda: int(round(time.time() * 1000))
 
-def open_loop_test():
+def open_loop_test(robot_id):
     commands = [
     (2000, 0.15),
     (3000, 0.2)
     ]
-    do_test(1, 0, commands)
+    do_test(1, 0, commands, robot_id)
 
-def close_loop_test():
+def close_loop_test(robot_id):
     commands = [
     (1700, 200),
     (500,  0)
     ]
-    do_test(1, 2, commands)
+    do_test(1, 2, commands, robot_id)
 
 
-def do_test(ctrl_loop_state_initially, ctrl_loop_state_for_test, commands) :
+def do_test(ctrl_loop_state_initially, ctrl_loop_state_for_test, commands, robot_id) :
     port = getFirstSerialPort()
     #port = '/dev/ttyACM0'
-    com = McuCom(port)
+    com = McuCom(port, robot_id=robot_id)
 
     # wait to contact robot
     #while not com.testHeartBeat():

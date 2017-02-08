@@ -6,10 +6,10 @@ from math import *
 
 JOYSTICK_DEAD_ZONE = 0.1
 
-def joystick_cli():
-    MAX_SPEED = 1200.0
+def joystick_cli(robot_id):
+    MAX_SPEED = 1600.0
     port = getFirstSerialPort()
-    com = McuCom(port)
+    com = McuCom(port, robot_id=robot_id)
 
     try:
         joy = Joystick()
@@ -18,13 +18,13 @@ def joystick_cli():
         return
 
     while True:
-    	x, y = joy.buttons['stick1'].coords
+    	y, x = joy.buttons['stick1'].coords
     	_, t = joy.buttons['stick2'].coords
 
     	mag = sqrt(x*x+y*y)
     	angle = atan2(y, x)
     	mag = mag if abs(mag) > JOYSTICK_DEAD_ZONE else 0
-    	x =  MAX_SPEED * mag * cos(angle)
+    	x =  -MAX_SPEED * mag * cos(angle)
     	y =  -MAX_SPEED * mag * sin(angle)
     	theta =  -MAX_SPEED * t / 3.0
 
@@ -51,9 +51,9 @@ def joystick_cli():
     		MAX_SPEED = 400.0
     	if joy.buttons['x'].value:
     		print("fast mod")
-    		MAX_SPEED = 1200.0
+    		MAX_SPEED = 1600.0
     	
 
 
     	print("x:{: 3.3f} y:{: 3.3f} t:{: 3.3f}".format(x, y, t))
-    	sleep(0.05)
+    	sleep(0.03)
