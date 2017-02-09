@@ -36,11 +36,10 @@ def getFirstSerialPort():
 
 class McuCom(object):
     """Handle communication between the robot and the computer"""
-    def __init__(self, port, robot_id, baudrate=115200, time_out=0.2):
+    def __init__(self, port, baudrate=115200, time_out=0.2):
         self.port = port
         self.baudrate = baudrate
         self.timeout = time_out
-        self.robot_id = robot_id
         
         while True:
             try:
@@ -52,8 +51,8 @@ class McuCom(object):
             break
         # Set escape caracter to \0
 
-    def testHeartBeat(self):
-        cmd = createNoArgCommand(self.robot_id, CMD_HEART_BEAT_REQUEST)
+    def testHeartBeat(self, robot_id):
+        cmd = createNoArgCommand(robot_id, CMD_HEART_BEAT_REQUEST)
         print("Cmd ask: ", cmd)
         #self.sendCommandAndWaitAcknowledge(cmd)
         self.sendCommand(cmd)
@@ -78,29 +77,29 @@ class McuCom(object):
         #return res[0] == CMD_ASK_ROBOT_NAME and  res[1] == ROBOT_NAME
 
 
-    def sendSpeed(self, vx, vy, vz):
-        cmd = create3FloatCommand(self.robot_id, CMD_MOVEMENT_COMMAND, vx, vy, vz)
+    def sendSpeed(self, robot_id, vx, vy, vz):
+        cmd = create3FloatCommand(robot_id, CMD_MOVEMENT_COMMAND, vx, vy, vz)
         #print("Cmd ask: ", cmd)
         #self.sendCommandAndWaitAcknowledge(cmd)
         self.sendCommand(cmd)
         #res = self.retreiveRespond()
         #res = self.retreiveRespond()
 
-    def turnOnDribbler(self):
-        self.setRegister(REG_SET_DRIBBLER_SPEED_COMMAND, 3);
+    def turnOnDribbler(self, robot_id):
+        self.setRegister(robot_id, REG_SET_DRIBBLER_SPEED_COMMAND, 3);
 
-    def turnOffDribbler(self):
-        self.setRegister(REG_SET_DRIBBLER_SPEED_COMMAND, 0);
+    def turnOffDribbler(self, robot_id):
+        self.setRegister(robot_id, REG_SET_DRIBBLER_SPEED_COMMAND, 0);
 
     
-    def kick(self):
-        self.setRegister(REG_KICK_COMMAND, 0);
+    def kick(self, robot_id):
+        self.setRegister(robot_id, REG_KICK_COMMAND, 0);
 
-    def charge(self):
-        self.setRegister(REG_CHARGE_KICKER_COMMAND, 0);
+    def charge(self, robot_id):
+        self.setRegister(robot_id, REG_CHARGE_KICKER_COMMAND, 0);
         
-    def setRegister(self, register, value):
-        cmd = create2BytesCommand(self.robot_id, CMD_SET_REGISTER, register, value)
+    def setRegister(self, robot_id, register, value):
+        cmd = create2BytesCommand(robot_id, CMD_SET_REGISTER, register, value)
         print("Cmd ask: ", cmd)
         #self.sendCommandAndWaitAcknowledge(cmd)
         self.sendCommand(cmd)
@@ -146,7 +145,7 @@ class McuCom(object):
 
     def retreiveRespond(self):
         res = unpackagePayload(self.readUntilZero())
-        if len(res) < len(generateHeader(self.robot_id, 0)):
+        if len(res) < len(generateHeader(0, 0)):
             raise cobs.DecodeError()
         """
         last_res = res
