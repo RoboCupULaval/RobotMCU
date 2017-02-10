@@ -278,17 +278,24 @@ static int8_t CDC_Receive_FS (uint8_t* Buf, uint32_t *Len)
 	// We suppose the whole usb packet is a single cobs-encoded packet
 	// This simplifies the treatment in this function which is actually called in an USB interrupt
 
+
+	USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
+	USBD_CDC_ReceivePacket(&hUsbDeviceFS);
     // Sanity check: if the circular buffer is full,
 	// reject the packet and warn the computer that we lost a packet.
     if (((myCircularBuffer.readIndex + 1) % CBPACKETNUMBER) == myCircularBuffer.writeIndex) {
     	// Send warning packet TODO
-    	//USBD_CDC_ReceivePacket(&hUsbDeviceFS);
+    	//static uint32_t packetLost = 0;
+    	//packetLost++;
+    	// TODO: this is a terrible hack!!! FIx au plus sacrant
+    	// If the packet is a setRegister(id=3), we remove the previous packet in the circular buffer
+    	if (Buf[4] == 3) {
+        	strcpy(myCircularBuffer.dataTable[(myCircularBuffer.writeIndex - 1)% CBPACKETNUMBER], Buf);
+
+    	}
     	return USBD_FAIL;
     }
     else {
-
-    	USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
-    	USBD_CDC_ReceivePacket(&hUsbDeviceFS);
     	// copy the buffer, update the write index
     	strcpy(myCircularBuffer.dataTable[myCircularBuffer.writeIndex], Buf);
     	myCircularBuffer.writeIndex = (myCircularBuffer.writeIndex + 1) % CBPACKETNUMBER;

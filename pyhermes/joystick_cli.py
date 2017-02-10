@@ -39,19 +39,19 @@ def do_joystick(com, joy, robot_id):
 	if joy.buttons['a'].value:
 		print("kick")
 		com.kick(robot_id)
-		sleep(0.1)
+		#sleep(0.1)
 	if joy.buttons['y'].value:
 		print("charge")
 		com.charge(robot_id)
-		sleep(0.1)
+		#sleep(0.1)
 	if joy.buttons['l'].value:
 		print("Dribbleur n")
 		com.turnOnDribbler(robot_id)
-		sleep(0.1)
+		#sleep(0.1)
 	if joy.buttons['r'].value:
 		print("Dribbleur off")
 		com.turnOffDribbler(robot_id)
-		sleep(0.1)
+		#sleep(0.1)
 	if joy.buttons['b'].value:
 		print("slow mod")
 		MAX_SPEED = 400.0
@@ -72,6 +72,6 @@ def joystick_cli(robot_id):
     while True:
         for (joy, robot_id) in joy_robot_list:
             do_joystick(com, joy, robot_id)
-            sleep(0.03)
-        print()
+            sleep(0.005)
+        print() # cariage return
     
