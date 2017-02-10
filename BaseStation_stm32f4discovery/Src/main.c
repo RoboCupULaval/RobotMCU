@@ -93,7 +93,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 
-  communicationTask();
+  //communicationTask();
 
   /* USER CODE END 2 */
 

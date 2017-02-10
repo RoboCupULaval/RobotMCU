@@ -72,6 +72,6 @@ def joystick_cli(robot_id):
     while True:
         for (joy, robot_id) in joy_robot_list:
             do_joystick(com, joy, robot_id)
-            sleep(0.005)
+            sleep(0.020)
         print() # cariage return
     

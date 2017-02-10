@@ -127,11 +127,11 @@ void communicationTask(void const * argument)
   TickType_t lastWakeTime = xTaskGetTickCount();
   for(;;)
   {
-	  if (xTaskGetTickCount() - lastWakeTime > 1000) {
-		  USBD_CDC_ReceivePacket(&hUsbDeviceFS);
-		  lastWakeTime = xTaskGetTickCount();
-		  SerialWrite("hello", strlen("hello"));
-	  }
+//	  if (xTaskGetTickCount() - lastWakeTime > 1000) {
+//		  USBD_CDC_ReceivePacket(&hUsbDeviceFS);
+//		  lastWakeTime = xTaskGetTickCount();
+//		  SerialWrite("hello", strlen("hello"));
+//	  }
 
 
 	  //Read a packet from usb

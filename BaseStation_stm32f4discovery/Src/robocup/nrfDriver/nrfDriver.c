@@ -44,15 +44,30 @@ void nrfSend(uint8_t * dataOut) {
 	TM_NRF24L01_Transmit_Status_t transmissionStatus;
 	uint8_t myStatus;
 
-	TM_NRF24L01_Transmit(dataOut);
-	vTaskDelay(5); // Don't delete this, it's like embedded jesus for us desperate programmers!
 
+	TM_NRF24L01_Transmit(dataOut);
+	//vTaskDelay(5); // Don't delete this, it's like embedded jesus for us desperate programmers!
+
+	static uint32_t maxCount =0;
+	static TickType_t maxDelta =0;
+	static TickType_t minDelta = 0xffff;
+	uint32_t count = 0;
+
+	TickType_t lastWakeTime = xTaskGetTickCount();
 	do {
 		/* Get transmission status */
 		transmissionStatus = TM_NRF24L01_GetTransmissionStatus();
-		myStatus = TM_NRF24L01_GetStatus();
+		//myStatus = TM_NRF24L01_GetStatus();
+		count++;
+
 	} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Sending);
-    //Get back into RX mode
+	TickType_t delta = xTaskGetTickCount() - lastWakeTime;
+	if(count > maxCount){
+		maxCount = count;
+		maxDelta = delta;
+	}
+	minDelta = delta < minDelta ? delta : minDelta;
+	//Get back into RX mode
 	TM_NRF24L01_PowerUpRx();
 }
 
