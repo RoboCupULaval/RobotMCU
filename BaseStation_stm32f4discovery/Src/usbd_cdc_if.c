@@ -293,7 +293,7 @@ static int8_t CDC_Receive_FS (uint8_t* Buf, uint32_t *Len)
 //        	strcpy(myCircularBuffer.dataTable[(myCircularBuffer.writeIndex - 1)% CBPACKETNUMBER], Buf);
 //
 //    	}
-    	USBD_CDC_ReceivePacket(&hUsbDeviceFS);
+    	//USBD_CDC_ReceivePacket(&hUsbDeviceFS);
 		return USBD_FAIL;
     }
     else {
