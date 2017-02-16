@@ -1,6 +1,9 @@
+#include "dribbler.h"
+
 #include "slow_task.h"
 
 powerState slow_handleBattProtection(void);
+void       slow_handleDribbler(void);
 
 void slow_taskEntryPoint(void) {
 	pmu_init();
@@ -27,24 +30,13 @@ void slow_taskEntryPoint(void) {
 			led_turnOn(id);
 		}
 
-		if(robot_isBtnPressed() == 1) {
-			kicker_kick();
-			/*//Dribbler
-			if(dribblerState == 1) {
-				dribbler_setPWM(0.0f);
-				dribblerState = 0;
-			} else {
-				dribbler_setPWM(0.2f);
-				dribblerState = 1;
-			}
-			HAL_Delay(1000);*/
-		}
-
 		kicker_update();
 
 		log_setBatteryVoltage(pmu_getBattVoltage());
 
 		slow_handleBattProtection();
+
+		dribbler_handleDribbler();
 
 		HAL_Delay(30);
 	}
@@ -71,4 +63,5 @@ powerState slow_handleBattProtection(void) {
 
 	return state;
 }
+
 

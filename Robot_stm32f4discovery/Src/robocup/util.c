@@ -112,12 +112,4 @@ uint8_t robot_getID(void) {
 	return id;
 }
 
-void dribbler_init(void) {
-  	HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1);
-}
-//Speed : PWM = 0 to 1.0
-// todo: add check on input
-void dribbler_setPWM(float speed) {
-	uint32_t pwmTimerValue = (uint32_t)(speed * 65535.0f);
-  	__HAL_TIM_SetCompare(&htim12, TIM_CHANNEL_1, pwmTimerValue);
-}
+

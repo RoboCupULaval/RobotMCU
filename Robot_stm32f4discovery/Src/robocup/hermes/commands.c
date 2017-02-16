@@ -5,6 +5,8 @@
  *      Author: philippe
  */
 
+#include "../dribbler.h"
+
 #include "commands.h"
 
 #include "../motors/ctrl_task.h"
@@ -69,7 +71,7 @@ void command_setRegister(const void *msg) {
 				default:
 					newSpeed = 0.0f;
 			}
-			dribbler_setPWM(newSpeed);
+			dribbler_startDribbler(newSpeed);
 			break;
 		default:
 			LOG_ERROR("Unknown register");

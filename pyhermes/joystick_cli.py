@@ -39,19 +39,19 @@ def do_joystick(com, joy, robot_id):
 	if joy.buttons['a'].value:
 		print("kick")
 		com.kick(robot_id)
-		#sleep(0.1)
+		sleep(0.05)
 	if joy.buttons['y'].value:
 		print("charge")
 		com.charge(robot_id)
-		#sleep(0.1)
+		sleep(0.05)
 	if joy.buttons['l'].value:
 		print("Dribbleur n")
 		com.turnOnDribbler(robot_id)
-		#sleep(0.1)
+		sleep(0.05)
 	if joy.buttons['r'].value:
 		print("Dribbleur off")
 		com.turnOffDribbler(robot_id)
-		#sleep(0.1)
+		sleep(0.05)
 	if joy.buttons['b'].value:
 		print("slow mod")
 		MAX_SPEED = 400.0

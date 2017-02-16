@@ -8,7 +8,6 @@
 #ifndef ROBOCUP_UTIL_H_
 #define ROBOCUP_UTIL_H_
 
-#include "tim.h"
 #include "robocup_define.h"
 
 #define MAX_METADATA_LEN 128
@@ -28,7 +27,5 @@ uint8_t robot_isDebug(void);
 uint8_t robot_getID(void);
 uint8_t robot_isBtnPressed(void);
 
-void dribbler_init(void);
-void dribbler_setPWM(float speed);
 
 #endif /* ROBOCUP_UTIL_H_ */
