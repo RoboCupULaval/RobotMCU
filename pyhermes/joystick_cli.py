@@ -23,7 +23,7 @@ def get_joysticks():
 
 def do_joystick(com, joy, robot_id):
 	global MAX_SPEED    
-	MAX_SPEED = 1200.0
+	MAX_SPEED = 1.0
 	y, x = joy.buttons['stick1'].coords
 	_, t = joy.buttons['stick2'].coords
 
@@ -32,7 +32,7 @@ def do_joystick(com, joy, robot_id):
 	mag = mag if abs(mag) > JOYSTICK_DEAD_ZONE else 0
 	x =  -MAX_SPEED * mag * cos(angle)
 	y =  -MAX_SPEED * mag * sin(angle)
-	theta =  -MAX_SPEED * t / 3.0
+	theta =  -2.0 * t
 
 	com.sendSpeed(robot_id, x, y, theta)
 
@@ -68,7 +68,7 @@ def joystick_cli(robot_id):
 
     port = getFirstSerialPort()
     com = McuCom(port)
-    
+    #com.setRegister(robot_id, REG_CTRL_LOOP_STATE, 2)    
     while True:
         for (joy, robot_id) in joy_robot_list:
             do_joystick(com, joy, robot_id)
