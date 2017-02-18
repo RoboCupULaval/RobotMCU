@@ -53,11 +53,11 @@ def do_joystick(com, joy, robot_id):
 		com.turnOffDribbler(robot_id)
 		sleep(0.05)
 	if joy.buttons['b'].value:
-		print("slow mod")
-		MAX_SPEED = 400.0
+		print("slow mode")
+		MAX_SPEED = 0.1
 	if joy.buttons['x'].value:
-		print("fast mod")
-		MAX_SPEED = 1200.0
+		print("fast mode")
+		MAX_SPEED = 1.0
 	print("id:{: 3.3f} x:{: 3.3f} y:{: 3.3f} t:{: 3.3f} ".format(robot_id, x, y, t), end='')
 
 def joystick_cli(robot_id):
