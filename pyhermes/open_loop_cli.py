@@ -6,8 +6,8 @@ current_milli_time = lambda: int(round(time.time() * 1000))
 
 def open_loop_test(robot_id):
     commands = [
-    (2000, 0.15),
-    (3000, 0.2)
+    (2000, 0.25),
+    (3000, 0.3)
     ]
     do_test(1, 0, commands, robot_id)
 
@@ -39,7 +39,7 @@ def do_test(ctrl_loop_state_initially, ctrl_loop_state_for_test, commands, robot
     	print(time, command)
     	start = current_milli_time();
     	while current_milli_time() - start < dt:
-    		com.sendSpeed(robot_id,-command, command, 0) # -command
+    		com.sendSpeed(robot_id,command, -command, 0) # -command
     		sleep(0.1)
 
     #while True:
