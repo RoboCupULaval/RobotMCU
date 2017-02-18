@@ -54,9 +54,11 @@ powerState slow_handleBattProtection(void) {
 		break;
 	case POWER_WARNING:
 		led_turnOn(7);
+		led_turnOff(6);
 		break;
 	case POWER_OK:
 		led_turnOn(6);
+		led_turnOff(7);
 		pmu_forceEnablePower();
 		break;
 	};

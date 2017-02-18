@@ -5,6 +5,9 @@
 // TODO No rotation
 #define RADIUS 0
 
+//Acceleration limitation
+const float MAX_LIN_ACC	= 1.0f / 100.0f; //1m/s^2 * 0.01 s
+
 // Calculate speed for that motor base on velocity command
 float wheel_setCommand(Wheel_t* wheel, const float vx, const float vy, const float vt) {
 
@@ -16,10 +19,24 @@ float wheel_setCommand(Wheel_t* wheel, const float vx, const float vy, const flo
 //	const float result = magnitude * cosf(forceAngle - angle) + vt;
 //	return result;
 
-	float omega = (vx * wheel->cosTheta + vy * wheel->sinTheta + vt * wheel->centerDistance);
-	omega = omega / wheel->radius;
+	float limitVx = vx;
+	float limitVy = vy;
 
-	float result = (omega * wheel->nbTickTurn) / (2 * M_PI);
+	const float magnitude = sqrtf(vx*vx + vy*vy);
+
+	if((magnitude - wheel->lastMagnitude) > MAX_LIN_ACC) {
+		wheel->lastMagnitude = wheel->lastMagnitude + MAX_LIN_ACC;
+		const float magnitudeFactor = wheel->lastMagnitude / magnitude;
+		limitVx *= magnitudeFactor;
+		limitVy *= magnitudeFactor;
+	} else {
+		wheel->lastMagnitude = magnitude;
+	}
+
+	float omega = (limitVx * wheel->cosTheta + limitVy * wheel->sinTheta + vt * wheel->centerDistance);
+	omega = (omega / wheel->radius);
+
+	float result = (omega * wheel->nbTickTurn) / (2.0f * (float)M_PI) / 100.0f; //Conversion from rad/s to ticks/10ms
 
 	return result;
 }

@@ -28,7 +28,6 @@ typedef enum{
 #endif
 } QuadEncoder_t;
 
-
 typedef struct {
 	char*              debugName;           // Name of the wheel for debuging
 	PidWheel_t         pid;                 // Instance of the pid
@@ -45,8 +44,10 @@ typedef struct {
 	float			   radius;
 	float			   centerDistance;
 	float 			   nbTickTurn;
+	float 			   lastMagnitude;		//Acceleration limitation
 } Wheel_t;
 
+//
 #define MOTOR_BREAK 0.0
 
 
