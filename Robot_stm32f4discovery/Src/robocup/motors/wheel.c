@@ -8,12 +8,19 @@
 // Calculate speed for that motor base on velocity command
 float wheel_setCommand(Wheel_t* wheel, const float vx, const float vy, const float vt) {
 
-	const float magnitude = sqrtf(vx*vx + vy*vy);
-	const float angle = atan2f(vy, vx);
-	// The wheel's angle is the position of the wheel axe
-	// The force angle is the angle of the force vector create by the rotation of the wheel
-	const float forceAngle = wheel->angle + (float)M_PI_2;
-	const float result = magnitude * cosf(forceAngle - angle) + vt;
+//	const float magnitude = sqrtf(vx*vx + vy*vy);
+//	const float angle = atan2f(vy, vx);
+//	// The wheel's angle is the position of the wheel axe
+//	// The force angle is the angle of the force vector create by the rotation of the wheel
+//	const float forceAngle = wheel->angle + (float)M_PI_2;
+//	const float result = magnitude * cosf(forceAngle - angle) + vt;
+//	return result;
+
+	float omega = (vx * wheel->cosTheta + vy * wheel->sinTheta + vt * wheel->centerDistance);
+	omega = omega / wheel->radius;
+
+	float result = (omega * wheel->nbTickTurn) / (2 * M_PI);
+
 	return result;
 }
 
