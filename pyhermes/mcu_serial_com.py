@@ -6,9 +6,12 @@ import io
 import time
 import glob
 
+from time import sleep
+
 def getFirstSerialPort():
     #ttyListA = glob.glob('/dev/cu.usb*')
     ttyList = glob.glob('/dev/ttyACM*')
+    ttyList +=  glob.glob('/dev/ttyBaseStation')
     ttyList +=  glob.glob('/dev/rfcomm*')
     ttyList +=  glob.glob('/dev/ttyUSB*')
     ttyList +=  glob.glob('/dev/tty.Robot*')
@@ -37,11 +40,19 @@ class McuCom(object):
         self.port = port
         self.baudrate = baudrate
         self.timeout = time_out
-        self.ser = serial.Serial(port, baudrate, timeout=time_out)
+        
+        while True:
+            try:
+                self.ser = serial.Serial(port, baudrate, timeout=time_out)
+            except serial.serialutil.SerialException:
+                print("Fail to open port")
+                sleep(1)
+                continue
+            break
         # Set escape caracter to \0
 
-    def testHeartBeat(self):
-        cmd = createNoArgCommand(CMD_HEART_BEAT_REQUEST)
+    def testHeartBeat(self, robot_id):
+        cmd = createNoArgCommand(robot_id, CMD_HEART_BEAT_REQUEST)
         print("Cmd ask: ", cmd)
         #self.sendCommandAndWaitAcknowledge(cmd)
         self.sendCommand(cmd)
@@ -66,18 +77,32 @@ class McuCom(object):
         #return res[0] == CMD_ASK_ROBOT_NAME and  res[1] == ROBOT_NAME
 
 
-    def sendSpeed(self, vx, vy, vz):
-        cmd = create3FloatCommand(CMD_MOVEMENT_COMMAND, vx, vy, vz)
+    def sendSpeed(self, robot_id, vx, vy, vz):
+        cmd = create3FloatCommand(robot_id, CMD_MOVEMENT_COMMAND, vx, vy, vz)
         #print("Cmd ask: ", cmd)
         #self.sendCommandAndWaitAcknowledge(cmd)
         self.sendCommand(cmd)
         #res = self.retreiveRespond()
         #res = self.retreiveRespond()
 
-    def setRegister(self, register, value):
-        cmd = create2BytesCommand(CMD_SET_REGISTER, register, value)
+    def turnOnDribbler(self, robot_id):
+        self.setRegister(robot_id, REG_SET_DRIBBLER_SPEED_COMMAND, 3);
+
+    def turnOffDribbler(self, robot_id):
+        self.setRegister(robot_id, REG_SET_DRIBBLER_SPEED_COMMAND, 0);
+
+    
+    def kick(self, robot_id):
+        self.setRegister(robot_id, REG_KICK_COMMAND, 0);
+
+    def charge(self, robot_id):
+        self.setRegister(robot_id, REG_CHARGE_KICKER_COMMAND, 0);
+        
+    def setRegister(self, robot_id, register, value):
+        cmd = create2BytesCommand(robot_id, CMD_SET_REGISTER, register, value)
         print("Cmd ask: ", cmd)
-        self.sendCommandAndWaitAcknowledge(cmd)
+        #self.sendCommandAndWaitAcknowledge(cmd)
+        self.sendCommand(cmd)
 
     def sendCommand(self, cmd):
         self.ser.write(cmd)
@@ -120,7 +145,7 @@ class McuCom(object):
 
     def retreiveRespond(self):
         res = unpackagePayload(self.readUntilZero())
-        if len(res) < len(generateHeader(0)):
+        if len(res) < len(generateHeader(0, 0)):
             raise cobs.DecodeError()
         """
         last_res = res

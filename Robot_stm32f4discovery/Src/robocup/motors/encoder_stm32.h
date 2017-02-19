@@ -10,8 +10,8 @@
 
 typedef struct EncoderHandle_t {
 	TIM_HandleTypeDef* pTimer;
-	int32_t previousCount;
-	int32_t deltaCount;
+	int16_t previousCount;
+	int16_t deltaCount;
 	float wheelVelocity;
 }EncoderHandle_t;
 

@@ -34,12 +34,11 @@ class Stick:
 
 
 class Joystick:
-    buttons = {}
 
-    def __init__(self):
-        self.jstick_file = open("/dev/input/js0", "rb")
-        self.thread = threading.Thread(target=self.updateCoords)
-        self.thread.start()
+    def __init__(self, file_path):
+        self.jstick_file = None
+        self.jstick_file = open(file_path, "rb")
+        self.buttons = {}
         self.buttons['stick1'] = Stick(0, 1)
         self.buttons['stick2'] = Stick(3, 2)
         self.buttons['a'] = Button(0)
@@ -48,6 +47,9 @@ class Joystick:
         self.buttons['y'] = Button(3)
         self.buttons['l'] = Button(10)
         self.buttons['r'] = Button(11)
+        self.thread = threading.Thread(target=self.updateCoords)
+        self.thread.start()
+        
 
     def updateCoords(self):
         while True:
@@ -62,4 +64,5 @@ class Joystick:
             time.sleep(0)
 
     def __del__(self):
-        file.close()
+        if self.jstick_file:
+            self.jstick_file.close()

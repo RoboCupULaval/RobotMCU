@@ -1,11 +1,13 @@
+#include <stdlib.h>
+
 #include "wheels_UT.h"
 #include "wheels_config.h"
 #include "cmsis_os.h"
 
 
 const float   BREAK_SPEED           = 0;
-const int     TIME_LEFT_SPINNING_MS = 100;
-const int     TIME_BREAKING_MS      = 700;
+const uint32_t     TIME_LEFT_SPINNING_MS = 100;
+const uint32_t     TIME_BREAKING_MS      = 700;
 
 #if defined (BETA)
 const float   NORMAL_SPEED          = 1.5;
@@ -25,7 +27,7 @@ bool test_startUp(void) {
   	for (size_t i = 0; i < wheelsLen; ++i) {
 		Wheel_t* pWheel = &g_wheels[i];
 
-		int16_t nbTick = abs(test_spinAndStopWheel(pWheel, BREAK_SPEED));
+		int nbTick = abs(test_spinAndStopWheel(pWheel, BREAK_SPEED));
 		// Check absolute value
 		bool testCaseSuccess = nbTick < MIN_TICK_FOR_MOVEMENT;
 		test_logWheelSpining(testCaseSuccess, pWheel->debugName, nbTick);
@@ -39,7 +41,7 @@ bool test_startUp(void) {
   	for (size_t i = 0; i < wheelsLen; ++i) {
 		Wheel_t* pWheel = &g_wheels[i];
 
-		int16_t nbTick = abs(test_spinAndStopWheel(pWheel, NORMAL_SPEED));
+		int nbTick = abs(test_spinAndStopWheel(pWheel, NORMAL_SPEED));
 		// Check absolute value
 		bool testCaseSuccess = nbTick > MIN_TICK_FOR_MOVEMENT;
 		test_logWheelSpining(testCaseSuccess, pWheel->debugName, nbTick);
@@ -53,7 +55,7 @@ bool test_startUp(void) {
   	for (size_t i = 0; i < wheelsLen; ++i) {
 		Wheel_t* pWheel = &g_wheels[i];
 
-		int16_t nbTick = test_spinAndStopWheel(pWheel, NORMAL_SPEED);
+		int nbTick = test_spinAndStopWheel(pWheel, NORMAL_SPEED);
 
 		bool testCaseSuccess = nbTick > MIN_TICK_FOR_MOVEMENT;
 		test_logWheelSpining(testCaseSuccess, pWheel->debugName, nbTick);
@@ -67,7 +69,7 @@ bool test_startUp(void) {
   	for (size_t i = 0; i < wheelsLen; ++i) {
 		Wheel_t* pWheel = &g_wheels[i];
 
-		int16_t nbTick = test_spinAndStopWheel(pWheel, -NORMAL_SPEED);
+		int nbTick = test_spinAndStopWheel(pWheel, -NORMAL_SPEED);
 
 		bool testCaseSuccess = nbTick < -MIN_TICK_FOR_MOVEMENT;
 		test_logWheelSpining(testCaseSuccess, pWheel->debugName, nbTick);
@@ -77,7 +79,7 @@ bool test_startUp(void) {
   	return success;
 }
 
-void test_logWheelSpining(bool successful, const char *pWheelDebugName, int16_t nbTick) {
+void test_logWheelSpining(bool successful, const char *pWheelDebugName, int nbTick) {
 	static char logBuffer[128];
 	if (successful) {
 		snprintf(logBuffer, 128, "%s nbTick:%d [OK]\r\n", pWheelDebugName, nbTick);
@@ -88,7 +90,7 @@ void test_logWheelSpining(bool successful, const char *pWheelDebugName, int16_t 
 	}
 }
 
-int16_t test_spinAndStopWheel(Wheel_t* pWheel, float speed) {
+int32_t test_spinAndStopWheel(Wheel_t* pWheel, float speed) {
   	int32_t wheelSpeed[4];
 	// Make it spins a little bit
 	wheel_setPWM(pWheel, speed);

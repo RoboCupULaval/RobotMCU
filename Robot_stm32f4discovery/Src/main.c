@@ -56,7 +56,7 @@
 // Local includes
 #include "robocup/robocup_define.h"
 #include "robocup/com_interfaces/bluetooth.h"
-#include "robocup/com_interfaces/usb.h"
+#include "robocup/com_interfaces/nrf.h"
 #include "robocup/hermes/hermes_task.h"
 #include "robocup/motors/ctrl_task.h"
 
@@ -129,19 +129,20 @@ int main(void)
   	//demux_Init(GPIOE, GPIO_PIN_4, GPIO_PIN_5, GPIO_PIN_6, CS_0);
 
   	// Init communication
-  	comHandle_t comUsb = usb_init();
+
   	comHandle_t comBluetooth = bluetooth_init();
 
 #ifdef GAMMA
+  	comHandle_t comUsb = usb_init();
   	hermes_init(comBluetooth);
   	log_init(comUsb);
   	HAL_GPIO_WritePin(EN_POWER_GPIO_Port, EN_POWER_Pin, GPIO_PIN_SET);
 #elif defined (GAMMA2)
-  	hermes_init(comUsb);
+  	comHandle_t comNrf = nrf_init();
+  	hermes_init(comNrf);
   	log_init(comBluetooth);
 	ctrl_emergencyBreak();
 #endif
-
 
   /* USER CODE END 2 */
 

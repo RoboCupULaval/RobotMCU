@@ -36,7 +36,7 @@ void log_broadcast(const char *pLogType, const char *pMessage){
 	char metaData[MAX_METADATA_LEN];
 	const TickType_t msSinceStartup = xTaskGetTickCount() * portTICK_PERIOD_MS;
 
-	snprintf(metaData, MAX_METADATA_LEN, "%s|%06u|R%d|B%2.1f|", pLogType, (unsigned)msSinceStartup, ADDR_ROBOT, s_batteryVoltage);
+	snprintf(metaData, MAX_METADATA_LEN, "%s|%06u|R%d|B%2.1f|", pLogType, (unsigned)msSinceStartup, robot_getID(), s_batteryVoltage);
 
 	// Start of critical zone
 	xSemaphoreTake(s_logLock, portMAX_DELAY);
@@ -74,6 +74,10 @@ void LOG_ERROR_AND_BUFFER(const char * pMessage, void * pBuffer, size_t length) 
 	log_messageWithBufferDump("ERROR", pMessage, pBuffer, length);
 }
 
+void LOG_DEBUG_AND_BUFFER(const char * pMessage, void * pBuffer, size_t length) {
+	log_messageWithBufferDump("DEBUG", pMessage, pBuffer, length);
+}
+
 void LOG_INFO(const char * pMessage){
 	log_broadcast("INFO", pMessage);
 }
@@ -82,6 +86,9 @@ void LOG_ERROR(const char * pMessage){
 }
 void LOG_DEBUG(const char * pMessage){
 	log_broadcast("DEBUG", pMessage);
+}
+void LOG_DATA(const char * pMessage){
+	log_broadcast("DATA", pMessage);
 }
 
 //Return 1 when in debug mode (switch), else no
@@ -99,17 +106,10 @@ uint8_t robot_getID(void) {
 	uint8_t id = 0;
 
 	id |= HAL_GPIO_ReadPin(ID_0_demux_0_GPIO_Port, ID_0_demux_0_Pin);
-	id |= (HAL_GPIO_ReadPin(ID_1_demux_1_GPIO_Port, ID_1_demux_1_Pin) << 1);
-	id |= (HAL_GPIO_ReadPin(ID_2_demux_2_GPIO_Port, ID_2_demux_2_Pin) << 2);
+	id |= (uint8_t)(HAL_GPIO_ReadPin(ID_1_demux_1_GPIO_Port, ID_1_demux_1_Pin) << 1);
+	id |= (uint8_t)(HAL_GPIO_ReadPin(ID_2_demux_2_GPIO_Port, ID_2_demux_2_Pin) << 2);
 
 	return id;
 }
 
-void dribbler_init(void) {
-  	HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1);
-}
-//Speed : PWM = 0 to 1.0
-void dribbler_setPWM(float speed) {
-	int pwm = (int)(speed * 65535.0f);
-  	__HAL_TIM_SetCompare(&htim12, TIM_CHANNEL_1, pwm);
-}
+

@@ -12,12 +12,18 @@ CMD_ROBOT_CRASHED_NOTIFICATION = 0x26
 
 # Register type
 REG_CTRL_LOOP_STATE            = 0x00;
+REG_KICK_COMMAND               = 0x01;
+REG_CHARGE_KICKER_COMMAND      = 0x02;
+REG_SET_DRIBBLER_SPEED_COMMAND = 0x03;
 
 PROTOCOL_VERSION  = 0x01
 
 #address
 ADDR_BASE_STATION = 0xFE
 ADDR_BROADCAST    = 0xFF
+ADDR_ROBOT1    = 0x01
+ADDR_ROBOT3    = 0x03
+ADDR_ROBOT7    = 0x07
 
 
 def intToByteString(i):
@@ -40,7 +46,7 @@ def unpackagePayload(pack):
     #    return pay + "Invalid respond from mcu"
         #print("payload len %d data=" % len(pack) + ":".join("{:02x}".format(ord(c)) for c in pack))
 
-def generateHeader(packet_type, dest_addres=ADDR_BROADCAST):
+def generateHeader(dest_addres, packet_type):
     header = bytes([PROTOCOL_VERSION,
                     ADDR_BASE_STATION,
                     dest_addres,
@@ -48,30 +54,30 @@ def generateHeader(packet_type, dest_addres=ADDR_BROADCAST):
                     0x00])
     return header
 
-def packagePayloadLess(id):
-    pay = generateHeader(id)
+def packagePayloadLess(robot_id, id):
+    pay = generateHeader(robot_id, id)
     return cobs.encode(bytes(pay)) + b'\0'
 
-def packagePayload(id, payload):
-    pay = generateHeader(id)
+def packagePayload(robot_id, id, payload):
+    pay = generateHeader(robot_id, id)
     pay += payload
     return cobs.encode(bytes(pay))  + b'\0'
 
-def createNoArgCommand(id):
-    return packagePayloadLess(id)
+def createNoArgCommand(robot_id, id):
+    return packagePayloadLess(robot_id, id)
 
 def createCommandGetStatus():
     return packagePayloadLess(CMD_GET_STATUS)
 
-def create2BytesCommand(id, b0, b1):
+def create2BytesCommand(robot_id, id, b0, b1):
     payload = bytes([b0, b1])
     
-    return packagePayload(id, payload)
+    return packagePayload(robot_id, id, payload)
 
-def create3FloatCommand(id, vx, vy, vz):
+def create3FloatCommand(robot_id, id, vx, vy, vz):
     vel = [vx, vy, vz]
     payload = struct.pack('%sf' % len(vel), *vel)
     #print("payload len %d data=" % len(payload) + ":".join("{:02x}".format(ord(c)) for c in payload))
     #print 'Raw payload', ":".join("{:02x}".format(ord(c)) for c in payload)
-    return packagePayload(id, payload)
+    return packagePayload(robot_id, id, payload)
 

@@ -65,6 +65,8 @@
 #define PH1_OSC_OUT_GPIO_Port GPIOH
 #define OTG_FS_PowerSwitchOn_Pin GPIO_PIN_0
 #define OTG_FS_PowerSwitchOn_GPIO_Port GPIOC
+#define NRF_CE_Pin GPIO_PIN_1
+#define NRF_CE_GPIO_Port GPIOC
 #define NRF_MISO_Pin GPIO_PIN_2
 #define NRF_MISO_GPIO_Port GPIOC
 #define MOTOR1_PWM_Pin GPIO_PIN_0

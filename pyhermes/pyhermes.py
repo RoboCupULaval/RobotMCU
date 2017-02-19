@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 
 # To install dependency : 
 # pip install cobs bitstring pyserial
@@ -20,6 +21,7 @@ if __name__ == "__main__":
 
     main_parser = argparse.ArgumentParser(description='Communication utility between Robocup Robot and control station')
     main_parser.add_argument('command', choices={"ping", "test_open", "test_close", "joystick"}, help='Type of utility')
+    main_parser.add_argument('robot_id', help='Id of the robot')
 
 
     """
@@ -30,14 +32,14 @@ if __name__ == "__main__":
     test_parser.set_defaults(which='a2')
     """
     args = main_parser.parse_args()
-
+    args.robot_id = int(args.robot_id)
     if args.command == "ping":
-        diagnostic()
+        diagnostic(args.robot_id)
     elif args.command == "test_open":
-        open_loop_test()
+        open_loop_test(args.robot_id)
     elif args.command == "test_close":
-        close_loop_test()
+        close_loop_test(args.robot_id)
     elif args.command == "joystick":
-        joystick_cli()
+        joystick_cli(args.robot_id)
 
 

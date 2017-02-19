@@ -16,18 +16,18 @@
 
 #define LED_ADDRESS			200
 
-#define LED_REG_SHUTDOWN	0x00
-#define LED_REG_CTRL1		0x01 //0 OUT6 OUT5 OUT4 0 OUT3 OUT2 OUT1
-#define LED_REG_CTRL2		0x02 //0 0    0    0    0 OUT9 OUT8 OUT7
-#define LED_REG_CONFIG1		0x03 //
-#define LED_REG_CONFIG2		0x04 // Current setting : D6:D4
-#define LED_REG_PWM			0x07
-#define LED_REG_LOAD_DATA	0x10
+#define LED_REG_SHUTDOWN	0x00u
+#define LED_REG_CTRL1		0x01u //0 OUT6 OUT5 OUT4 0 OUT3 OUT2 OUT1
+#define LED_REG_CTRL2		0x02u //0 0    0    0    0 OUT9 OUT8 OUT7
+#define LED_REG_CONFIG1		0x03u //
+#define LED_REG_CONFIG2		0x04u // Current setting : D6:D4
+#define LED_REG_PWM			0x07u
+#define LED_REG_LOAD_DATA	0x10u
 
-#define LED_CS_20mA			0x00
-#define LED_CS_15mA			(0x01 << 4)
-#define LED_CS_10mA			(0x02 << 4)
-#define LED_CS_5mA			(0x03 << 4)
+#define LED_CS_20mA			0x00u
+#define LED_CS_15mA			(0x01u << 4)
+#define LED_CS_10mA			(0x02u << 4)
+#define LED_CS_5mA			(0x03u << 4)
 
 
 void led_init(void);

@@ -39,7 +39,6 @@ typedef enum {
  */
 
 
-static const uint8_t ADDR_ROBOT = 0x01; // Make it configurable with a switch
 
 //#define BETA
 //#define GAMMA
@@ -47,23 +46,27 @@ static const uint8_t ADDR_ROBOT = 0x01; // Make it configurable with a switch
 
 #ifdef BETA
 #define USE_QUAD
-#endif
-
-#define CONTROL_LOOP_PERIOD_MS 10
 
 #define PID_P 5.9f //0.001102f
 #define PID_I (0.07416f/100.0f) //0.000009f
 #define PID_D 0.0f
 
+#elif defined (GAMMA2)
+
+#define PID_P 0.004217f
+#define PID_I (0.00000134f/100.0f)
+#define PID_D 0.0f
+
+#endif
+
+#define CONTROL_LOOP_PERIOD_MS 10
+
+
 
 //PMU
-#define PMU_BATT_SHUTDOWN_TRESHOLD		13.2//V : Power is automatically turned off if Voltage is under this value
+#define PMU_BATT_SHUTDOWN_TRESHOLD		12.6//V : Power is automatically turned off if Voltage is under this value
 #define PMU_BATT_WARNING_TRESHOLD		14//V : Power stays on if already turned on, but impossible to enable it if disabled
 
-
-//PMU
-#define PMU_BATT_SHUTDOWN_TRESHOLD		13.2//V : Power is automatically turned off if Voltage is under this value
-#define PMU_BATT_WARNING_TRESHOLD		14//V : Power stays on if already turned on, but impossible to enable it if disabled
 
 
 #endif /* ROBOCUP_ROBOCUP_DEFINE_H_ */

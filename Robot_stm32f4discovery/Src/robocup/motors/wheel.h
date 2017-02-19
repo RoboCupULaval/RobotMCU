@@ -28,7 +28,6 @@ typedef enum{
 #endif
 } QuadEncoder_t;
 
-
 typedef struct {
 	char*              debugName;           // Name of the wheel for debuging
 	PidWheel_t         pid;                 // Instance of the pid
@@ -38,10 +37,17 @@ typedef struct {
 	GPIO_TypeDef*      dirGpioPort;         // Pointer to the gpio port for the direction pin
 	uint16_t           dirGpioPin;          // Mask used for selecting the individual gpio pin
 	WheelDirection_t   direction;           // Reverse the pin direction
-	double             angle;               // Angle in rad, normally motor1 is at 45 degree and motor4 at -45 degree, refer to documentation for more information on convention
-	double             openLoopAttenuation; // In open loop some wheel require a greater voltage to turn than other, this factor multiply the input command.
+	float              angle;               // Angle in rad, normally motor1 is at 45 degree and motor4 at -45 degree, refer to documentation for more information on convention
+	float              openLoopAttenuation; // In open loop some wheel require a greater voltage to turn than other, this factor multiply the input command.
+	float			   cosTheta;
+	float			   sinTheta;
+	float			   radius;
+	float			   centerDistance;
+	float 			   nbTickTurn;
+	float 			   lastMagnitude;		//Acceleration limitation
 } Wheel_t;
 
+//
 #define MOTOR_BREAK 0.0
 
 
