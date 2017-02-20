@@ -9,7 +9,11 @@ import glob
 from time import sleep
 
 def getFirstSerialPort():
-    #ttyListA = glob.glob('/dev/cu.usb*')
+    defaultPort = '/dev/ttyBaseStation'
+    # Give priority to BaseStation macro
+    if glob.glob(defaultPort):
+        print("Default to port {}".format(defaultPort))
+        return defaultPort
     ttyList = glob.glob('/dev/ttyACM*')
     ttyList +=  glob.glob('/dev/ttyBaseStation')
     ttyList +=  glob.glob('/dev/rfcomm*')
