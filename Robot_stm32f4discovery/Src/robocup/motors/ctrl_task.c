@@ -72,6 +72,10 @@ void ctrl_taskEntryPoint(void) {
 			continue;
 		}
 
+		if(g_ctrlLoopState == CLOSE_LOOP_WITH_LOGGING) {
+			motorDataLog_addReceivedSpeed(vx, vy, vt);
+		}
+
 		for (int i = 0; i < wheelsLen; ++i) {
 			Wheel_t* pWheel = &g_wheels[i];
 			float reference = wheel_setCommand(pWheel, vx, vy, vt);
@@ -98,7 +102,7 @@ void ctrl_taskEntryPoint(void) {
 					// If the speed command is negative we change the pid output to be negative
 					// and thus the motor will spin in the correct direction
 					output *= (reference >= 0.0 ? 1.0f : -1.0f);
-					if (CLOSE_LOOP_WITH_LOGGING) {
+					if (g_ctrlLoopState == CLOSE_LOOP_WITH_LOGGING) {
 						motorDataLog_addCloseLoopData(&pWheel->pid);
 					}
 					break;
