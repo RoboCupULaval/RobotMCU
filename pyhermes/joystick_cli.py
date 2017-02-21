@@ -68,7 +68,7 @@ def joystick_cli(robot_id):
 
     port = getFirstSerialPort()
     com = McuCom(port)
-    #com.setRegister(robot_id, REG_CTRL_LOOP_STATE, 2)    
+    # com.setRegister(robot_id, REG_CTRL_LOOP_STATE, 1)
     while True:
         for (joy, robot_id) in joy_robot_list:
             do_joystick(com, joy, robot_id)

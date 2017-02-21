@@ -15,8 +15,10 @@ def open_loop_test(robot_id):
 # 0.07 max 4 wheels speed
 def close_loop_test(robot_id):
     commands = [
-    (9000, 0.07),
-    (500,  0)
+    (2000, 0.05),
+    (2000, 0.25),
+    (2000, -0.1),
+    (2000, 0.25)
     ]
     do_test(1, 2, commands, robot_id)
 
@@ -34,7 +36,7 @@ def do_test(ctrl_loop_state_initially, ctrl_loop_state_for_test, commands, robot
     sleep(1)
 
     print("Start open loop")
-    #com.setRegister(robot_id,REG_CTRL_LOOP_STATE, ctrl_loop_state_for_test) # set open loop
+    com.setRegister(robot_id,REG_CTRL_LOOP_STATE, ctrl_loop_state_for_test) # set open loop
 
 
     for (dt, command) in commands:

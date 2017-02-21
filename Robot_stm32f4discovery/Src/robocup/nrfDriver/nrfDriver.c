@@ -27,7 +27,7 @@ uint8_t TxAddress[] = {
 };
 
 void nrfInit(const size_t packetSize) {
-	TM_NRF24L01_Init(2, packetSize);
+	TM_NRF24L01_Init(100, packetSize);
 	TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_1M, TM_NRF24L01_OutputPower_M18dBm);
 	MyAddress[4] = robot_getID();
 	TM_NRF24L01_SetMyAddress(MyAddress);
