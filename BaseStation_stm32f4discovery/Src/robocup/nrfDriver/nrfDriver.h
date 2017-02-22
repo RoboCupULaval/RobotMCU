@@ -12,7 +12,7 @@
 #include <stdbool.h>
 
 void nrfInit();
-void nrfSend(uint8_t * dataOut);
+void nrfSend(uint8_t * dataOut, bool forceRetryBool);
 void nrfReceive(uint8_t * dataIn);
 uint8_t nrfRetransmitCount();
 uint8_t nrfGetStatus();
