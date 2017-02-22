@@ -5,7 +5,7 @@ from math import fabs
 
 pygame.display.set_mode([1,1])
 
-with open('joystick_config.json') as configsFile:
+with open('joystick_pygame/joystick_config.json') as configsFile:
     configs = json.load(configsFile)
 
 

@@ -1,25 +1,14 @@
+import pygame
+
 from mcu_serial_com import *
 from time import sleep
 import time
-from joystick_pygame import *
+from joystick_pygame.joystick import RobotJoystick
 from math import *
 
-def get_joysticks():
-    joyList = glob.glob('/dev/input/js*')
-
-    if len(joyList) == 0:
-        print('No joystick found! Exiting...')
-        exit()
-    elif len(joyList) == 1:
-        print('One joystick found and selected: ' + str(joyList[0]))
-    else:
-        print('Multiple joystick detected')
-        for joy_path in joyList:
-            print(joy_path)
-
-    return joyList
 
 def do_joystick(com, joy, robot_id):
+	global MAX_SPEED
 	x, y = joy.getLeftAxisVector()
 	_, t = joy.getRightAxisVector()
 
@@ -37,7 +26,7 @@ def do_joystick(com, joy, robot_id):
 		com.charge(robot_id)
 		sleep(0.05)
 	if joy.getBtnValue("B"):
-		print("Dribbleur n")
+		print("Dribbleur on")
 		com.turnOnDribbler(robot_id)
 		sleep(0.05)
 	if joy.getBtnValue("Y"):
@@ -52,17 +41,33 @@ def do_joystick(com, joy, robot_id):
 		MAX_SPEED = 1.0
 	print("id:{: 3.3f} x:{: 3.3f} y:{: 3.3f} t:{: 3.3f} ".format(robot_id, x, y, t), end='')
 
-def joystick_cli(robot_id):
+def joystick_pygame_cli(robot_id):
+	global MAX_SPEED
+	MAX_SPEED = 1.0
 
+	# Initialize
+	pygame.init()
+	pygame.joystick.init()
+	joystick_count = pygame.joystick.get_count()
 
-    joy_robot_list = [(Joystick(joy_list[i]), robot_id + i) for i in range(len(joy_list))]     
+	print('# of detected joystick : {}'.format(joystick_count))
 
-    #port = getFirstSerialPort()
-    #com = McuCom(port)
-    #com.setRegister(robot_id, REG_CTRL_LOOP_STATE, 2)    
-    while True:
-        for (joy, robot_id) in joy_robot_list:
-            do_joystick(com, joy, robot_id)
-            sleep(0.005)
-        print() # cariage return
-    
+	robotJoystick = []
+
+	# For each joystick:
+	for i in range(joystick_count):
+		joystick = pygame.joystick.Joystick(i)
+		joystick.init()
+		robotJoystick.append((RobotJoystick(joystick), robot_id + i))
+
+	port = getFirstSerialPort()
+	com = McuCom(port)
+	com.setRegister(robot_id, REG_CTRL_LOOP_STATE, 2)
+
+	while True:
+		pygame.event.pump()
+		for (joy, robot_id) in robotJoystick:
+			do_joystick(com, joy, robot_id)
+		sleep(0.005)
+		print() # cariage return
+
