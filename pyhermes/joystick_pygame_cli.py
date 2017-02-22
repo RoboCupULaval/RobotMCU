@@ -20,8 +20,6 @@ def get_joysticks():
     return joyList
 
 def do_joystick(com, joy, robot_id):
-	global MAX_SPEED
-	MAX_SPEED = 1.0
 	x, y = joy.getLeftAxisVector()
 	_, t = joy.getRightAxisVector()
 
@@ -56,12 +54,11 @@ def do_joystick(com, joy, robot_id):
 
 def joystick_cli(robot_id):
 
-    joy_list = get_joysticks()
 
     joy_robot_list = [(Joystick(joy_list[i]), robot_id + i) for i in range(len(joy_list))]     
 
-    port = getFirstSerialPort()
-    com = McuCom(port)
+    #port = getFirstSerialPort()
+    #com = McuCom(port)
     #com.setRegister(robot_id, REG_CTRL_LOOP_STATE, 2)    
     while True:
         for (joy, robot_id) in joy_robot_list:
