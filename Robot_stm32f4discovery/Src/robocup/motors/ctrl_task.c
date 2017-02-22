@@ -102,9 +102,6 @@ void ctrl_taskEntryPoint(void) {
 					// If the speed command is negative we change the pid output to be negative
 					// and thus the motor will spin in the correct direction
 					output *= (reference >= 0.0 ? 1.0f : -1.0f);
-					if (g_ctrlLoopState == CLOSE_LOOP_WITH_LOGGING) {
-						motorDataLog_addCloseLoopData(&pWheel->pid);
-					}
 					break;
 				default:
 					LOG_ERROR("Unimplemented control loop state.\r\n");
@@ -112,10 +109,15 @@ void ctrl_taskEntryPoint(void) {
 			wheel_setPWM(pWheel, output);
 		}
 
+		// Handle logging output for close/open loop test
 		if (g_ctrlLoopState == OPEN_LOOP || g_ctrlLoopState == CLOSE_LOOP_WITH_LOGGING) {
+			for (int i = 0; i < wheelsLen; ++i) {
+				if (g_ctrlLoopState == CLOSE_LOOP_WITH_LOGGING) {
+					motorDataLog_addCloseLoopData(&g_wheels[i].pid);
+				}
+			}
 			motorDataLog_flushDataLine();
 		}
-
 	  }
 }
 

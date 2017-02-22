@@ -46,31 +46,18 @@ void wheel_break(const Wheel_t *wheel) {
 }
 
 void wheel_setPWM(const Wheel_t *wheel, float speed) {
-	// Range is 20000 to 28000, the output is in the range -1.0 to 1.0
 	// TODO put in own function
+	float speedInverted = 1.0f - (float)fabs(speed);
+	int command = ((int) ((float)fabs(speedInverted) * 6500.0f));
 
-#if defined (BETA)
-	int command = ((int) fabs(speed * 24000.0)) + 18000;
-#elif defined (GAMMA)
-	int command = (int) fabs(speed * 30000) + 6000;
-#elif defined (GAMMA2)
-	float _speed = 1.0f - (float)fabs(speed);
-	int command = ((int) ((float)fabs(_speed) * 6500.0f));
-#endif
 	// Less then 4% of power we break
 	if((float)fabs(speed) < 0.05){
-		command = 0;
-#if defined (GAMMA2)
 		command = 6500;
-#endif
 	}
 
 	uint32_t timerValue = (uint32_t)command;
   	__HAL_TIM_SetCompare(wheel->pTimer, wheel->timerChannel, timerValue);
 
-  	//static char buffer[128];
-	//snprintf(buffer, 128, "fbk: %d err: %d out: %d ", (int)wheel->pid.fbk, (int)wheel->pid.e, (int)(wheel->pid.output *100.0));
-	//Debug_Print(buffer);
 
 	// A clockwise/anticlockwise refer to rotation of the wheel when looking from the front.
 	// A clockwise turn clockwise when the direction pin is set to high
