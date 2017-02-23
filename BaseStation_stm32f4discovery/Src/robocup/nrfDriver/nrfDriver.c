@@ -45,14 +45,14 @@ void nrfSend(uint8_t * dataOut, bool forceRetryBool) {
 	uint8_t myStatus;
 
 
+	//do {
+	TM_NRF24L01_Transmit(dataOut);
 	do {
-		TM_NRF24L01_Transmit(dataOut);
-		do {
-			/* Get transmission status */
-			transmissionStatus = TM_NRF24L01_GetTransmissionStatus();
-			//myStatus = TM_NRF24L01_GetStatus();
-		} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Sending);
-	} while (forceRetryBool && transmissionStatus == TM_NRF24L01_Transmit_Status_Lost);
+		/* Get transmission status */
+		transmissionStatus = TM_NRF24L01_GetTransmissionStatus();
+		//myStatus = TM_NRF24L01_GetStatus();
+	} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Sending);
+	//} while (forceRetryBool && transmissionStatus == TM_NRF24L01_Transmit_Status_Lost);
 
 	//Get back into RX mode
 	TM_NRF24L01_PowerUpRx();
