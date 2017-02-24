@@ -60,13 +60,13 @@ void command_setRegister(const void *msg) {
 			float newSpeed = 0.0;
 			switch (registerMsg->value) {
 				case 1:
-					newSpeed = 0.1f;
+					newSpeed = 0.3f;
 					break;
 				case 2:
-					newSpeed = 0.2f;
+					newSpeed = 0.5f;
 					break;
 				case 3:
-					newSpeed = 0.3f;
+					newSpeed = 0.8f;
 					break;
 				default:
 					newSpeed = 0.0f;
