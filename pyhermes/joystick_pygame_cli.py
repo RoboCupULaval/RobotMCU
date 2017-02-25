@@ -1,5 +1,3 @@
-from tkinter.constants import CURRENT
-
 import pygame
 
 from mcu_serial_com import *
