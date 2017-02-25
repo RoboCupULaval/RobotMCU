@@ -46,5 +46,53 @@
         "left": -1
       }
     }
+  },
+  "Mad Catz Game Controller" : {
+    "buttons" : {
+      "X" : 2,
+      "A" : 0,
+      "B" : 1,
+      "Y" : 3,
+      "L1" : 10,
+      "L2" : 10,
+      "L3" : 7,
+      "R1" : 11,
+      "R2" : 11,
+      "R3" : 9,
+      "start" : 8,
+      "select" : 6
+    },
+    "axis" : {
+      "left" : {
+        "updown" : {
+          "id" : 1,
+          "up" : -1
+        },
+        "leftright" : {
+          "id" : 0,
+          "left" : -1
+        }
+      },
+      "right" : {
+        "updown" : {
+          "id" : 2,
+          "up" : -1
+        },
+        "leftright" : {
+          "id" : 3,
+          "left" : -1
+        }
+      }
+    },
+    "dpad" : {
+      "updown": {
+        "id": 1,
+        "up": 1
+      },
+      "leftright": {
+        "id": 0,
+        "left": -1
+      }
+    }
   }
 }

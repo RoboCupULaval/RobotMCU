@@ -40,7 +40,23 @@ void command_setRegister(const void *msg) {
 			break;
 		case KICK_COMMAND:
 			LOG_INFO("Kicking!!\r\n");
-			kicker_kick();
+			switch (registerMsg->value) {
+				case 1:
+					kicker_kick(KICKER_FORCE_1);
+					break;
+				case 2:
+					kicker_kick(KICKER_FORCE_2);
+					break;
+				case 3:
+					kicker_kick(KICKER_FORCE_3);
+					break;
+				case 4:
+					kicker_kick(KICKER_FORCE_4);
+					break;
+				default:
+					LOG_ERROR("Kicker error\r\n");
+					break;
+			}
 			break;
 		case CONTROL_LOOP_STATE:
 			switch (registerMsg->value) {
@@ -66,7 +82,7 @@ void command_setRegister(const void *msg) {
 					newSpeed = 0.5f;
 					break;
 				case 3:
-					newSpeed = 0.8f;
+					newSpeed = 0.7f;
 					break;
 				default:
 					newSpeed = 0.0f;

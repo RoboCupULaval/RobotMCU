@@ -1,3 +1,5 @@
+from tkinter.constants import CURRENT
+
 import pygame
 
 from mcu_serial_com import *
@@ -9,6 +11,7 @@ from math import *
 
 def do_joystick(com, joy, robot_id):
 	global MAX_SPEED
+	global current_dribbler_speed
 	x, y = joy.getLeftAxisVector()
 	_, t = joy.getRightAxisVector()
 
@@ -26,8 +29,12 @@ def do_joystick(com, joy, robot_id):
 		com.charge(robot_id)
 		sleep(0.05)
 	if joy.getBtnValue("B"):
-		print("Dribbleur on")
-		com.turnOnDribbler(robot_id)
+		new_speed = current_dribbler_speed + 1
+		if new_speed > 3:
+			new_speed = 1
+		print("Dribbleur set to ", new_speed)
+		com.setDribblerSpeed(robot_id, new_speed)
+		current_dribbler_speed = new_speed
 		sleep(0.05)
 	if joy.getBtnValue("Y"):
 		print("Dribbleur off")
@@ -44,6 +51,8 @@ def do_joystick(com, joy, robot_id):
 def joystick_pygame_cli(robot_id):
 	global MAX_SPEED
 	MAX_SPEED = 1.0
+	global current_dribbler_speed
+	current_dribbler_speed = 0
 
 	# Initialize
 	pygame.init()

@@ -3,7 +3,6 @@
 #include "slow_task.h"
 
 powerState slow_handleBattProtection(void);
-void       slow_handleDribbler(void);
 
 void slow_taskEntryPoint(void) {
 	pmu_init();
@@ -17,7 +16,6 @@ void slow_taskEntryPoint(void) {
 		led_swipingLedTest();
 	}
 
-	uint8_t dribblerState = 0;
 	uint8_t id = robot_getID();
 	for(;;) {
 		//Debug modee
@@ -38,7 +36,7 @@ void slow_taskEntryPoint(void) {
 
 		dribbler_handleDribbler();
 
-		HAL_Delay(30);
+		HAL_Delay(1);
 	}
 }
 

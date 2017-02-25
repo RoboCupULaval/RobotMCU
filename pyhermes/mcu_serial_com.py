@@ -91,17 +91,19 @@ class McuCom(object):
         #res = self.retreiveRespond()
 
     def turnOnDribbler(self, robot_id):
-        self.setRegister(robot_id, REG_SET_DRIBBLER_SPEED_COMMAND, 3);
+        self.setRegister(robot_id, REG_SET_DRIBBLER_SPEED_COMMAND, 3)
+
+    def setDribblerSpeed(self, robot_id, speed):
+        self.setRegister(robot_id, REG_SET_DRIBBLER_SPEED_COMMAND, speed)
 
     def turnOffDribbler(self, robot_id):
-        self.setRegister(robot_id, REG_SET_DRIBBLER_SPEED_COMMAND, 0);
-
+        self.setRegister(robot_id, REG_SET_DRIBBLER_SPEED_COMMAND, 0)
     
     def kick(self, robot_id):
-        self.setRegister(robot_id, REG_KICK_COMMAND, 0);
+        self.setRegister(robot_id, REG_KICK_COMMAND, 4)
 
     def charge(self, robot_id):
-        self.setRegister(robot_id, REG_CHARGE_KICKER_COMMAND, 0);
+        self.setRegister(robot_id, REG_CHARGE_KICKER_COMMAND, 0)
         
     def setRegister(self, robot_id, register, value):
         cmd = create2BytesCommand(robot_id, CMD_SET_REGISTER, register, value)
