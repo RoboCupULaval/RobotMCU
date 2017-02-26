@@ -9,9 +9,9 @@
 
 typedef enum  {
 	KICKER_FORCE_1 = 1, //time in tick
-	KICKER_FORCE_2 = 2,
-	KICKER_FORCE_3 = 3,
-	KICKER_FORCE_4 = 4
+	KICKER_FORCE_2 = 5,
+	KICKER_FORCE_3 = 10,
+	KICKER_FORCE_4 = 15
 } KickerForce_t;
 
 void kicker_init(void);

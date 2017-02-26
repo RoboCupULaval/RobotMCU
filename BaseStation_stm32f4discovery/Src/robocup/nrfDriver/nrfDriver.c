@@ -40,7 +40,7 @@ void nrfSetRobotTX(uint8_t robotNumber) {
 
 }
 
-void nrfSend(uint8_t * dataOut, bool forceRetryBool) {
+void nrfSend(uint8_t * dataOut) {//, bool forceRetryBool) {
 	TM_NRF24L01_Transmit_Status_t transmissionStatus;
 	uint8_t myStatus;
 

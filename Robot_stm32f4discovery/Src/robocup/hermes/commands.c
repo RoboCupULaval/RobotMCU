@@ -42,15 +42,19 @@ void command_setRegister(const void *msg) {
 			LOG_INFO("Kicking!!\r\n");
 			switch (registerMsg->value) {
 				case 1:
+					LOG_INFO("KICKER_FORCE_1\r\n");
 					kicker_kick(KICKER_FORCE_1);
 					break;
 				case 2:
+					LOG_INFO("KICKER_FORCE_2\r\n");
 					kicker_kick(KICKER_FORCE_2);
 					break;
 				case 3:
+					LOG_INFO("KICKER_FORCE_3\r\n");
 					kicker_kick(KICKER_FORCE_3);
 					break;
 				case 4:
+					LOG_INFO("KICKER_FORCE_4\r\n");
 					kicker_kick(KICKER_FORCE_4);
 					break;
 				default:

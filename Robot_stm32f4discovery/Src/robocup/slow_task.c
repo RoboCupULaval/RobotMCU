@@ -36,7 +36,7 @@ void slow_taskEntryPoint(void) {
 
 		dribbler_handleDribbler();
 
-		HAL_Delay(1);
+		HAL_Delay(20);
 	}
 }
 
