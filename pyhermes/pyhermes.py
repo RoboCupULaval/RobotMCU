@@ -21,7 +21,7 @@ if __name__ == "__main__":
         raise "Must be python 3"
 
     main_parser = argparse.ArgumentParser(description='Communication utility between Robocup Robot and control station')
-    main_parser.add_argument('command', choices={"ping", "test_open", "test_close", "joystick", "joystick_pygame"}, help='Type of utility')
+    main_parser.add_argument('command', choices={"ping", "test_open", "test_close", "test_rotate", "switch_close_loop", "joystick", "joystick_pygame"}, help='Type of utility')
     main_parser.add_argument('robot_id', help='Id of the robot')
 
 
@@ -40,6 +40,10 @@ if __name__ == "__main__":
         open_loop_test(args.robot_id)
     elif args.command == "test_close":
         close_loop_test(args.robot_id)
+    elif args.command == "test_rotate":
+        rotate_test(args.robot_id)
+    elif args.command == "switch_close_loop":
+        switch_to_close_loop(args.robot_id)
     elif args.command == "joystick":
         joystick_cli(args.robot_id)
     elif args.command == "joystick_pygame":

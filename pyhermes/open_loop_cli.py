@@ -4,6 +4,25 @@ import time
 
 current_milli_time = lambda: int(round(time.time() * 1000))
 
+
+def rotate_test(robot_id):
+	print("Start rotate test")
+	port = getFirstSerialPort()
+	com = McuCom(port)
+
+	while True:
+		print("Rotate command send")
+		com.sendSpeed(robot_id, 0 , 0, 1.0) # break
+		sleep(0.01)
+
+def switch_to_close_loop(robot_id):
+	port = getFirstSerialPort()
+	com = McuCom(port)
+	print("Switch to close loop test")
+	com.setRegister(robot_id,REG_CTRL_LOOP_STATE, 2)
+
+
+
 def open_loop_test(robot_id):
     commands = [
     (2000, 0.25),
@@ -21,6 +40,8 @@ def close_loop_test(robot_id):
     (2000, 0.25)
     ]
     do_test(1, 2, commands, robot_id)
+
+
 
 
 def do_test(ctrl_loop_state_initially, ctrl_loop_state_for_test, commands, robot_id) :

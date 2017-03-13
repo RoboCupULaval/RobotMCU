@@ -124,6 +124,7 @@ void communicationTask(void const * argument)
 //	nrfSend(dataOut);
 //  }
 
+  uint8_t lastDestAddress = 0xF0;
   TickType_t lastWakeTime = xTaskGetTickCount();
   for(;;)
   {
@@ -146,6 +147,7 @@ void communicationTask(void const * argument)
 
 		  // Check if decobification was successful
 		  if (result == -1) {
+		      HAL_GPIO_TogglePin(GPIOD, LD3_Pin);
 			  continue;
 		  }
 		  // Extract useful info
@@ -155,7 +157,11 @@ void communicationTask(void const * argument)
 
 		  // Send to Destination through NRF if necessary
 		  packetHeaderStruct_t* packet = (packetHeaderStruct_t*)decobifiedPacketBytes;
-		  nrfSetRobotTX(packet->destAddress);
+
+		  if (lastDestAddress != packet->destAddress) {
+			  lastDestAddress = packet->destAddress;
+			  nrfSetRobotTX(packet->destAddress);
+		  }
 		  nrfSend(packetBytesToSend);
 	  }
 
