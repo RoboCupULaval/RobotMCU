@@ -15,6 +15,7 @@ def do_joystick(com, joy, robot_id):
 
 	x = x * MAX_SPEED
 	y = y * MAX_SPEED
+	t = t * 4
 
 	com.sendSpeed(robot_id, x, y, t)
 
@@ -48,7 +49,7 @@ def do_joystick(com, joy, robot_id):
 
 def joystick_pygame_cli(robot_id):
 	global MAX_SPEED
-	MAX_SPEED = 1.0
+	MAX_SPEED = 0.1
 	global current_dribbler_speed
 	current_dribbler_speed = 0
 
@@ -69,7 +70,7 @@ def joystick_pygame_cli(robot_id):
 
 	port = getFirstSerialPort()
 	com = McuCom(port)
-	com.setRegister(robot_id, REG_CTRL_LOOP_STATE, 2)
+	com.setRegister(robot_id, REG_CTRL_LOOP_STATE, 1)
 
 	while True:
 		pygame.event.pump()

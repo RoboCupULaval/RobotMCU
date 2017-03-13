@@ -48,18 +48,19 @@ typedef enum {
 #define USE_QUAD
 
 #define PID_P 5.9f //0.001102f
-#define PID_I (0.07416f/100.0f) //0.000009f
+#define PID_I (0.07416f/CONTROL_LOOP_FREQ) //0.000009f
 #define PID_D 0.0f
 
 #elif defined (GAMMA2)
 
-#define PID_P 0.004217f
-#define PID_I (0.00000134f/100.0f)
+#define PID_P 0.0003f//0.004217f
+#define PID_I 0.002f/CONTROL_LOOP_FREQ//(0.00000134f/CONTROL_LOOP_FREQ)
 #define PID_D 0.0f
 
 #endif
 
-#define CONTROL_LOOP_PERIOD_MS 10
+#define CONTROL_LOOP_PERIOD_MS 	50
+#define CONTROL_LOOP_FREQ		20.0f
 
 
 

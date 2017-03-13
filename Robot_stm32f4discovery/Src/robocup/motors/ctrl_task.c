@@ -78,14 +78,19 @@ void ctrl_taskEntryPoint(void) {
 
 		for (int i = 0; i < wheelsLen; ++i) {
 			Wheel_t* pWheel = &g_wheels[i];
+			float output = 0.0;
 			float reference = wheel_setCommand(pWheel, vx, vy, vt);
 			float feedback = (float)wheelSpeed[pWheel->quad];
-			float output = 0.0;
 
 			switch(g_ctrlLoopState) {
 				case OPEN_LOOP:
-					output = reference * pWheel->openLoopAttenuation;
-
+					if(i == (int)vx || i == (int)vx + 2) {
+						if(i == 0 || i == 1) {
+							output = vy;
+						} else if(i == 2 || i == 3) {
+							output = vt;
+						}
+					}
 					motorDataLog_addWheelData(output, feedback);
 					break;
 				case CLOSE_LOOP_WITHOUT_LOGGING:

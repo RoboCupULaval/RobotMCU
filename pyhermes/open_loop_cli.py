@@ -24,22 +24,25 @@ def switch_to_close_loop(robot_id):
 
 
 def open_loop_test(robot_id):
-    commands = [
-    (2000, 0.25),
-    (3000, 0.3)
-    ]
+    commands = []
+
+    commands.append((6000, 0, 0, 0))
+
+    # RAMP ..
+    # for cmd in range(-40, 40, 1):
+    #     commands.append((200, 0, -cmd/100, cmd/100))
+    #
+    # commands.append((1000, 0, -0.4, 0.4))
+
     do_test(1, 0, commands, robot_id)
 
 # 0.03 max 2 wheels speed
 # 0.07 max 4 wheels speed
 def close_loop_test(robot_id):
     commands = [
-    (2000, 0.05),
-    (2000, 0.25),
-    (2000, -0.1),
-    (2000, 0.25)
+    (10000, 0.3535, 0.3535)
     ]
-    do_test(1, 2, commands, robot_id)
+    do_test(1, 1, commands, robot_id)
 
 
 
@@ -60,12 +63,20 @@ def do_test(ctrl_loop_state_initially, ctrl_loop_state_for_test, commands, robot
     com.setRegister(robot_id,REG_CTRL_LOOP_STATE, ctrl_loop_state_for_test) # set open loop
 
 
-    for (dt, command) in commands:
-    	print(time, command)
-    	start = current_milli_time();
-    	while current_milli_time() - start < dt:
-    		com.sendSpeed(robot_id,command, 0, 0) # -command
-    		sleep(0.05)
+    if ctrl_loop_state_for_test == 0:
+        for (dt, wheel_set, left_wheel, right_wheel) in commands:
+            print(time.time(), left_wheel, right_wheel)
+            start = current_milli_time();
+            while current_milli_time() - start < dt:
+                com.sendSpeed(robot_id, wheel_set, left_wheel, right_wheel)  # -command
+                sleep(0.05)
+    else:
+        for (dt, x, y) in commands:
+            print(time, x, ' ', y)
+            start = current_milli_time();
+            while current_milli_time() - start < dt:
+                com.sendSpeed(robot_id, x, y, 0) # -command
+                sleep(0.05)
 
     #while True:
     print("Stop open loop")
