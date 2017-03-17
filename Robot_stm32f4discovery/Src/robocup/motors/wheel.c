@@ -39,14 +39,14 @@ void wheel_break(const Wheel_t *wheel) {
 
 void wheel_setPWM(const Wheel_t *wheel, float speed) {
 	// Deadzone compensation
-	float compensatedSpeed = speed + (speed > 0) ? 0.25 : ((speed < 0) ? -0.25 : 0);
+	float compensatedSpeed = speed + (speed > 0) ? MOTOR_DEADZONE : ((speed < 0) ? -MOTOR_DEADZONE : 0);
 
 	// TODO put in own function
 	float invertedSpeed = 1.0f - (float)fabs(compensatedSpeed);
 	int pwm = ((int) ((float)fabs(invertedSpeed) * 6500.0f));
 
-	// Less than 5% of power we break
-	if((float)fabs(speed) < 0.05){
+	// Less than BREAKING_DEADZONE of power we break
+	if((float)fabs(speed) < BREAKING_THRESHOLD){
 		pwm = 6500;
 	}
 
