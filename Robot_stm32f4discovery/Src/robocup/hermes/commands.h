@@ -68,6 +68,7 @@ enum registerTypes_t {
 void nop(const void *msg);
 void command_heartbeatRequest(const void *msg);
 void command_movementCommand(const void *msg);
+void command_movementCommandOpen(const void *msg);
 void command_setRegister(const void *msg);
 
 
