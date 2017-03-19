@@ -31,10 +31,10 @@ volatile SpeedCommand_t g_speedCommand = {
 		.tickSinceLastUpdate = 0
 };
 volatile SpeedCommandOpen_t g_speedCommandOpen = {
-		.w1 = 0.0,
-		.w2 = 0.0,
-		.w3 = 0.0,
-		.w4 = 0.0,
+		.cmd1 = 0.0,
+		.cmd2 = 0.0,
+		.cmd3 = 0.0,
+		.cmd4 = 0.0,
 		.tickSinceLastUpdate = 0
 };
 
@@ -72,10 +72,10 @@ void ctrl_taskEntryPoint(void) {
 
 		switch(g_ctrlLoopState) {
 			case OPEN_LOOP:
-				output[0] = g_speedCommandOpen.w1;
-				output[1] = g_speedCommandOpen.w2;
-				output[2] = g_speedCommandOpen.w3;
-				output[3] = g_speedCommandOpen.w4;
+				output[0] = g_speedCommandOpen.cmd1;
+				output[1] = g_speedCommandOpen.cmd2;
+				output[2] = g_speedCommandOpen.cmd3;
+				output[3] = g_speedCommandOpen.cmd4;
 
 				const bool lastSpeedCommandOpenTimeout = speedCommandOpenTimeout;
 				speedCommandOpenTimeout = hasSpeedCommandOpenTimeout();

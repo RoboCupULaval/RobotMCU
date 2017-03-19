@@ -1,5 +1,3 @@
-import pygame
-
 from mcu_serial_com import *
 from time import sleep
 import time
@@ -52,6 +50,7 @@ def joystick_pygame_cli(robot_id):
 	MAX_SPEED = 0.1
 	global current_dribbler_speed
 	current_dribbler_speed = 0
+	import pygame
 
 	# Initialize
 	pygame.init()

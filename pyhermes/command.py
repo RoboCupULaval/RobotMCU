@@ -82,8 +82,8 @@ def create3FloatCommand(robot_id, id, vx, vy, vz):
     #print 'Raw payload', ":".join("{:02x}".format(ord(c)) for c in payload)
     return packagePayload(robot_id, id, payload)
 
-def create4FloatCommand(robot_id, id, w1, w2, w3, w4):
-    vel = [w1, w2, w3, w4]
+def create4FloatCommand(robot_id, id, cmd1, cmd2, cmd3, cmd4):
+    vel = [cmd1, cmd2, cmd3, cmd4]
     payload = struct.pack('%sf' % len(vel), *vel)
     return packagePayload(robot_id, id, payload)
 

@@ -24,7 +24,7 @@ typedef struct {
 } SpeedCommand_t;
 
 typedef struct {
-	float w1, w2, w3, w4;
+	float cmd1, cmd2, cmd3, cmd4; //pwm to wheel i between 0.0 and 1.0
 	TickType_t tickSinceLastUpdate;
 } SpeedCommandOpen_t;
 

@@ -33,10 +33,10 @@ void command_movementCommand(const void *msg){
 void command_movementCommandOpen(const void *msg){
 	// TODO: should add timing information, so if connection lost, we break
     msg_set_speed_open_t * movementMsg = (msg_set_speed_open_t *) msg;
-    g_speedCommandOpen.w1 = movementMsg->w1;
-    g_speedCommandOpen.w2 = movementMsg->w2;
-    g_speedCommandOpen.w3 = movementMsg->w3;
-    g_speedCommandOpen.w4 = movementMsg->w4;
+    g_speedCommandOpen.cmd1 = movementMsg->cmd1;
+    g_speedCommandOpen.cmd2 = movementMsg->cmd2;
+    g_speedCommandOpen.cmd3 = movementMsg->cmd3;
+    g_speedCommandOpen.cmd4 = movementMsg->cmd4;
     g_speedCommandOpen.tickSinceLastUpdate = xTaskGetTickCount();
 }
 

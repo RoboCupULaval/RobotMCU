@@ -44,11 +44,11 @@ def do_test(ctrl_loop_state_initially, ctrl_loop_state_for_test, commands, robot
 
     if ctrl_loop_state_for_test == 0:
         print("Start open loop")
-        for (dt, w1, w2, w3, w4) in commands:
-            print(time.time(), w1, ' ', w2, ' ', w3, ' ', w4)
+        for (dt, cmd1, cmd2, cmd3, cmd4) in commands:
+            print(time.time(), cmd1, ' ', cmd2, ' ', cmd3, ' ', cmd4)
             start = current_milli_time()
             while current_milli_time() - start < dt:
-                com.sendOpenLoopSpeed(robot_id, w1, w2, w3, w4)  # -command
+                com.sendOpenLoopSpeed(robot_id, cmd1, cmd2, cmd3, cmd4)  # -command
                 sleep(0.05)
         print("Stop open loop")
         for i in range(1, 10):
