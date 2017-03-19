@@ -90,6 +90,10 @@ class McuCom(object):
         #res = self.retreiveRespond()
         #res = self.retreiveRespond()
 
+    def sendOpenLoopSpeed(self, robot_id, w1, w2, w3, w4):
+        cmd = create4FloatCommand(robot_id, CMD_MOVEMENT_COMMAND_OPEN, w1, w2, w3, w4)
+        self.sendCommand(cmd)
+
     def turnOnDribbler(self, robot_id):
         self.setRegister(robot_id, REG_SET_DRIBBLER_SPEED_COMMAND, 3)
 

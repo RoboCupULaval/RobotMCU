@@ -9,12 +9,13 @@ CMD_MOVEMENT_COMMAND           = 0x02
 CMD_SET_REGISTER               = 0x03
 CMD_ACK                        = 0x04
 CMD_ROBOT_CRASHED_NOTIFICATION = 0x26
+CMD_MOVEMENT_COMMAND_OPEN      = 0x2E
 
 # Register type
-REG_CTRL_LOOP_STATE            = 0x00;
-REG_KICK_COMMAND               = 0x01;
-REG_CHARGE_KICKER_COMMAND      = 0x02;
-REG_SET_DRIBBLER_SPEED_COMMAND = 0x03;
+REG_CTRL_LOOP_STATE            = 0x00
+REG_KICK_COMMAND               = 0x01
+REG_CHARGE_KICKER_COMMAND      = 0x02
+REG_SET_DRIBBLER_SPEED_COMMAND = 0x03
 
 PROTOCOL_VERSION  = 0x01
 
@@ -79,5 +80,10 @@ def create3FloatCommand(robot_id, id, vx, vy, vz):
     payload = struct.pack('%sf' % len(vel), *vel)
     #print("payload len %d data=" % len(payload) + ":".join("{:02x}".format(ord(c)) for c in payload))
     #print 'Raw payload', ":".join("{:02x}".format(ord(c)) for c in payload)
+    return packagePayload(robot_id, id, payload)
+
+def create4FloatCommand(robot_id, id, w1, w2, w3, w4):
+    vel = [w1, w2, w3, w4]
+    payload = struct.pack('%sf' % len(vel), *vel)
     return packagePayload(robot_id, id, payload)
 
