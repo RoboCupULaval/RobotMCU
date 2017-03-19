@@ -34,6 +34,14 @@ typedef struct __attribute__((__packed__)) {
 
 typedef struct __attribute__((__packed__)) {
 	packetHeaderStruct_t header;
+	float   w1;
+	float   w2;
+	float   w3;
+	float	w4;
+} msg_set_speed_open_t;
+
+typedef struct __attribute__((__packed__)) {
+	packetHeaderStruct_t header;
 	float   kp;
 	float   ki;
 	float   kd;
