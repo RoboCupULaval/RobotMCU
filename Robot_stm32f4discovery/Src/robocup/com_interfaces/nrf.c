@@ -3,7 +3,7 @@
 #include "nrf.h"
 #include "../nrfDriver/nrfDriver.h"
 
-#define PACKET_SIZE 20
+#define PACKET_SIZE 23
 comHandle_t nrf_init(void){
 
 	nrfInit(PACKET_SIZE);
