@@ -30,21 +30,21 @@ void hermes_taskEntryPoint(void) {
 		encodedPacketHeaderStruct_t* encodedHeader = (encodedPacketHeaderStruct_t *) packetBuffer;
 		if (encodedHeader->header.destAddress != robot_getID() && encodedHeader->header.destAddress != ADDR_BROADCAST) {
 			LOG_ERROR_AND_BUFFER("Wrong dest", packetBuffer, bytesReceived);
-			//LOG_INFO("Wrong dest\r\n");
 			continue;
 		}
 
 		// The packet is decoded
 		res = decobifyData(packetBuffer, bytesReceived, dataBuffer, &payloadLen);
-		if (res == FAILURE){
-			LOG_ERROR("Fail decoding\r\n");
+		if (res == RESULT_FAILURE){
+			//LOG_ERROR("Fail decoding\r\n");
+			LOG_ERROR_AND_BUFFER("Fail decoding", packetBuffer, bytesReceived);
 			continue;
 		}
 
 		packetHeaderStruct_t* currentPacketHeaderPtr = (packetHeaderStruct_t *) dataBuffer;
 		res = validPayload(currentPacketHeaderPtr, payloadLen);
 
-		if (res == FAILURE) {
+		if (res == RESULT_FAILURE) {
 			continue;
 		}
 

@@ -22,8 +22,7 @@ def get_joysticks():
     return joyList
 
 def do_joystick(com, joy, robot_id):
-	global MAX_SPEED    
-	MAX_SPEED = 1.0
+	global MAX_SPEED
 	y, x = joy.buttons['stick1'].coords
 	_, t = joy.buttons['stick2'].coords
 
@@ -65,13 +64,14 @@ def joystick_cli(robot_id):
     joy_list = get_joysticks()
 
     joy_robot_list = [(Joystick(joy_list[i]), robot_id + i) for i in range(len(joy_list))]     
-
+    global MAX_SPEED
+    MAX_SPEED  = 1.0
     port = getFirstSerialPort()
     com = McuCom(port)
-    #com.setRegister(robot_id, REG_CTRL_LOOP_STATE, 2)    
+    # com.setRegister(robot_id, REG_CTRL_LOOP_STATE, 1)
     while True:
         for (joy, robot_id) in joy_robot_list:
             do_joystick(com, joy, robot_id)
-            sleep(0.005)
+            sleep(0.030)
         print() # cariage return
     

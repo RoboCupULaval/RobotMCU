@@ -4,10 +4,7 @@
 #include "wheels_config.h"
 
 
-#ifdef USE_QUAD
-static quad_Handle quadA;
-static quad_Handle quadB;
-#else
+
 typedef struct EncoderTimerAssociation_t{
 	QuadEncoder_t identifier;
 	TIM_HandleTypeDef* timer;
@@ -21,7 +18,6 @@ static EncoderTimerAssociation_t s_encoders[] = {
 	{EncoderTim4, &htim4, {0}}
 };
 const size_t encodersLen = sizeof(s_encoders) / sizeof(EncoderTimerAssociation_t);
-#endif
 
 volatile CtrlLoop_t g_ctrlLoopState = CLOSE_LOOP_WITHOUT_LOGGING;
 volatile SpeedCommand_t g_speedCommand = {
@@ -72,16 +68,25 @@ void ctrl_taskEntryPoint(void) {
 			continue;
 		}
 
+		if(g_ctrlLoopState == CLOSE_LOOP_WITH_LOGGING) {
+			motorDataLog_addReceivedSpeed(vx, vy, vt);
+		}
+
 		for (int i = 0; i < wheelsLen; ++i) {
 			Wheel_t* pWheel = &g_wheels[i];
+			float output = 0.0;
 			float reference = wheel_setCommand(pWheel, vx, vy, vt);
 			float feedback = (float)wheelSpeed[pWheel->quad];
-			float output = 0.0;
 
 			switch(g_ctrlLoopState) {
 				case OPEN_LOOP:
-					output = reference * pWheel->openLoopAttenuation;
-
+					if(i == (int)vx || i == (int)vx + 2) {
+						if(i == 0 || i == 1) {
+							output = vy;
+						} else if(i == 2 || i == 3) {
+							output = vt;
+						}
+					}
 					motorDataLog_addWheelData(output, feedback);
 					break;
 				case CLOSE_LOOP_WITHOUT_LOGGING:
@@ -98,9 +103,6 @@ void ctrl_taskEntryPoint(void) {
 					// If the speed command is negative we change the pid output to be negative
 					// and thus the motor will spin in the correct direction
 					output *= (reference >= 0.0 ? 1.0f : -1.0f);
-					if (CLOSE_LOOP_WITH_LOGGING) {
-						motorDataLog_addCloseLoopData(&pWheel->pid);
-					}
 					break;
 				default:
 					LOG_ERROR("Unimplemented control loop state.\r\n");
@@ -108,10 +110,15 @@ void ctrl_taskEntryPoint(void) {
 			wheel_setPWM(pWheel, output);
 		}
 
+		// Handle logging output for close/open loop test
 		if (g_ctrlLoopState == OPEN_LOOP || g_ctrlLoopState == CLOSE_LOOP_WITH_LOGGING) {
+			for (int i = 0; i < wheelsLen; ++i) {
+				if (g_ctrlLoopState == CLOSE_LOOP_WITH_LOGGING) {
+					motorDataLog_addCloseLoopData(&g_wheels[i].pid);
+				}
+			}
 			motorDataLog_flushDataLine();
 		}
-
 	  }
 }
 
@@ -131,33 +138,18 @@ void initPwmAndQuad(void) {
 			g_wheels[i].pid = pid_init(PID_P, PID_I, PID_D, 1.0, 0.0);
 		}
 
-#ifdef USE_QUAD
-	  	quadA = quad_Init(CS_1);
-	  	quadB = quad_Init(CS_2);
-#else
 		for(int i = 0; i < encodersLen; ++i) {
 			s_encoders[i].encoder = encoder_init(s_encoders[i].timer);
 		}
-#endif
 	}
 }
 
 void readQuadsSpeed(int32_t *wheelSpeed) {
-
-#ifdef USE_QUAD
-	quad_ReadCounters(&quadA);
-	quad_ReadCounters(&quadB);
-	wheelSpeed[QuadEncoderA1] = quadA.delta_count0;
-	wheelSpeed[QuadEncoderA2] = quadA.delta_count1;
-	wheelSpeed[QuadEncoderB1] = quadB.delta_count0;
-	wheelSpeed[QuadEncoderB2] = quadB.delta_count1;
-#else
 	for(int i = 0; i < encodersLen; ++i) {
 		EncoderTimerAssociation_t* encoderTimerAsso = &s_encoders[i];
 		encoder_readCounters(&(encoderTimerAsso->encoder));
 		wheelSpeed[encoderTimerAsso->identifier] = encoderTimerAsso->encoder.deltaCount;
 	}
-#endif
 }
 
 

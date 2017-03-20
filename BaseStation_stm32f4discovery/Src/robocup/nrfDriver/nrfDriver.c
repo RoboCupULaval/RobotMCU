@@ -27,7 +27,7 @@ uint8_t TxAddress[] = {
 };
 
 void nrfInit() {
-	TM_NRF24L01_Init(2, 20);
+	TM_NRF24L01_Init(100, 20);
 	TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_1M, TM_NRF24L01_OutputPower_0dBm);
 	TM_NRF24L01_SetMyAddress(MyAddress);
 	TM_NRF24L01_SetTxAddress(TxAddress);
@@ -40,33 +40,19 @@ void nrfSetRobotTX(uint8_t robotNumber) {
 
 }
 
-void nrfSend(uint8_t * dataOut) {
+void nrfSend(uint8_t * dataOut) {//, bool forceRetryBool) {
 	TM_NRF24L01_Transmit_Status_t transmissionStatus;
-	uint8_t myStatus;
+	//uint8_t myStatus;
 
-
+	//do {
 	TM_NRF24L01_Transmit(dataOut);
-	//vTaskDelay(5); // Don't delete this, it's like embedded jesus for us desperate programmers!
-
-	static uint32_t maxCount =0;
-	static TickType_t maxDelta =0;
-	static TickType_t minDelta = 0xffff;
-	uint32_t count = 0;
-
-	TickType_t lastWakeTime = xTaskGetTickCount();
 	do {
 		/* Get transmission status */
 		transmissionStatus = TM_NRF24L01_GetTransmissionStatus();
 		//myStatus = TM_NRF24L01_GetStatus();
-		count++;
-
 	} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Sending);
-	TickType_t delta = xTaskGetTickCount() - lastWakeTime;
-	if(count > maxCount){
-		maxCount = count;
-		maxDelta = delta;
-	}
-	minDelta = delta < minDelta ? delta : minDelta;
+	//} while (forceRetryBool && transmissionStatus == TM_NRF24L01_Transmit_Status_Lost);
+
 	//Get back into RX mode
 	TM_NRF24L01_PowerUpRx();
 }

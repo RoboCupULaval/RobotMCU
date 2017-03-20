@@ -9,7 +9,10 @@
 .osx.project
 */.settings/*
 */SW4STM32/*
-*.ld
+*/STM32F4DISCOVERY.xml
+*/startup/*
+
+
 .metadata/*
 RemoteSystemsTempFiles/
 
