@@ -3,11 +3,7 @@ import json
 import time
 from math import fabs
 
-pygame.display.set_mode([1,1])
-
-with open('joystick_pygame/joystick_config.json') as configsFile:
-    configs = json.load(configsFile)
-
+from joystick_pygame.joystick_config import configs
 
 class RobotJoystick():
 
@@ -18,10 +14,10 @@ class RobotJoystick():
         self.deadZone = 0.05
         self.config = configs[joystick.get_name()]
 
-    def getBtnValue(self, btn):
+    def get_btn_value(self, btn):
         return self.joystick.get_button(self.config['buttons'][btn])
 
-    def getLeftAxisVector(self):
+    def get_left_axis_vector(self):
         x = self.joystick.get_axis(self.config['axis']['left']['updown']['id']) * self.config['axis']['left']['updown']['up']
         y = self.joystick.get_axis(self.config['axis']['left']['leftright']['id']) * self.config['axis']['left']['leftright']['left']
 
@@ -32,7 +28,7 @@ class RobotJoystick():
 
         return x, y
 
-    def getRightAxisVector(self):
+    def get_right_axis_vector(self):
         x = self.joystick.get_axis(self.config['axis']['right']['updown']['id']) * self.config['axis']['right']['updown']['up']
         y = self.joystick.get_axis(self.config['axis']['right']['leftright']['id']) * self.config['axis']['right']['leftright']['left']
 
@@ -43,7 +39,7 @@ class RobotJoystick():
 
         return x, y
 
-    def getDPadVector(self):
+    def get_dpad_vector(self):
         x = self.joystick.get_hat(self.config['dpad']['updown']['id']) * self.config['dpad']['updown']['up']
         y = self.joystick.get_hat(self.config['dpad']['leftright']['id']) * self.config['dpad']['leftright']['left']
 
@@ -60,6 +56,8 @@ if __name__ == '__main__':
     pygame.joystick.init()
     joystick_count = pygame.joystick.get_count()
 
+    pygame.display.set_mode([1,1])
+
     print(joystick_count)
 
     robotJoystick = []
@@ -73,7 +71,7 @@ if __name__ == '__main__':
     while True:
         pygame.event.pump()
         for i in range(joystick_count):
-            print(str(robotJoystick[i].getLeftAxisVector()) + '\n')
-            print(str(robotJoystick[i].getBtnValue('X')))
+            print(str(robotJoystick[i].get_left_axis_vector()) + '\n')
+            print(str(robotJoystick[i].get_btn_value('X')))
 
         time.sleep(0.001)

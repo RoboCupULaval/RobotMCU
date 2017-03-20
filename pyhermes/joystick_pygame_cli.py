@@ -8,8 +8,8 @@ from math import *
 def do_joystick(com, joy, robot_id):
 	global MAX_SPEED
 	global current_dribbler_speed
-	x, y = joy.getLeftAxisVector()
-	_, t = joy.getRightAxisVector()
+	x, y = joy.get_left_axis_vector()
+	_, t = joy.get_right_axis_vector()
 
 	x = x * MAX_SPEED
 	y = y * MAX_SPEED
@@ -17,15 +17,15 @@ def do_joystick(com, joy, robot_id):
 
 	com.sendSpeed(robot_id, x, y, t)
 
-	if joy.getBtnValue("X"):
+	if joy.get_btn_value("X"):
 		print("kick")
 		com.kick(robot_id)
 		sleep(0.05)
-	if joy.getBtnValue("A"):
+	if joy.get_btn_value("A"):
 		print("charge")
 		com.charge(robot_id)
 		sleep(0.05)
-	if joy.getBtnValue("B"):
+	if joy.get_btn_value("B"):
 		new_speed = current_dribbler_speed + 1
 		if new_speed > 3:
 			new_speed = 1
@@ -33,14 +33,14 @@ def do_joystick(com, joy, robot_id):
 		com.setDribblerSpeed(robot_id, new_speed)
 		current_dribbler_speed = new_speed
 		sleep(0.05)
-	if joy.getBtnValue("Y"):
+	if joy.get_btn_value("Y"):
 		print("Dribbleur off")
 		com.turnOffDribbler(robot_id)
 		sleep(0.05)
-	if joy.getBtnValue("L1"):
+	if joy.get_btn_value("L1"):
 		print("slow mode")
 		MAX_SPEED = 0.1
-	if joy.getBtnValue("R1"):
+	if joy.get_btn_value("R1"):
 		print("fast mode")
 		MAX_SPEED = 1.0
 	print("id:{: 3.3f} x:{: 3.3f} y:{: 3.3f} t:{: 3.3f} ".format(robot_id, x, y, t), end='')
