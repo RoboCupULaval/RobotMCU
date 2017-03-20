@@ -38,16 +38,21 @@ void wheel_break(const Wheel_t *wheel) {
 }
 
 void wheel_setPWM(const Wheel_t *wheel, float speed) {
-	// TODO put in own function
-	float speedInverted = 1.0f - (float)fabs(speed);
-	int command = ((int) ((float)fabs(speedInverted) * 6500.0f));
+	// Deadzone compensation + 100% cmd saturation
+	float compensatedSpeed = fabs(speed) + MOTOR_DEADZONE;
+	compensatedSpeed = (compensatedSpeed > 1.0f ? 1.0f : compensatedSpeed);
+	compensatedSpeed = (compensatedSpeed < -1.0f ? -1.0f : compensatedSpeed);
 
-	// Less then 4% of power we break
-	if((float)fabs(speed) < 0.05){
-		command = 6500;
+	// TODO put in own function
+	float invertedSpeed = 1.0f - compensatedSpeed;
+	int pwm = ((int) ((float)invertedSpeed) * 6500.0f);
+
+	// Less than BREAKING_DEADZONE of power we break
+	if((float)fabs(speed) < BREAKING_THRESHOLD){
+		pwm = 6500;
 	}
 
-	uint32_t timerValue = (uint32_t)command;
+	uint32_t timerValue = (uint32_t)pwm;
   	__HAL_TIM_SetCompare(wheel->pTimer, wheel->timerChannel, timerValue);
 
 
