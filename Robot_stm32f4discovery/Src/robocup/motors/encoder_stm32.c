@@ -12,15 +12,8 @@ EncoderHandle_t encoder_init(TIM_HandleTypeDef* pTimer) {
 }
 
 void encoder_readCounters(EncoderHandle_t *pEncoder) {
-	/*const */int16_t currentCount = __HAL_TIM_GetCounter(pEncoder->pTimer);
-	//int32_t currentCount = 0;
+	const int16_t currentCount = __HAL_TIM_GetCounter(pEncoder->pTimer);
 	int16_t deltaCount = currentCount - pEncoder->previousCount;
-	/*if (abs(deltaCount) > 63000) {
-		LOG_ERROR("Weird value for counter.\r\n");
-		pEncoder->deltaCount = 0;
-		currentCount = pEncoder->previousCount;
-		deltaCount = pEncoder->deltaCount;
-	}*/
 	pEncoder->deltaCount = deltaCount;
 	pEncoder->previousCount = currentCount;
 }

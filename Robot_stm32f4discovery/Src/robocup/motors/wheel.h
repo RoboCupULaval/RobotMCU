@@ -15,17 +15,11 @@ typedef enum {
 
 // Each quadrature encoder has two counters 1 and 2. We also have two quaddrature encoders
 typedef enum{
-#ifdef USE_QUAD
-	QuadEncoderA1,
-	QuadEncoderA2,
-	QuadEncoderB1,
-	QuadEncoderB2
-#else
+
 	EncoderTim1 = 0,
 	EncoderTim2 = 1,
 	EncoderTim3 = 2,
 	EncoderTim4 = 3
-#endif
 } QuadEncoder_t;
 
 typedef struct {

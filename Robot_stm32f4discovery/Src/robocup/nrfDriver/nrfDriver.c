@@ -58,10 +58,10 @@ void nrfReceive(uint8_t * dataIn) {
 	TM_NRF24L01_GetData(dataIn);
 }
 
-uint8_t nrfRetransmitCount() {
+uint8_t nrfRetransmitCount(void) {
 	return TM_NRF24L01_GetRetransmissionsCount();
 }
 
-uint8_t nrfGetStatus() {
+uint8_t nrfGetStatus(void) {
 	return TM_NRF24L01_GetStatus();
 }

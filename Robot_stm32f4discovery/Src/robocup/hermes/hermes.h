@@ -30,10 +30,9 @@ static const uint8_t PROTOCOL_VERSION  = 0x01;
  *******************************************************************************/
 
 
-// TODO: More specific failure than just FAILURE, Also ERROR/SUCCESS already defined elsewhere
 typedef enum {
-	FAILURE = 0,
-	MySUCCESS
+	RESULT_FAILURE = 0,
+	RESULT_SUCCESS
 }Result_t;
 
 typedef struct packetHeaderStruct packetHeaderStruct;

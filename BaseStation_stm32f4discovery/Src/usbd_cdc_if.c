@@ -282,7 +282,7 @@ static int8_t CDC_Receive_FS (uint8_t* Buf, uint32_t *Len)
 	//packetTotal++;
 
 	// Sanity check: if the circular buffer is full,
-	// reject the packet and warn the computer that we lost a packet.
+	// reject the packet and toggle a led
     if (((myCircularBuffer.readIndex + 1) % CBPACKETNUMBER) == myCircularBuffer.writeIndex) {
     	// Send warning packet TODO
     	//static uint32_t packetLost = 0;
@@ -354,10 +354,8 @@ int SerialRead(uint8_t* dataBuffer) {
 }
 
 // This function writes a single (preferably) cobs-encoded packet and sends it through USB
-void SerialWrite(uint8_t* Buf, uint32_t Len) {
-	uint8_t result;
-	//CDC_Transmit_FS ((uint8_t*)("123456 "),7);
-	result = CDC_Transmit_FS(Buf, Len);
+uint8_t SerialWrite(uint8_t* Buf, uint32_t Len) {
+	return CDC_Transmit_FS(Buf, Len);
 }
 /* USER CODE END PRIVATE_FUNCTIONS_IMPLEMENTATION */
 
