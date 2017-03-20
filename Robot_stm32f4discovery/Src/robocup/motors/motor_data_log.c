@@ -5,6 +5,8 @@
  *      Author: philippe
  */
 
+#include <string.h>
+
 #include "motor_data_log.h"
 
 static char s_dataLineBuffer[400];

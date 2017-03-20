@@ -456,6 +456,9 @@ TM_NRF24L01_Transmit_Status_t TM_NRF24L01_GetTransmissionStatus(void) {
 		/* Message lost */
 		return TM_NRF24L01_Transmit_Status_Lost;
 	}
+	if (status != 0xe) {
+		return TM_NRF24L01_Transmit_Status_Sending;
+	}
 	
 	/* Still sending */
 	return TM_NRF24L01_Transmit_Status_Sending;

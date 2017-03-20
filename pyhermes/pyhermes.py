@@ -28,6 +28,9 @@ if __name__ == '__main__':
     ping_parser = subparsers.add_parser('ping', help='Send ping to a robot')
     ping_parser.add_argument('robot_id', type=int, help='ID of the robot')
 
+    ping_parser = subparsers.add_parser('test_rotate', help='Send a rotation command to the robot')
+    ping_parser.add_argument('robot_id', type=int, help='ID of the robot')
+
     joystick_parser = subparsers.add_parser('joystick', help='Control a robot using a joystick')
     joystick_parser.add_argument('--pygame', action='store_true', help='Use pygame cli over default linux one')
     joystick_parser.add_argument('robot_id', type=int, help='ID of the robot')
@@ -36,7 +39,6 @@ if __name__ == '__main__':
     ctrl_parser.add_argument('ctrl_loop_type', choices={'open_loop', 'close_loop'}, help='Type of control loop')
     ctrl_parser.add_argument('speed_commands_file', type=str, help='Path to the txt file containing rows of speed commands')
     ctrl_parser.add_argument('robot_id', type=int, help='ID of the robot')
-
 
     args = main_parser.parse_args()
 
@@ -64,4 +66,6 @@ if __name__ == '__main__':
         else:
             close_loop_test(args.robot_id, commands)
 
+    elif args.command == 'test_rotate':
+        rotate_test(args.robot_id)
 

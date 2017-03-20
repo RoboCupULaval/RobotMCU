@@ -1,12 +1,6 @@
-/*
- * com_interface.h
- *
- *  Created on: Jul 2, 2016
- *      Author: philippe
- */
-
 #ifndef ROBOCUP_HERMES_COM_INTERFACE_H_
 #define ROBOCUP_HERMES_COM_INTERFACE_H_
+#include <stddef.h>
 
 /***
  * Every communication medium uses by hermes must pass by this interface

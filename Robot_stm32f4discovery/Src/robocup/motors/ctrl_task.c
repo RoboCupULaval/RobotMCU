@@ -4,10 +4,7 @@
 #include "wheels_config.h"
 
 
-#ifdef USE_QUAD
-static quad_Handle quadA;
-static quad_Handle quadB;
-#else
+
 typedef struct EncoderTimerAssociation_t{
 	QuadEncoder_t identifier;
 	TIM_HandleTypeDef* timer;
@@ -21,7 +18,6 @@ static EncoderTimerAssociation_t s_encoders[] = {
 	{EncoderTim4, &htim4, {0}}
 };
 const size_t encodersLen = sizeof(s_encoders) / sizeof(EncoderTimerAssociation_t);
-#endif
 
 volatile CtrlLoop_t g_ctrlLoopState = CLOSE_LOOP_WITHOUT_LOGGING;
 volatile SpeedCommand_t g_speedCommand = {
@@ -166,33 +162,18 @@ void initPwmAndQuad(void) {
 			g_wheels[i].pid = pid_init(PID_P, PID_I, PID_D, 1.0, 0.0);
 		}
 
-#ifdef USE_QUAD
-	  	quadA = quad_Init(CS_1);
-	  	quadB = quad_Init(CS_2);
-#else
 		for(int i = 0; i < encodersLen; ++i) {
 			s_encoders[i].encoder = encoder_init(s_encoders[i].timer);
 		}
-#endif
 	}
 }
 
 void readQuadsSpeed(int32_t *wheelSpeed) {
-
-#ifdef USE_QUAD
-	quad_ReadCounters(&quadA);
-	quad_ReadCounters(&quadB);
-	wheelSpeed[QuadEncoderA1] = quadA.delta_count0;
-	wheelSpeed[QuadEncoderA2] = quadA.delta_count1;
-	wheelSpeed[QuadEncoderB1] = quadB.delta_count0;
-	wheelSpeed[QuadEncoderB2] = quadB.delta_count1;
-#else
 	for(int i = 0; i < encodersLen; ++i) {
 		EncoderTimerAssociation_t* encoderTimerAsso = &s_encoders[i];
 		encoder_readCounters(&(encoderTimerAsso->encoder));
 		wheelSpeed[encoderTimerAsso->identifier] = encoderTimerAsso->encoder.deltaCount;
 	}
-#endif
 }
 
 
