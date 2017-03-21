@@ -96,7 +96,7 @@ void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PEPin PEPin PEPin */
-  GPIO_InitStruct.Pin = ID_0_demux_0_Pin|ID_1_demux_1_Pin|ID_2_demux_2_Pin;
+  GPIO_InitStruct.Pin = ID_0_Pin|ID_1_Pin|ID_2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);

@@ -22,7 +22,6 @@ void command_heartbeatRequest(const void *msg){
 
 // Extracts the speed commands and puts it into the global speed command
 void command_movementCommand(const void *msg){
-	// TODO: should add timing information, so if connection lost, we break
     msg_set_speed_t * movementMsg = (msg_set_speed_t *) msg;
     g_speedCommand.vx = movementMsg->vx;
     g_speedCommand.vy = movementMsg->vy;

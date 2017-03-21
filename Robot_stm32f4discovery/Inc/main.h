@@ -53,12 +53,12 @@
 
 #define CS_I2C_SPI_Pin GPIO_PIN_3
 #define CS_I2C_SPI_GPIO_Port GPIOE
-#define ID_0_demux_0_Pin GPIO_PIN_4
-#define ID_0_demux_0_GPIO_Port GPIOE
-#define ID_1_demux_1_Pin GPIO_PIN_5
-#define ID_1_demux_1_GPIO_Port GPIOE
-#define ID_2_demux_2_Pin GPIO_PIN_6
-#define ID_2_demux_2_GPIO_Port GPIOE
+#define ID_0_Pin GPIO_PIN_4
+#define ID_0_GPIO_Port GPIOE
+#define ID_1_Pin GPIO_PIN_5
+#define ID_1_GPIO_Port GPIOE
+#define ID_2_Pin GPIO_PIN_6
+#define ID_2_GPIO_Port GPIOE
 #define PH0_OSC_IN_Pin GPIO_PIN_0
 #define PH0_OSC_IN_GPIO_Port GPIOH
 #define PH1_OSC_OUT_Pin GPIO_PIN_1
@@ -155,6 +155,7 @@
 #define MOTOR4_DIR_GPIO_Port GPIOB
 #define MEMS_INT2_Pin GPIO_PIN_1
 #define MEMS_INT2_GPIO_Port GPIOE
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

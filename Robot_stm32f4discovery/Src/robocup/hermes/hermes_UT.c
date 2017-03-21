@@ -39,7 +39,7 @@ void test_hermes() {
 	memset(buffer, 'a', 300);
 	buffer[299] = '\0';
 	res = test_hermes_try_encode_decode(buffer, strlen(buffer));
-	if(res == FAILURE)
+	if(res == RESULT_FAILURE)
 		LOG_INFO("[OK]\r\n");
 	else
 		LOG_INFO("[FAIL]\r\n");
@@ -47,7 +47,7 @@ void test_hermes() {
 	LOG_INFO("HERMES - Test decoding invalid packet (too long)");
 	const char testStrInvalidPacket[] = "\fhello world too long before a zero char";
 	res = test_hermes_invalid_packet(testStrInvalidPacket, sizeof(testStrInvalidPacket));
-	if(res == FAILURE)
+	if(res == RESULT_FAILURE)
 		LOG_INFO("[OK]\r\n");
 	else
 		LOG_INFO("[FAIL]\r\n");
@@ -66,9 +66,9 @@ Result_t test_hermes_try_encode_decode(const char* pPayload, size_t payload_len)
 		resDecod &&
 		decode_len == payload_len &&
 		memcmp(pPayload, decode, payload_len) == 0) {
-		return MySUCCESS;
+		return RESULT_SUCCESS;
 	} else {
-		return FAILURE;
+		return RESULT_FAILURE;
 	}
 }
 

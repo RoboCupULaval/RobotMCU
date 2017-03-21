@@ -119,19 +119,10 @@ void communicationTask(void const * argument)
   unsigned int REMOVETHISVARIABLEITSUSELESS = 0;
   int receivedLen;
 
-//  while (1) {
-//	uint8_t dataOut[15] = {0x04, 0x01, 0xfe, 0xff, 0x01, 0x01, 0x00};
-//	nrfSend(dataOut);
-//  }
-
+  uint8_t lastDestAddress = 0xF0;
   TickType_t lastWakeTime = xTaskGetTickCount();
   for(;;)
   {
-//	  if (xTaskGetTickCount() - lastWakeTime > 1000) {
-//		  USBD_CDC_ReceivePacket(&hUsbDeviceFS);
-//		  lastWakeTime = xTaskGetTickCount();
-//		  SerialWrite("hello", strlen("hello"));
-//	  }
 
 
 	  //Read a packet from usb
@@ -146,6 +137,7 @@ void communicationTask(void const * argument)
 
 		  // Check if decobification was successful
 		  if (result == -1) {
+		      HAL_GPIO_TogglePin(GPIOD, LD3_Pin);
 			  continue;
 		  }
 		  // Extract useful info
@@ -155,7 +147,11 @@ void communicationTask(void const * argument)
 
 		  // Send to Destination through NRF if necessary
 		  packetHeaderStruct_t* packet = (packetHeaderStruct_t*)decobifiedPacketBytes;
-		  nrfSetRobotTX(packet->destAddress);
+
+		  if (lastDestAddress != packet->destAddress) {
+			  lastDestAddress = packet->destAddress;
+			  nrfSetRobotTX(packet->destAddress);
+		  }
 		  nrfSend(packetBytesToSend);
 	  }
 

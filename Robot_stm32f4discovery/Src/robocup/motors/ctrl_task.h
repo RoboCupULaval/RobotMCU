@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <math.h>
+#include <stdbool.h>
 
 #include "FreeRTOS.h"
 #include "cmsis_os.h"

@@ -35,7 +35,7 @@ void hermes_taskEntryPoint(void) {
 
 		// The packet is decoded
 		res = decobifyData(packetBuffer, bytesReceived, dataBuffer, &payloadLen);
-		if (res == FAILURE){
+		if (res == RESULT_FAILURE){
 			//LOG_ERROR("Fail decoding\r\n");
 			LOG_ERROR_AND_BUFFER("Fail decoding", packetBuffer, bytesReceived);
 			continue;
@@ -44,7 +44,7 @@ void hermes_taskEntryPoint(void) {
 		packetHeaderStruct_t* currentPacketHeaderPtr = (packetHeaderStruct_t *) dataBuffer;
 		res = validPayload(currentPacketHeaderPtr, payloadLen);
 
-		if (res == FAILURE) {
+		if (res == RESULT_FAILURE) {
 			continue;
 		}
 
