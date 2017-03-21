@@ -42,8 +42,6 @@ if __name__ == '__main__':
 
     args = main_parser.parse_args()
 
-    print(args)
-
     if args.command == 'ping':
         diagnostic(args.robot_id)
 
