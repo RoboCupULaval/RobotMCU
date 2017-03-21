@@ -13,7 +13,7 @@ def do_joystick(com, joy, robot_id):
 
 	x = x * MAX_SPEED
 	y = y * MAX_SPEED
-	t = t * 4
+	t = t * 2
 
 	com.sendSpeed(robot_id, x, y, t)
 
