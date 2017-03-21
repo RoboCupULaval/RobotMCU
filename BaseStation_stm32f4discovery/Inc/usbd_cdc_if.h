@@ -115,7 +115,7 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
 
 int SerialRead(uint8_t* Buf);
 
-void SerialWrite(uint8_t* Buf, uint32_t Len);
+uint8_t SerialWrite(uint8_t* Buf, uint32_t Len);
 /* USER CODE END EXPORTED_FUNCTIONS */
 /**
   * @}
