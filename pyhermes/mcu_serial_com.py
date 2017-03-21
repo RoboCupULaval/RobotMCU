@@ -5,6 +5,8 @@ import serial
 import io
 import time
 import glob
+import sys
+from serial.tools import list_ports
 
 from time import sleep
 
@@ -14,12 +16,16 @@ def getFirstSerialPort():
     if glob.glob(defaultPort):
         print("Default to port {}".format(defaultPort))
         return defaultPort
-    ttyList = glob.glob('/dev/ttyACM*')
-    ttyList +=  glob.glob('/dev/ttyBaseStation')
-    ttyList +=  glob.glob('/dev/rfcomm*')
-    ttyList +=  glob.glob('/dev/ttyUSB*')
-    ttyList +=  glob.glob('/dev/tty.Robot*')
-    ttyList +=  glob.glob('/dev/tty.usbmodem*')
+
+    if sys.platform.startswith('win'):
+        ttyList = [port.device for port in list_ports.comports()]
+    else:
+        ttyList = glob.glob('/dev/ttyACM*')
+        ttyList += glob.glob('/dev/ttyBaseStation')
+        ttyList += glob.glob('/dev/rfcomm*')
+        ttyList += glob.glob('/dev/ttyUSB*')
+        ttyList += glob.glob('/dev/tty.Robot*')
+        ttyList += glob.glob('/dev/tty.usbmodem*')
 
     if len(ttyList) == 0:
         print('No serial device found! Exiting...')
@@ -37,7 +43,8 @@ def getFirstSerialPort():
                 inputNumber = int(input())
             except:
                 pass
-    return ttyList[inputNumber]
+
+        return ttyList[inputNumber]
 
 class McuCom(object):
     """Handle communication between the robot and the computer"""
