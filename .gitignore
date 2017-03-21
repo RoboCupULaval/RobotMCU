@@ -1,6 +1,8 @@
 # CubeMX
 # Don't ignore .project and .cproject to keep settings not set in CubeMX
 
+*/pyhermes/__pycache__/*
+
 */Middlewares/*
 */Debug/*
 */Release/*
