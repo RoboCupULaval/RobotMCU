@@ -9,7 +9,7 @@ void hermes_init(comHandle_t com){
 }
 
 
-Result_t validPayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen) {
+Result_t validatePayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen) {
 	uint8_t id = currentPacketHeaderPtr->packetType;
 	if(currentPacketHeaderPtr->protocolVersion != PROTOCOL_VERSION){
 		LOG_ERROR("Invalid protocol version\r\n");
@@ -27,6 +27,20 @@ Result_t validPayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t paylo
 	}
 
 	//TODO here the checksum is computed,
+	uint8_t checksum = 0;
+	uint8_t* rawByte = (uint8_t*)currentPacketHeaderPtr;
+	const size_t offsetOfChecksum = (uint8_t*)&(currentPacketHeaderPtr->checksum) - rawByte;
+	// Add all the content of the packet except the checksum
+	for(size_t i = 0; i < payloadLen; ++i) {
+		if (i != offsetOfChecksum) {
+			checksum += rawByte[i];
+		}
+	}
+
+	if (checksum != currentPacketHeaderPtr->checksum) {
+		LOG_ERROR("Invalid checksum\r\n");
+		return RESULT_FAILURE;
+	}
 
 	return RESULT_SUCCESS;
 }

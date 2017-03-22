@@ -55,14 +55,19 @@ def generateHeader(dest_addres, packet_type):
                     0x00])
     return header
 
+def calculateAndSetChecksum(payload):
+    checksum = bytes([sum(payload) & 0xff])
+    return payload[:4] + checksum + payload[5:]
+
 def packagePayloadLess(robot_id, id):
     pay = generateHeader(robot_id, id)
-    return cobs.encode(bytes(pay)) + b'\0'
+    return cobs.encode(bytes(calculateAndSetChecksum(pay))) + b'\0'
 
 def packagePayload(robot_id, id, payload):
     pay = generateHeader(robot_id, id)
     pay += payload
-    return cobs.encode(bytes(pay))  + b'\0'
+    preEncoding = bytes(calculateAndSetChecksum(pay))
+    return cobs.encode(preEncoding)  + b'\0'
 
 def createNoArgCommand(robot_id, id):
     return packagePayloadLess(robot_id, id)

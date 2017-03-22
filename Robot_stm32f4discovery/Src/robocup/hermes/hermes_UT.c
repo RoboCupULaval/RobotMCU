@@ -17,7 +17,7 @@ void test_hermes() {
 	if(res)
 		LOG_INFO("[OK]\r\n");
 	else
-		LOG_INFO("[FAIL]\r\n");
+		LOG_ERROR("[FAIL]\r\n");
 
 	LOG_INFO("HERMES - Test encoding and decoding of string with escape character... ");
 	const char testStrWithZeroChar[] = "hello\0world";
@@ -25,16 +25,16 @@ void test_hermes() {
 	if(res)
 		LOG_INFO("[OK]\r\n");
 	else
-		LOG_INFO("[FAIL]\r\n");
+		LOG_ERROR("[FAIL]\r\n");
 
 	LOG_INFO("HERMES - Test encoding and decoding of empty string");
 	res = test_hermes_try_encode_decode('\0', (size_t)0);
 	if(res)
 		LOG_INFO("[OK]\r\n");
 	else
-		LOG_INFO("[FAIL]\r\n");
+		LOG_ERROR("[FAIL]\r\n");
 
-	LOG_INFO("HERMES - Test encoding and decoding of a packet of more than 255 characters");
+	/*LOG_INFO("HERMES - Test encoding and decoding of a packet of more than 255 characters");
 	char buffer[300];
 	memset(buffer, 'a', 300);
 	buffer[299] = '\0';
@@ -42,7 +42,8 @@ void test_hermes() {
 	if(res == RESULT_FAILURE)
 		LOG_INFO("[OK]\r\n");
 	else
-		LOG_INFO("[FAIL]\r\n");
+		LOG_ERROR("[FAIL]\r\n");
+	 */
 
 	LOG_INFO("HERMES - Test decoding invalid packet (too long)");
 	const char testStrInvalidPacket[] = "\fhello world too long before a zero char";
@@ -50,7 +51,25 @@ void test_hermes() {
 	if(res == RESULT_FAILURE)
 		LOG_INFO("[OK]\r\n");
 	else
-		LOG_INFO("[FAIL]\r\n");
+		LOG_ERROR("[FAIL]\r\n");
+
+	packetHeaderStruct_t header = hermes_createHeader(HeartbeatRequest);
+	header.srcAddress = 42; // src address change base on Robot_ID, we set it up for a set value
+
+	LOG_INFO("HERMES - Test validating a packet with a wrong checksum");
+	res = validatePayload(&header, sizeof(packetHeaderStruct_t));
+	if(res == RESULT_FAILURE)
+		LOG_INFO("[OK]\r\n");
+	else
+		LOG_ERROR("[FAIL]\r\n");
+
+	LOG_INFO("HERMES - Test validating a packet with a valid checksum");
+	header.checksum = header.srcAddress - 1; // The expected checksum in our case is always one less then the srcAddress
+	res = validatePayload(&header, sizeof(packetHeaderStruct_t));
+	if(res == RESULT_SUCCESS)
+		LOG_INFO("[OK]\r\n");
+	else
+		LOG_ERROR("[FAIL]\r\n");
 
 }
 
@@ -62,10 +81,9 @@ Result_t test_hermes_try_encode_decode(const char* pPayload, size_t payload_len)
 	resCod = cobifyData(pPayload, payload_len, encoded);
 	resDecod = decobifyData(encoded, strlen(encoded), decode, &decode_len);
 
-	if (resCod &&
-		resDecod &&
-		decode_len == payload_len &&
-		memcmp(pPayload, decode, payload_len) == 0) {
+	if (resCod && resDecod
+			&& decode_len == payload_len
+			&& memcmp(pPayload, decode, payload_len) == 0) {
 		return RESULT_SUCCESS;
 	} else {
 		return RESULT_FAILURE;
