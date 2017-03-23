@@ -26,6 +26,13 @@ volatile SpeedCommand_t g_speedCommand = {
 		.vtheta = 0,
 		.tickSinceLastUpdate = 0
 };
+volatile SpeedCommandOpen_t g_speedCommandOpen = {
+		.cmd1 = 0.0,
+		.cmd2 = 0.0,
+		.cmd3 = 0.0,
+		.cmd4 = 0.0,
+		.tickSinceLastUpdate = 0
+};
 
 
 
@@ -42,6 +49,7 @@ void ctrl_taskEntryPoint(void) {
 	int32_t wheelSpeed[4];
   	TickType_t lastWakeTime = xTaskGetTickCount();
   	bool speedCommandTimeout = true;
+  	bool speedCommandOpenTimeout = true;
 	for(;;) {
 		// Delay the loop to a fix frequency
 		vTaskDelayUntil(&lastWakeTime, CONTROL_LOOP_PERIOD_MS / portTICK_PERIOD_MS);
@@ -55,42 +63,57 @@ void ctrl_taskEntryPoint(void) {
 
 		readQuadsSpeed(&wheelSpeed);
 
-		const float vx = g_speedCommand.vx;
-		const float vy = g_speedCommand.vy;
-		const float vt = g_speedCommand.vtheta;
+		float vx, vy, vt;
+		float output[4];
 
-		const bool lastSpeedCommandTimeout = speedCommandTimeout;
-		speedCommandTimeout = hasSpeedCommandTimeout();
-		if (speedCommandTimeout) {
-			if (c == 0 || speedCommandTimeout != lastSpeedCommandTimeout)
-				LOG_ERROR("Timeout on command\r\n");
-			ctrl_emergencyBreak();
-			continue;
-		}
+		switch(g_ctrlLoopState) {
+			case OPEN_LOOP:
+				output[0] = g_speedCommandOpen.cmd1;
+				output[1] = g_speedCommandOpen.cmd2;
+				output[2] = g_speedCommandOpen.cmd3;
+				output[3] = g_speedCommandOpen.cmd4;
 
-		if(g_ctrlLoopState == CLOSE_LOOP_WITH_LOGGING) {
-			motorDataLog_addReceivedSpeed(vx, vy, vt);
-		}
+				const bool lastSpeedCommandOpenTimeout = speedCommandOpenTimeout;
+				speedCommandOpenTimeout = hasSpeedCommandOpenTimeout();
+				if (speedCommandOpenTimeout) {
+					if (c == 0 || speedCommandOpenTimeout != lastSpeedCommandOpenTimeout)
+						LOG_ERROR("Timeout on open loop command\r\n");
+					ctrl_emergencyBreak();
+					continue;
+				}
 
-		for (int i = 0; i < wheelsLen; ++i) {
-			Wheel_t* pWheel = &g_wheels[i];
-			float output = 0.0;
-			float reference = wheel_setCommand(pWheel, vx, vy, vt);
-			float feedback = (float)wheelSpeed[pWheel->quad];
+				for (int i = 0; i < wheelsLen; ++i) {
+					Wheel_t* pWheel = &g_wheels[i];
+					float feedback = (float)wheelSpeed[pWheel->quad];
+					motorDataLog_addWheelData(output[i], feedback);
+					wheel_setPWM(pWheel, output[i]);
+				}
+				break;
+			case CLOSE_LOOP_WITHOUT_LOGGING:
+			case CLOSE_LOOP_WITH_LOGGING:
+				vx = g_speedCommand.vx;
+				vy = g_speedCommand.vy;
+				vt = g_speedCommand.vtheta;
 
-			switch(g_ctrlLoopState) {
-				case OPEN_LOOP:
-					if(i == (int)vx || i == (int)vx + 2) {
-						if(i == 0 || i == 1) {
-							output = vy;
-						} else if(i == 2 || i == 3) {
-							output = vt;
-						}
-					}
-					motorDataLog_addWheelData(output, feedback);
-					break;
-				case CLOSE_LOOP_WITHOUT_LOGGING:
-				case CLOSE_LOOP_WITH_LOGGING:
+				const bool lastSpeedCommandTimeout = speedCommandTimeout;
+				speedCommandTimeout = hasSpeedCommandTimeout();
+				if (speedCommandTimeout) {
+					if (c == 0 || speedCommandTimeout != lastSpeedCommandTimeout)
+						LOG_ERROR("Timeout on command\r\n");
+					ctrl_emergencyBreak();
+					continue;
+				}
+
+				if(g_ctrlLoopState == CLOSE_LOOP_WITH_LOGGING) {
+					motorDataLog_addReceivedSpeed(vx, vy, vt);
+				}
+
+				for (int i = 0; i < wheelsLen; ++i) {
+					Wheel_t* pWheel = &g_wheels[i];
+					float output = 0.0;
+					float reference = wheel_setCommand(pWheel, vx, vy, vt);
+					float feedback = (float)wheelSpeed[pWheel->quad];
+
 					// The speed reference and feedback must be absolute, since the pid ignore the wheel direction.
 					// This is done since the passage from one direction to another one cause an instability
 					pWheel->pid.r = (float)fabs(reference);
@@ -103,13 +126,13 @@ void ctrl_taskEntryPoint(void) {
 					// If the speed command is negative we change the pid output to be negative
 					// and thus the motor will spin in the correct direction
 					output *= (reference >= 0.0 ? 1.0f : -1.0f);
-					break;
-				default:
-					LOG_ERROR("Unimplemented control loop state.\r\n");
-			}
-			wheel_setPWM(pWheel, output);
-		}
 
+					wheel_setPWM(pWheel, output);
+				}
+				break;
+			default:
+				LOG_ERROR("Unimplemented control loop state.\r\n");
+		}
 		// Handle logging output for close/open loop test
 		if (g_ctrlLoopState == OPEN_LOOP || g_ctrlLoopState == CLOSE_LOOP_WITH_LOGGING) {
 			for (int i = 0; i < wheelsLen; ++i) {
@@ -119,6 +142,7 @@ void ctrl_taskEntryPoint(void) {
 			}
 			motorDataLog_flushDataLine();
 		}
+
 	  }
 }
 
@@ -156,4 +180,9 @@ void readQuadsSpeed(int32_t *wheelSpeed) {
 bool hasSpeedCommandTimeout(void) {
 	const TickType_t SPEED_COMMAND_TIMEOUT_TICK = 500;
 	return xTaskGetTickCount() - g_speedCommand.tickSinceLastUpdate > SPEED_COMMAND_TIMEOUT_TICK / portTICK_PERIOD_MS;
+}
+
+bool hasSpeedCommandOpenTimeout(void) {
+	const TickType_t SPEED_COMMAND_TIMEOUT_TICK = 500;
+	return xTaskGetTickCount() - g_speedCommandOpen.tickSinceLastUpdate > SPEED_COMMAND_TIMEOUT_TICK / portTICK_PERIOD_MS;
 }
