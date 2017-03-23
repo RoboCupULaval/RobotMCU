@@ -70,7 +70,8 @@ enum packetTypes_t {
 	CurrentState,
 	NewStateCommand,
 	WirelessTimeWatchdogValueRequest,
-	WirelessTimeWatchdogValue
+	WirelessTimeWatchdogValue,
+	MovementCommandOpen //46
 };
 
 
@@ -130,7 +131,8 @@ static const packet_t g_packetsTable[] = {
 		{CurrentState,                       nop, (size_t)0},
 		{NewStateCommand,                    nop, (size_t)0},
 		{WirelessTimeWatchdogValueRequest,   nop, (size_t)0},
-		{WirelessTimeWatchdogValue,          nop, (size_t)0}
+		{WirelessTimeWatchdogValue,          nop, (size_t)0},
+		{MovementCommandOpen,				 command_movementCommandOpen, sizeof(msg_set_speed_open_t)}
 };
 
 static const size_t g_packetsTableLen = sizeof(g_packetsTable) / sizeof(packet_t);

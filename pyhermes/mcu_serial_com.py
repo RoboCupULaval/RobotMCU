@@ -5,6 +5,7 @@ import serial
 import io
 import time
 import glob
+from sys import exit
 
 from time import sleep
 
@@ -31,10 +32,16 @@ def getFirstSerialPort():
         print('Multiple serial devices detected, please select a number:')
         inputNumber = None
         while inputNumber not in range(len(ttyList)):
+            print("0) Quit ")
             for i in range(len(ttyList)):
-                print(str(i) + ') ' + ttyList[i])
+                print(str(i + 1) + ') ' + ttyList[i])
             try:
                 inputNumber = int(input())
+		
+                if inputNumber == 0:
+                    print("exiting")
+                    exit()
+                inputNumber = inputNumber - 1
             except:
                 pass
     return ttyList[inputNumber]
@@ -89,6 +96,11 @@ class McuCom(object):
         self.sendCommand(cmd)
         #res = self.retreiveRespond()
         #res = self.retreiveRespond()
+
+    def sendOpenLoopSpeed(self, robot_id, cmd1, cmd2, cmd3, cmd4):
+        """ Send a speed command in open loop mode. Each command represent a pwm between 0 and 1. """
+        cmd = create4FloatCommand(robot_id, CMD_MOVEMENT_COMMAND_OPEN, cmd1, cmd2, cmd3, cmd4)
+        self.sendCommand(cmd)
 
     def turnOnDribbler(self, robot_id):
         self.setRegister(robot_id, REG_SET_DRIBBLER_SPEED_COMMAND, 3)

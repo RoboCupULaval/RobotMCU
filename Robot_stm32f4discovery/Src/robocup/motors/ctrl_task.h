@@ -24,9 +24,15 @@ typedef struct {
 	TickType_t tickSinceLastUpdate;
 } SpeedCommand_t;
 
+typedef struct {
+	float cmd1, cmd2, cmd3, cmd4; //pwm to wheel i between 0.0 and 1.0
+	TickType_t tickSinceLastUpdate;
+} SpeedCommandOpen_t;
+
 
 extern volatile CtrlLoop_t g_ctrlLoopState;
 extern volatile SpeedCommand_t g_speedCommand;
+extern volatile SpeedCommandOpen_t g_speedCommandOpen;
 
 // These variables are public for the unit test
 extern Wheel_t wheels[];
@@ -37,5 +43,6 @@ void ctrl_emergencyBreak(void);
 void initPwmAndQuad(void);
 void readQuadsSpeed(int32_t *wheelSpeed);
 bool hasSpeedCommandTimeout(void);
+bool hasSpeedCommandOpenTimeout(void);
 
 #endif /* WHEEL_TASK_H_ */
