@@ -5,8 +5,8 @@ import serial
 import io
 import time
 import glob
-import sys
 from serial.tools import list_ports
+from sys import exit, platform
 
 from time import sleep
 
@@ -17,7 +17,7 @@ def getFirstSerialPort():
         print("Default to port {}".format(defaultPort))
         return defaultPort
 
-    if sys.platform.startswith('win'):
+    if platform.startswith('win'):
         ttyList = [port.device for port in list_ports.comports()]
     else:
         ttyList = glob.glob('/dev/ttyACM*')
@@ -37,10 +37,16 @@ def getFirstSerialPort():
         print('Multiple serial devices detected, please select a number:')
         inputNumber = None
         while inputNumber not in range(len(ttyList)):
+            print("0) Quit ")
             for i in range(len(ttyList)):
-                print(str(i) + ') ' + ttyList[i])
+                print(str(i + 1) + ') ' + ttyList[i])
             try:
                 inputNumber = int(input())
+		
+                if inputNumber == 0:
+                    print("exiting")
+                    exit()
+                inputNumber = inputNumber - 1
             except:
                 pass
 
