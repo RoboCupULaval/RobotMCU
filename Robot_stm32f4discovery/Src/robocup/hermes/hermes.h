@@ -38,7 +38,7 @@ typedef enum {
 typedef struct packetHeaderStruct packetHeaderStruct;
 
 void                 hermes_init(comHandle_t com);
-Result_t             validPayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen);
+Result_t             validatePayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen);
 void                 hermes_sendError(char * pStr);
 packetHeaderStruct_t hermes_createHeader(uint8_t packetType);
 void                 hermes_sendAcknowledgment(void);
