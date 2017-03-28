@@ -48,7 +48,7 @@ void MNRC_update(MNRC_t *mnrc){
 	for (size_t i = 0; i < 4; ++i) {
 
 		mnrc->w_m[i] = mnrc->K1 * mnrc->w_m[i] - mnrc->K2 * mnrc->w_ref[i];
-		mnrc->e[i] = mnrc->w_m[i] - mnrc->w_ref[i];
+		mnrc->e[i] = mnrc->w_m[i] - mnrc->w[i];
 		mnrc->eI[i] = mnrc->eI[i] + mnrc->e[i] * CONTROL_LOOP_DELTA_T;
 
 		PI_action[i] = mnrc->Kp * mnrc->e[i] + mnrc->Ki * mnrc->eI[i];
