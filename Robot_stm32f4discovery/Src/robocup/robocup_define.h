@@ -37,9 +37,9 @@ typedef enum {
  */
 
 
-#define PID_P 0.0003f//0.004217f
-#define PID_I 0.002f/CONTROL_LOOP_FREQ//(0.00000134f/CONTROL_LOOP_FREQ)
-#define PID_D 0.0f
+#define MNRC_KP					7.0f
+#define MNRC_KI					25.0f
+#define MNRC_GAMMA				-3.0f
 
 #define CONTROL_LOOP_PERIOD_MS 	50
 #define CONTROL_LOOP_DELTA_T	0.05f

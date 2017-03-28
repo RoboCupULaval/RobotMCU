@@ -45,7 +45,7 @@ void ctrl_taskEntryPoint(void) {
 	}
   	LOG_INFO("Starting!!!\r\n");
 	initPwmAndQuad();
-	MNRC_t mnrc = MNRC_init(7.0f, 25.0f, -5.0f);
+	MNRC_t mnrc = MNRC_init(MNRC_KP, MNRC_KI, MNRC_GAMMA);
 
 	float wheelSpeed[4];
   	TickType_t lastWakeTime = xTaskGetTickCount();
@@ -121,9 +121,13 @@ void ctrl_taskEntryPoint(void) {
 
 				MNRC_update(&mnrc);
 
-				for (int i = 0; i < wheelsLen; ++i) {
-					Wheel_t* pWheel = &g_wheels[i];
-					wheel_setPWM(pWheel, mnrc.command[i]);
+				if(vx == 0.f && vy == 0.f && vt == 0.f) {
+					ctrl_emergencyBreak();
+				} else {
+					for (int i = 0; i < wheelsLen; ++i) {
+						Wheel_t* pWheel = &g_wheels[i];
+						wheel_setPWM(pWheel, mnrc.command[i]);
+					}
 				}
 
 				break;
