@@ -46,7 +46,7 @@ void ctrl_taskEntryPoint(void) {
   	LOG_INFO("Starting!!!\r\n");
 	initPwmAndQuad();
 
-	int32_t wheelSpeed[4];
+	float wheelSpeed[4];
   	TickType_t lastWakeTime = xTaskGetTickCount();
   	bool speedCommandTimeout = true;
   	bool speedCommandOpenTimeout = true;
@@ -61,7 +61,7 @@ void ctrl_taskEntryPoint(void) {
 				//LOG_INFO("ctrl\r\n");
 		}
 
-		readQuadsSpeed(&wheelSpeed);
+		readQuadsSpeed(wheelSpeed);
 
 		float vx, vy, vt;
 		float output[4];
@@ -112,7 +112,7 @@ void ctrl_taskEntryPoint(void) {
 					Wheel_t* pWheel = &g_wheels[i];
 					float output = 0.0;
 					float reference = wheel_setCommand(pWheel, vx, vy, vt);
-					float feedback = (float)wheelSpeed[pWheel->quad];
+					float feedback = wheelSpeed[pWheel->quad];
 
 					// The speed reference and feedback must be absolute, since the pid ignore the wheel direction.
 					// This is done since the passage from one direction to another one cause an instability
@@ -168,11 +168,12 @@ void initPwmAndQuad(void) {
 	}
 }
 
-void readQuadsSpeed(int32_t *wheelSpeed) {
+void readQuadsSpeed(float *wheelSpeed) {
 	for(int i = 0; i < encodersLen; ++i) {
 		EncoderTimerAssociation_t* encoderTimerAsso = &s_encoders[i];
 		encoder_readCounters(&(encoderTimerAsso->encoder));
-		wheelSpeed[encoderTimerAsso->identifier] = encoderTimerAsso->encoder.deltaCount;
+		float speed = encoderTimerAsso->encoder.deltaCount * (2.0f * (float)M_PI) * CONTROL_LOOP_FREQ / g_wheels[i].nbTickTurn; //Conversion from tick/loop to rad/s
+		wheelSpeed[encoderTimerAsso->identifier] = speed;
 	}
 }
 

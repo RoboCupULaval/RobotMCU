@@ -42,10 +42,11 @@ typedef enum {
 #define PID_D 0.0f
 
 #define CONTROL_LOOP_PERIOD_MS 	50
+#define CONTROL_LOOP_DELTA_T	0.05f
 #define CONTROL_LOOP_FREQ		20.0f
 
 #define MOTOR_DEADZONE 			0.25f //Min PWM duty-cycle to compensate deadzone
-#define BREAKING_THRESHOLD		0.05f //Threshold to set the 0% duty-cycle
+#define BRAKING_THRESHOLD		0.05f //Threshold to set the 0% duty-cycle
 
 
 //PMU
