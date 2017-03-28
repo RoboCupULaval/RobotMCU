@@ -25,6 +25,12 @@ MNRC_t MNRC_init(float Kp, float Ki, float gamma){
 	mnrc.K1 = 1.0f / (1.0f - gamma * CONTROL_LOOP_DELTA_T);
 	mnrc.K2 = gamma * CONTROL_LOOP_DELTA_T / (1.0f - gamma * CONTROL_LOOP_DELTA_T);
 
+	int i = 0;
+	for (i = 0; i < 4; i++) {
+		mnrc.eI[i] = 0;
+		mnrc.w_m[i] = 0;
+	}
+
 	return mnrc;
 }
 
@@ -58,6 +64,7 @@ void MNRC_update(MNRC_t *mnrc){
 	}
 
 	for (size_t i = 0; i < 4; ++i) {
+		mnrc->command[i] = 0;
 		for (size_t j = 0; j < 4; ++j) {
 			mnrc->command[i] += ROBOT_MODEL_INV_M1[i][j] * mnrc_error[j];
 		}
