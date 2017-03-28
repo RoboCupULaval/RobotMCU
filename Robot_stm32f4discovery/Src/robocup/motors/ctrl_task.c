@@ -2,7 +2,7 @@
 
 #include "wheels_UT.h"
 #include "wheels_config.h"
-
+#include "mnrc.h"
 
 
 typedef struct EncoderTimerAssociation_t{
@@ -45,6 +45,7 @@ void ctrl_taskEntryPoint(void) {
 	}
   	LOG_INFO("Starting!!!\r\n");
 	initPwmAndQuad();
+	MNRC_t mnrc = MNRC_init(7.0f, 25.0f, -5.0f);
 
 	float wheelSpeed[4];
   	TickType_t lastWakeTime = xTaskGetTickCount();
@@ -108,27 +109,23 @@ void ctrl_taskEntryPoint(void) {
 					motorDataLog_addReceivedSpeed(vx, vy, vt);
 				}
 
+
 				for (int i = 0; i < wheelsLen; ++i) {
 					Wheel_t* pWheel = &g_wheels[i];
-					float output = 0.0;
 					float reference = wheel_setCommand(pWheel, vx, vy, vt);
-					float feedback = wheelSpeed[pWheel->quad];
+					float measure = wheelSpeed[pWheel->quad];
 
-					// The speed reference and feedback must be absolute, since the pid ignore the wheel direction.
-					// This is done since the passage from one direction to another one cause an instability
-					pWheel->pid.r = (float)fabs(reference);
-					pWheel->pid.fbk = (float)fabs(feedback);
-					pid_update(&pWheel->pid);
-
-					output = pWheel->pid.output;
-
-					// Pid uses absolute speed and does not know about wheel direction
-					// If the speed command is negative we change the pid output to be negative
-					// and thus the motor will spin in the correct direction
-					output *= (reference >= 0.0 ? 1.0f : -1.0f);
-
-					wheel_setPWM(pWheel, output);
+					mnrc.w[i] = measure;
+					mnrc.w_ref[i] = reference;
 				}
+
+				MNRC_update(&mnrc);
+
+				for (int i = 0; i < wheelsLen; ++i) {
+					Wheel_t* pWheel = &g_wheels[i];
+					wheel_setPWM(pWheel, mnrc.command[i]);
+				}
+
 				break;
 			default:
 				LOG_ERROR("Unimplemented control loop state.\r\n");
@@ -159,7 +156,7 @@ void initPwmAndQuad(void) {
 
 		for(size_t i = 0; i < wheelsLen; ++i) {
 		  	HAL_TIM_PWM_Start(g_wheels[i].pTimer, g_wheels[i].timerChannel);
-			g_wheels[i].pid = pid_init(PID_P, PID_I, PID_D, 1.0, 0.0);
+			//g_wheels[i].pid = pid_init(PID_P, PID_I, PID_D, 1.0, 0.0);
 		}
 
 		for(int i = 0; i < encodersLen; ++i) {

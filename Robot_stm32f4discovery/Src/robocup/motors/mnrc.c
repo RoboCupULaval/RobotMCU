@@ -1,5 +1,18 @@
-
 #include "mnrc.h"
+
+const float ROBOT_MODEL_INV_M1[4][4] = {
+	{  0.0019200f, -0.000986f,  0.000263f, -0.000818f},
+	{ -0.0012300f,  0.002390f, -0.001100f,  0.000539f},
+	{ -0.0000703f, -0.000501f,  0.001660f, -0.000439f},
+	{ -0.0004900f,  0.000192f, -0.000266f,  0.001710f},
+};
+
+const float ROBOT_MODEL_M2[4][4] = {
+	{4.5265f,  0.2949f,  1.1064f,  0.3471f},
+	{1.0369f,  2.9667f,  0.8380f,  0.1454f},
+	{0.1446f,  0.2892f,  2.9959f,  0.2894f},
+	{0.7098f,  0.1451f,  0.2896f,  3.3578f}
+};
 
 MNRC_t MNRC_init(float Kp, float Ki, float gamma){
 
@@ -16,23 +29,12 @@ MNRC_t MNRC_init(float Kp, float Ki, float gamma){
 }
 
 
-float* MNRC_update(MNRC_t *mnrc){
+void MNRC_update(MNRC_t *mnrc){
 
-	float command[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-
-	const float M2[4][4] = {
-		{4.5265f,  0.2949f,  1.1064f,  0.3471f},
-		{1.0369f,  2.9667f,  0.8380f,  0.1454f},
-		{0.1446f,  0.2892f,  2.9959f,  0.2894f},
-		{0.7098f,  0.1451f,  0.2896f,  3.3578f}
-	};
-
-	const float invM1[4][4] = {
-		{  0.0019200f, -0.000986f,  0.000263f, -0.000818f},
-		{ -0.0012300f,  0.002390f, -0.001100f,  0.000539f},
-		{ -0.0000703f, -0.000501f,  0.001660f, -0.000439f},
-		{ -0.0004900f,  0.000192f, -0.000266f,  0.001710f},
-	};
+	float PI_action[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+	float dynamic_diff[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+	float speed_state[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+	float mnrc_error[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 
 	// M2 = [M11 M12 M13 M14
 	//       M21...]
@@ -48,7 +50,7 @@ float* MNRC_update(MNRC_t *mnrc){
 		dynamic_diff[i] = mnrc->gamma * ( mnrc->w_m[i] - mnrc->w_ref[i] );
 
 		for (size_t j = 0; j < 4; ++j) {
-			speed_state[i] += mnrc->M2[i][j] * mnrc->w[j];
+			speed_state[i] += ROBOT_MODEL_M2[i][j] * mnrc->w[j];
 		}
 
 		mnrc_error[i] = dynamic_diff[i] + speed_state[i] + PI_action[i];
@@ -57,10 +59,8 @@ float* MNRC_update(MNRC_t *mnrc){
 
 	for (size_t i = 0; i < 4; ++i) {
 		for (size_t j = 0; j < 4; ++j) {
-			command[i] += mnrc->invM1[i][j] * mnrc_error[j];
+			mnrc->command[i] += ROBOT_MODEL_INV_M1[i][j] * mnrc_error[j];
 		}
 	}	
-
-	return command;
 
 }
