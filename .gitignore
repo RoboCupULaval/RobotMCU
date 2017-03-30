@@ -1,6 +1,8 @@
 # CubeMX
 # Don't ignore .project and .cproject to keep settings not set in CubeMX
 
+*/pyhermes/__pycache__/*
+
 */Middlewares/*
 */Debug/*
 */Release/*
@@ -9,11 +11,13 @@
 .osx.project
 */.settings/*
 */SW4STM32/*
-*.ld
+*/STM32F4DISCOVERY.xml
+*/startup/*
+
+
 .metadata/*
 RemoteSystemsTempFiles/
 
-*/__pycache__/*
-*/*/__pycache__/*
+__pycache__/
 *.DS_Store
 */.idea/*

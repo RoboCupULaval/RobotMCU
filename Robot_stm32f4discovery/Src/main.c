@@ -122,27 +122,15 @@ int main(void)
   	HAL_TIM_Base_Start(&htim12);
 
 
-
-    //HAL_GPIO_WritePin(EN_POWER_GPIO_Port, EN_POWER_Pin, 1);
-    //HAL_GPIO_WritePin(KICKER_SELECT_GPIO_Port, KICKER_SELECT_Pin, 1);
-
-  	//demux_Init(GPIOE, GPIO_PIN_4, GPIO_PIN_5, GPIO_PIN_6, CS_0);
-
   	// Init communication
 
   	comHandle_t comBluetooth = bluetooth_init();
 
-#ifdef GAMMA
-  	comHandle_t comUsb = usb_init();
-  	hermes_init(comBluetooth);
-  	log_init(comUsb);
-  	HAL_GPIO_WritePin(EN_POWER_GPIO_Port, EN_POWER_Pin, GPIO_PIN_SET);
-#elif defined (GAMMA2)
+
   	comHandle_t comNrf = nrf_init();
   	hermes_init(comNrf);
   	log_init(comBluetooth);
 	ctrl_emergencyBreak();
-#endif
 
   /* USER CODE END 2 */
 

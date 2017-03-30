@@ -1,4 +1,3 @@
-cobs
 bitstring
 pyserial
-
+pygame

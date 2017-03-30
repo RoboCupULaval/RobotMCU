@@ -4,10 +4,7 @@
 #include "wheels_config.h"
 
 
-#ifdef USE_QUAD
-static quad_Handle quadA;
-static quad_Handle quadB;
-#else
+
 typedef struct EncoderTimerAssociation_t{
 	QuadEncoder_t identifier;
 	TIM_HandleTypeDef* timer;
@@ -21,13 +18,19 @@ static EncoderTimerAssociation_t s_encoders[] = {
 	{EncoderTim4, &htim4, {0}}
 };
 const size_t encodersLen = sizeof(s_encoders) / sizeof(EncoderTimerAssociation_t);
-#endif
 
 volatile CtrlLoop_t g_ctrlLoopState = CLOSE_LOOP_WITHOUT_LOGGING;
 volatile SpeedCommand_t g_speedCommand = {
 		.vx = 0.0,
 		.vy = 0.0,
 		.vtheta = 0,
+		.tickSinceLastUpdate = 0
+};
+volatile SpeedCommandOpen_t g_speedCommandOpen = {
+		.cmd1 = 0.0,
+		.cmd2 = 0.0,
+		.cmd3 = 0.0,
+		.cmd4 = 0.0,
 		.tickSinceLastUpdate = 0
 };
 
@@ -46,6 +49,7 @@ void ctrl_taskEntryPoint(void) {
 	int32_t wheelSpeed[4];
   	TickType_t lastWakeTime = xTaskGetTickCount();
   	bool speedCommandTimeout = true;
+  	bool speedCommandOpenTimeout = true;
 	for(;;) {
 		// Delay the loop to a fix frequency
 		vTaskDelayUntil(&lastWakeTime, CONTROL_LOOP_PERIOD_MS / portTICK_PERIOD_MS);
@@ -59,33 +63,57 @@ void ctrl_taskEntryPoint(void) {
 
 		readQuadsSpeed(&wheelSpeed);
 
-		const float vx = g_speedCommand.vx;
-		const float vy = g_speedCommand.vy;
-		const float vt = g_speedCommand.vtheta;
+		float vx, vy, vt;
+		float output[4];
 
-		const bool lastSpeedCommandTimeout = speedCommandTimeout;
-		speedCommandTimeout = hasSpeedCommandTimeout();
-		if (speedCommandTimeout) {
-			if (c == 0 || speedCommandTimeout != lastSpeedCommandTimeout)
-				LOG_ERROR("Timeout on command\r\n");
-			ctrl_emergencyBreak();
-			continue;
-		}
+		switch(g_ctrlLoopState) {
+			case OPEN_LOOP:
+				output[0] = g_speedCommandOpen.cmd1;
+				output[1] = g_speedCommandOpen.cmd2;
+				output[2] = g_speedCommandOpen.cmd3;
+				output[3] = g_speedCommandOpen.cmd4;
 
-		for (int i = 0; i < wheelsLen; ++i) {
-			Wheel_t* pWheel = &g_wheels[i];
-			float reference = wheel_setCommand(pWheel, vx, vy, vt);
-			float feedback = (float)wheelSpeed[pWheel->quad];
-			float output = 0.0;
+				const bool lastSpeedCommandOpenTimeout = speedCommandOpenTimeout;
+				speedCommandOpenTimeout = hasSpeedCommandOpenTimeout();
+				if (speedCommandOpenTimeout) {
+					if (c == 0 || speedCommandOpenTimeout != lastSpeedCommandOpenTimeout)
+						LOG_ERROR("Timeout on open loop command\r\n");
+					ctrl_emergencyBreak();
+					continue;
+				}
 
-			switch(g_ctrlLoopState) {
-				case OPEN_LOOP:
-					output = reference * pWheel->openLoopAttenuation;
+				for (int i = 0; i < wheelsLen; ++i) {
+					Wheel_t* pWheel = &g_wheels[i];
+					float feedback = (float)wheelSpeed[pWheel->quad];
+					motorDataLog_addWheelData(output[i], feedback);
+					wheel_setPWM(pWheel, output[i]);
+				}
+				break;
+			case CLOSE_LOOP_WITHOUT_LOGGING:
+			case CLOSE_LOOP_WITH_LOGGING:
+				vx = g_speedCommand.vx;
+				vy = g_speedCommand.vy;
+				vt = g_speedCommand.vtheta;
 
-					motorDataLog_addWheelData(output, feedback);
-					break;
-				case CLOSE_LOOP_WITHOUT_LOGGING:
-				case CLOSE_LOOP_WITH_LOGGING:
+				const bool lastSpeedCommandTimeout = speedCommandTimeout;
+				speedCommandTimeout = hasSpeedCommandTimeout();
+				if (speedCommandTimeout) {
+					if (c == 0 || speedCommandTimeout != lastSpeedCommandTimeout)
+						LOG_ERROR("Timeout on command\r\n");
+					ctrl_emergencyBreak();
+					continue;
+				}
+
+				if(g_ctrlLoopState == CLOSE_LOOP_WITH_LOGGING) {
+					motorDataLog_addReceivedSpeed(vx, vy, vt);
+				}
+
+				for (int i = 0; i < wheelsLen; ++i) {
+					Wheel_t* pWheel = &g_wheels[i];
+					float output = 0.0;
+					float reference = wheel_setCommand(pWheel, vx, vy, vt);
+					float feedback = (float)wheelSpeed[pWheel->quad];
+
 					// The speed reference and feedback must be absolute, since the pid ignore the wheel direction.
 					// This is done since the passage from one direction to another one cause an instability
 					pWheel->pid.r = (float)fabs(reference);
@@ -98,17 +126,20 @@ void ctrl_taskEntryPoint(void) {
 					// If the speed command is negative we change the pid output to be negative
 					// and thus the motor will spin in the correct direction
 					output *= (reference >= 0.0 ? 1.0f : -1.0f);
-					if (CLOSE_LOOP_WITH_LOGGING) {
-						motorDataLog_addCloseLoopData(&pWheel->pid);
-					}
-					break;
-				default:
-					LOG_ERROR("Unimplemented control loop state.\r\n");
-			}
-			wheel_setPWM(pWheel, output);
-		}
 
+					wheel_setPWM(pWheel, output);
+				}
+				break;
+			default:
+				LOG_ERROR("Unimplemented control loop state.\r\n");
+		}
+		// Handle logging output for close/open loop test
 		if (g_ctrlLoopState == OPEN_LOOP || g_ctrlLoopState == CLOSE_LOOP_WITH_LOGGING) {
+			for (int i = 0; i < wheelsLen; ++i) {
+				if (g_ctrlLoopState == CLOSE_LOOP_WITH_LOGGING) {
+					motorDataLog_addCloseLoopData(&g_wheels[i].pid);
+				}
+			}
 			motorDataLog_flushDataLine();
 		}
 
@@ -131,37 +162,27 @@ void initPwmAndQuad(void) {
 			g_wheels[i].pid = pid_init(PID_P, PID_I, PID_D, 1.0, 0.0);
 		}
 
-#ifdef USE_QUAD
-	  	quadA = quad_Init(CS_1);
-	  	quadB = quad_Init(CS_2);
-#else
 		for(int i = 0; i < encodersLen; ++i) {
 			s_encoders[i].encoder = encoder_init(s_encoders[i].timer);
 		}
-#endif
 	}
 }
 
 void readQuadsSpeed(int32_t *wheelSpeed) {
-
-#ifdef USE_QUAD
-	quad_ReadCounters(&quadA);
-	quad_ReadCounters(&quadB);
-	wheelSpeed[QuadEncoderA1] = quadA.delta_count0;
-	wheelSpeed[QuadEncoderA2] = quadA.delta_count1;
-	wheelSpeed[QuadEncoderB1] = quadB.delta_count0;
-	wheelSpeed[QuadEncoderB2] = quadB.delta_count1;
-#else
 	for(int i = 0; i < encodersLen; ++i) {
 		EncoderTimerAssociation_t* encoderTimerAsso = &s_encoders[i];
 		encoder_readCounters(&(encoderTimerAsso->encoder));
 		wheelSpeed[encoderTimerAsso->identifier] = encoderTimerAsso->encoder.deltaCount;
 	}
-#endif
 }
 
 
 bool hasSpeedCommandTimeout(void) {
 	const TickType_t SPEED_COMMAND_TIMEOUT_TICK = 500;
 	return xTaskGetTickCount() - g_speedCommand.tickSinceLastUpdate > SPEED_COMMAND_TIMEOUT_TICK / portTICK_PERIOD_MS;
+}
+
+bool hasSpeedCommandOpenTimeout(void) {
+	const TickType_t SPEED_COMMAND_TIMEOUT_TICK = 500;
+	return xTaskGetTickCount() - g_speedCommandOpen.tickSinceLastUpdate > SPEED_COMMAND_TIMEOUT_TICK / portTICK_PERIOD_MS;
 }

@@ -9,12 +9,13 @@ CMD_MOVEMENT_COMMAND           = 0x02
 CMD_SET_REGISTER               = 0x03
 CMD_ACK                        = 0x04
 CMD_ROBOT_CRASHED_NOTIFICATION = 0x26
+CMD_MOVEMENT_COMMAND_OPEN      = 0x2E
 
 # Register type
-REG_CTRL_LOOP_STATE            = 0x00;
-REG_KICK_COMMAND               = 0x01;
-REG_CHARGE_KICKER_COMMAND      = 0x02;
-REG_SET_DRIBBLER_SPEED_COMMAND = 0x03;
+REG_CTRL_LOOP_STATE            = 0x00
+REG_KICK_COMMAND               = 0x01
+REG_CHARGE_KICKER_COMMAND      = 0x02
+REG_SET_DRIBBLER_SPEED_COMMAND = 0x03
 
 PROTOCOL_VERSION  = 0x01
 
@@ -54,14 +55,19 @@ def generateHeader(dest_addres, packet_type):
                     0x00])
     return header
 
+def calculateAndSetChecksum(payload):
+    checksum = bytes([sum(payload) & 0xff])
+    return payload[:4] + checksum + payload[5:]
+
 def packagePayloadLess(robot_id, id):
     pay = generateHeader(robot_id, id)
-    return cobs.encode(bytes(pay)) + b'\0'
+    return cobs.encode(bytes(calculateAndSetChecksum(pay))) + b'\0'
 
 def packagePayload(robot_id, id, payload):
     pay = generateHeader(robot_id, id)
     pay += payload
-    return cobs.encode(bytes(pay))  + b'\0'
+    preEncoding = bytes(calculateAndSetChecksum(pay))
+    return cobs.encode(preEncoding)  + b'\0'
 
 def createNoArgCommand(robot_id, id):
     return packagePayloadLess(robot_id, id)
@@ -79,5 +85,10 @@ def create3FloatCommand(robot_id, id, vx, vy, vz):
     payload = struct.pack('%sf' % len(vel), *vel)
     #print("payload len %d data=" % len(payload) + ":".join("{:02x}".format(ord(c)) for c in payload))
     #print 'Raw payload', ":".join("{:02x}".format(ord(c)) for c in payload)
+    return packagePayload(robot_id, id, payload)
+
+def create4FloatCommand(robot_id, id, cmd1, cmd2, cmd3, cmd4):
+    vel = [cmd1, cmd2, cmd3, cmd4]
+    payload = struct.pack('%sf' % len(vel), *vel)
     return packagePayload(robot_id, id, payload)
 

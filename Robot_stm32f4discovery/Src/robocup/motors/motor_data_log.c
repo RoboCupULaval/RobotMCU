@@ -5,6 +5,8 @@
  *      Author: philippe
  */
 
+#include <string.h>
+
 #include "motor_data_log.h"
 
 static char s_dataLineBuffer[400];
@@ -15,8 +17,13 @@ void motorDataLog_addWheelData(float reference, float feedback) {
 	s_dataLineBufferLen = strlen(s_dataLineBuffer);
 }
 
+void motorDataLog_addReceivedSpeed(float vx, float vy, float vt) {
+	snprintf(s_dataLineBuffer + s_dataLineBufferLen, 255 - s_dataLineBufferLen, "%.3f|%.3f|%.3f|", vx, vy, vt);
+	s_dataLineBufferLen = strlen(s_dataLineBuffer);
+}
+
 void motorDataLog_addCloseLoopData(PidWheel_t* pPid) {
-	snprintf(s_dataLineBuffer + s_dataLineBufferLen, 255 - s_dataLineBufferLen, "%.3f|%.3f|%.3f|%.3f|", pPid->e, pPid->r, pPid->fbk, pPid->output);
+	snprintf(s_dataLineBuffer + s_dataLineBufferLen, 255 - s_dataLineBufferLen, "%.3f|%.3f|%.3f|%.3f|", pPid->r, pPid->fbk, pPid->e, pPid->output);
 	s_dataLineBufferLen = strlen(s_dataLineBuffer);
 }
 

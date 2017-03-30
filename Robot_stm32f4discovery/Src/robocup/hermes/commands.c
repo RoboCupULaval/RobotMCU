@@ -22,12 +22,21 @@ void command_heartbeatRequest(const void *msg){
 
 // Extracts the speed commands and puts it into the global speed command
 void command_movementCommand(const void *msg){
-	// TODO: should add timing information, so if connection lost, we break
     msg_set_speed_t * movementMsg = (msg_set_speed_t *) msg;
     g_speedCommand.vx = movementMsg->vx;
     g_speedCommand.vy = movementMsg->vy;
     g_speedCommand.vtheta = movementMsg->vtheta;
     g_speedCommand.tickSinceLastUpdate = xTaskGetTickCount();
+}
+
+void command_movementCommandOpen(const void *msg){
+	// TODO: should add timing information, so if connection lost, we break
+    msg_set_speed_open_t * movementMsg = (msg_set_speed_open_t *) msg;
+    g_speedCommandOpen.cmd1 = movementMsg->cmd1;
+    g_speedCommandOpen.cmd2 = movementMsg->cmd2;
+    g_speedCommandOpen.cmd3 = movementMsg->cmd3;
+    g_speedCommandOpen.cmd4 = movementMsg->cmd4;
+    g_speedCommandOpen.tickSinceLastUpdate = xTaskGetTickCount();
 }
 
 void command_setRegister(const void *msg) {
@@ -40,7 +49,27 @@ void command_setRegister(const void *msg) {
 			break;
 		case KICK_COMMAND:
 			LOG_INFO("Kicking!!\r\n");
-			kicker_kick();
+			switch (registerMsg->value) {
+				case 1:
+					LOG_INFO("KICKER_FORCE_1\r\n");
+					kicker_kick(KICKER_FORCE_1);
+					break;
+				case 2:
+					LOG_INFO("KICKER_FORCE_2\r\n");
+					kicker_kick(KICKER_FORCE_2);
+					break;
+				case 3:
+					LOG_INFO("KICKER_FORCE_3\r\n");
+					kicker_kick(KICKER_FORCE_3);
+					break;
+				case 4:
+					LOG_INFO("KICKER_FORCE_4\r\n");
+					kicker_kick(KICKER_FORCE_4);
+					break;
+				default:
+					LOG_ERROR("Kicker error\r\n");
+					break;
+			}
 			break;
 		case CONTROL_LOOP_STATE:
 			switch (registerMsg->value) {
@@ -60,13 +89,13 @@ void command_setRegister(const void *msg) {
 			float newSpeed = 0.0;
 			switch (registerMsg->value) {
 				case 1:
-					newSpeed = 0.1f;
+					newSpeed = 0.3f;
 					break;
 				case 2:
-					newSpeed = 0.2f;
+					newSpeed = 0.5f;
 					break;
 				case 3:
-					newSpeed = 0.3f;
+					newSpeed = 0.7f;
 					break;
 				default:
 					newSpeed = 0.0f;

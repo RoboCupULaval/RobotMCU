@@ -3,7 +3,7 @@
 #include "nrf.h"
 #include "../nrfDriver/nrfDriver.h"
 
-#define PACKET_SIZE 20
+#define PACKET_SIZE 23
 comHandle_t nrf_init(void){
 
 	nrfInit(PACKET_SIZE);
@@ -31,8 +31,7 @@ size_t nrf_readUntilZero(void *pBuffer,
 		                 __attribute__ ((unused)) size_t maxLength){
 
 	// TODO modify nrfReceive to take maxLength into account
-	// TODO this strlen will kill us one day
 	nrfReceive(pBuffer);
 	//LOG_DEBUG_AND_BUFFER("PACKET RECEIVE", pBuffer, 20);
-	return strlen(pBuffer);
+	return strnlen(pBuffer, PACKET_SIZE);
 }

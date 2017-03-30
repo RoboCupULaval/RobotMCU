@@ -30,16 +30,15 @@ static const uint8_t PROTOCOL_VERSION  = 0x01;
  *******************************************************************************/
 
 
-// TODO: More specific failure than just FAILURE, Also ERROR/SUCCESS already defined elsewhere
 typedef enum {
-	FAILURE = 0,
-	MySUCCESS
+	RESULT_FAILURE = 0,
+	RESULT_SUCCESS
 }Result_t;
 
 typedef struct packetHeaderStruct packetHeaderStruct;
 
 void                 hermes_init(comHandle_t com);
-Result_t             validPayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen);
+Result_t             validatePayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen);
 void                 hermes_sendError(char * pStr);
 packetHeaderStruct_t hermes_createHeader(uint8_t packetType);
 void                 hermes_sendAcknowledgment(void);

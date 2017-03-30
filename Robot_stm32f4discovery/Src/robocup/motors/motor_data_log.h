@@ -12,6 +12,7 @@
 #include "pid.h"
 
 void motorDataLog_addWheelData(float reference, float feedback);
+void motorDataLog_addReceivedSpeed(float vx, float vy, float vt) ;
 void motorDataLog_addCloseLoopData(PidWheel_t* pPid);
 void motorDataLog_flushDataLine(void);
 

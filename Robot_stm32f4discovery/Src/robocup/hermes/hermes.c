@@ -9,26 +9,40 @@ void hermes_init(comHandle_t com){
 }
 
 
-Result_t validPayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen) {
+Result_t validatePayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen) {
 	uint8_t id = currentPacketHeaderPtr->packetType;
 	if(currentPacketHeaderPtr->protocolVersion != PROTOCOL_VERSION){
 		LOG_ERROR("Invalid protocol version\r\n");
-		return FAILURE;
+		return RESULT_FAILURE;
 	}
 
 	if(id >= g_packetsTableLen || g_packetsTable[id].callback == nop){
 		LOG_ERROR("Invalid command\r\n");
-		return FAILURE;
+		return RESULT_FAILURE;
 	}
 
 	if(g_packetsTable[id].len != payloadLen){
 		LOG_ERROR("Too small payload\r\n");
-		return FAILURE;
+		return RESULT_FAILURE;
 	}
 
 	//TODO here the checksum is computed,
+	uint8_t checksum = 0;
+	uint8_t* rawByte = (uint8_t*)currentPacketHeaderPtr;
+	const size_t offsetOfChecksum = (uint8_t*)&(currentPacketHeaderPtr->checksum) - rawByte;
+	// Add all the content of the packet except the checksum
+	for(size_t i = 0; i < payloadLen; ++i) {
+		if (i != offsetOfChecksum) {
+			checksum += rawByte[i];
+		}
+	}
 
-	return SUCCESS;
+	if (checksum != currentPacketHeaderPtr->checksum) {
+		LOG_ERROR("Invalid checksum\r\n");
+		return RESULT_FAILURE;
+	}
+
+	return RESULT_SUCCESS;
 }
 
 //
@@ -108,7 +122,7 @@ Result_t cobifyData(const void *data, size_t msg_len, char *dstOut) {
 
 	FinishBlock(code);
 	*code_ptr = 0;
-	return MySUCCESS;
+	return RESULT_SUCCESS;
 }
 
 // TODO Fix retarted camelCase and snake_case and remove useless parameter
@@ -121,7 +135,7 @@ Result_t cobifyData(const void *data, size_t msg_len, char *dstOut) {
  */
 Result_t decobifyData(const char *msg, size_t len, void *dstOut, size_t *dst_len) {
 	if(len >= COBS_MAX_PAYLOAD_LEN)
-		return FAILURE;
+		return RESULT_FAILURE;
 	unsigned char *ptr = (unsigned char*) msg;
 	unsigned char *dst = (unsigned char*) dstOut;
 	const unsigned char *end = ptr + len;
@@ -131,7 +145,7 @@ Result_t decobifyData(const char *msg, size_t len, void *dstOut, size_t *dst_len
 		for (i = 1; i < code; i++) {
 			// If we get to the end too soon, the pack is invalid
 			if (ptr >= end)
-				return FAILURE;
+				return RESULT_FAILURE;
 			*dst++ = *ptr++;
 			(*dst_len)++;
 
@@ -142,6 +156,6 @@ Result_t decobifyData(const char *msg, size_t len, void *dstOut, size_t *dst_len
 		(*dst_len)++;
 	}
 	(*dst_len)--;
-	return MySUCCESS;
+	return RESULT_SUCCESS;
 }
 

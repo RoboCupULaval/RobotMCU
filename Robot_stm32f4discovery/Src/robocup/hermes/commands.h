@@ -34,6 +34,14 @@ typedef struct __attribute__((__packed__)) {
 
 typedef struct __attribute__((__packed__)) {
 	packetHeaderStruct_t header;
+	float   cmd1; //pwm to wheel 1 between 0.0 and 1.0
+	float   cmd2;
+	float   cmd3;
+	float	cmd4;
+} msg_set_speed_open_t;
+
+typedef struct __attribute__((__packed__)) {
+	packetHeaderStruct_t header;
 	float   kp;
 	float   ki;
 	float   kd;
@@ -60,6 +68,7 @@ enum registerTypes_t {
 void nop(const void *msg);
 void command_heartbeatRequest(const void *msg);
 void command_movementCommand(const void *msg);
+void command_movementCommandOpen(const void *msg);
 void command_setRegister(const void *msg);
 
 

@@ -5,17 +5,27 @@ import serial
 import io
 import time
 import glob
+from serial.tools import list_ports
+from sys import exit, platform
 
 from time import sleep
 
 def getFirstSerialPort():
-    #ttyListA = glob.glob('/dev/cu.usb*')
-    ttyList = glob.glob('/dev/ttyACM*')
-    ttyList +=  glob.glob('/dev/ttyBaseStation')
-    ttyList +=  glob.glob('/dev/rfcomm*')
-    ttyList +=  glob.glob('/dev/ttyUSB*')
-    ttyList +=  glob.glob('/dev/tty.Robot*')
-    ttyList +=  glob.glob('/dev/tty.usbmodem*')
+    defaultPort = '/dev/ttyBaseStation'
+    # Give priority to BaseStation macro
+    if glob.glob(defaultPort):
+        print("Default to port {}".format(defaultPort))
+        return defaultPort
+
+    if platform.startswith('win'):
+        ttyList = [port.device for port in list_ports.comports()]
+    else:
+        ttyList = glob.glob('/dev/ttyACM*')
+        ttyList += glob.glob('/dev/ttyBaseStation')
+        ttyList += glob.glob('/dev/rfcomm*')
+        ttyList += glob.glob('/dev/ttyUSB*')
+        ttyList += glob.glob('/dev/tty.Robot*')
+        ttyList += glob.glob('/dev/tty.usbmodem*')
 
     if len(ttyList) == 0:
         print('No serial device found! Exiting...')
@@ -27,13 +37,20 @@ def getFirstSerialPort():
         print('Multiple serial devices detected, please select a number:')
         inputNumber = None
         while inputNumber not in range(len(ttyList)):
+            print("0) Quit ")
             for i in range(len(ttyList)):
-                print(str(i) + ') ' + ttyList[i])
+                print(str(i + 1) + ') ' + ttyList[i])
             try:
                 inputNumber = int(input())
+		
+                if inputNumber == 0:
+                    print("exiting")
+                    exit()
+                inputNumber = inputNumber - 1
             except:
                 pass
-    return ttyList[inputNumber]
+
+        return ttyList[inputNumber]
 
 class McuCom(object):
     """Handle communication between the robot and the computer"""
@@ -86,18 +103,25 @@ class McuCom(object):
         #res = self.retreiveRespond()
         #res = self.retreiveRespond()
 
+    def sendOpenLoopSpeed(self, robot_id, cmd1, cmd2, cmd3, cmd4):
+        """ Send a speed command in open loop mode. Each command represent a pwm between 0 and 1. """
+        cmd = create4FloatCommand(robot_id, CMD_MOVEMENT_COMMAND_OPEN, cmd1, cmd2, cmd3, cmd4)
+        self.sendCommand(cmd)
+
     def turnOnDribbler(self, robot_id):
-        self.setRegister(robot_id, REG_SET_DRIBBLER_SPEED_COMMAND, 3);
+        self.setRegister(robot_id, REG_SET_DRIBBLER_SPEED_COMMAND, 3)
+
+    def setDribblerSpeed(self, robot_id, speed):
+        self.setRegister(robot_id, REG_SET_DRIBBLER_SPEED_COMMAND, speed)
 
     def turnOffDribbler(self, robot_id):
-        self.setRegister(robot_id, REG_SET_DRIBBLER_SPEED_COMMAND, 0);
-
+        self.setRegister(robot_id, REG_SET_DRIBBLER_SPEED_COMMAND, 0)
     
     def kick(self, robot_id):
-        self.setRegister(robot_id, REG_KICK_COMMAND, 0);
+        self.setRegister(robot_id, REG_KICK_COMMAND, 4)
 
     def charge(self, robot_id):
-        self.setRegister(robot_id, REG_CHARGE_KICKER_COMMAND, 0);
+        self.setRegister(robot_id, REG_CHARGE_KICKER_COMMAND, 0)
         
     def setRegister(self, robot_id, register, value):
         cmd = create2BytesCommand(robot_id, CMD_SET_REGISTER, register, value)

@@ -7,21 +7,11 @@
 
 #ifndef ROBOCUP_UTIL_H_
 #define ROBOCUP_UTIL_H_
+#include <stdint.h>
 
+#include "log.h"
 #include "robocup_define.h"
 
-#define MAX_METADATA_LEN 128
-
-void log_init(comHandle_t comInterface);
-void log_setBatteryVoltage(const double batteryVoltage);
-void LOG_INFO(const char * pMessage);
-void LOG_ERROR(const char * pMessage);
-void LOG_DEBUG(const char * pMessage);
-void LOG_DATA(const char * pMessage);
-void LOG_INFO_AND_BUFFER(const char * pMessage, void * pBuffer, size_t length);
-void LOG_ERROR_AND_BUFFER(const char * pMessage, void * pBuffer, size_t length);
-void LOG_DEBUG_AND_BUFFER(const char * pMessage, void * pBuffer, size_t length);
-void convertBytesToStr(const void * ptr, size_t len, char* str);
 
 uint8_t robot_isDebug(void);
 uint8_t robot_getID(void);

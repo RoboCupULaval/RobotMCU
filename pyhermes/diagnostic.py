@@ -1,11 +1,11 @@
 from mcu_serial_com import *
 
-def diagnostic():
+def diagnostic(robot_id):
     port = getFirstSerialPort()
-    com = McuCom(port, robot_id=robot_id)
+    com = McuCom(port)
 
     try:
         while True:
-            com.testHeartBeat()
+            com.testHeartBeat(robot_id)
     except (KeyboardInterrupt, SystemExit):
         com.ser.close()
