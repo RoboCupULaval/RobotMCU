@@ -22,8 +22,8 @@ MNRC_t MNRC_init(float Kp, float Ki, float gamma){
 	mnrc.Ki = Ki;
 	mnrc.gamma = gamma;
 
-	mnrc.K1 = 1.0f / (1.0f - gamma * CONTROL_LOOP_DELTA_T);
-	mnrc.K2 = gamma * CONTROL_LOOP_DELTA_T / (1.0f - gamma * CONTROL_LOOP_DELTA_T);
+	mnrc->eIMax =  3.14f;
+	mnrc->eIMin = -3.14f;
 
 	int i = 0;
 	for (i = 0; i < 4; i++) {
@@ -37,23 +37,29 @@ MNRC_t MNRC_init(float Kp, float Ki, float gamma){
 
 void MNRC_update(MNRC_t *mnrc){
 
-	float PI_action[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+	float PI_action[4]    = {0.0f, 0.0f, 0.0f, 0.0f};
 	float dynamic_diff[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-	float speed_state[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-	float mnrc_error[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+	float speed_state[4]  = {0.0f, 0.0f, 0.0f, 0.0f};
+	float mnrc_error[4]   = {0.0f, 0.0f, 0.0f, 0.0f};
 
 	// M2 = [M11 M12 M13 M14
 	//       M21...]
 
 	for (size_t i = 0; i < 4; ++i) {
 
-		mnrc->w_m[i] = mnrc->K1 * mnrc->w_m[i] - mnrc->K2 * mnrc->w_ref[i];
+		GT = gamma * CONTROL_LOOP_DELTA_T;
+		mnrc->w_m[i] = (1 + GT) * mnrc->w_m[i] - GT * mnrc->w_ref[i];
+
 		mnrc->e[i] = mnrc->w_m[i] - mnrc->w[i];
 		mnrc->eI[i] = mnrc->eI[i] + mnrc->e[i] * CONTROL_LOOP_DELTA_T;
 
+		// Anti wind-up (Saturation)
+		mnrc->eI[i] = (mnrc->eI[i] > mnrc->eIMax) ? mnrc->eIMax : mnrc->eI[i] ;
+		mnrc->eI[i] = (mnrc->eIMin > mnrc->eI[i]) ? mnrc->eIMin : mnrc->eI[i] ;
+
 		PI_action[i] = mnrc->Kp * mnrc->e[i] + mnrc->Ki * mnrc->eI[i];
 
-		dynamic_diff[i] = mnrc->gamma * ( mnrc->w_m[i] - mnrc->w_ref[i] );
+		dynamic_diff[i] = mnrc->gamma * ( mnrc->w[i] - mnrc->w_ref[i] );
 
 		for (size_t j = 0; j < 4; ++j) {
 			speed_state[i] += ROBOT_MODEL_M2[i][j] * mnrc->w[j];

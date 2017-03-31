@@ -17,9 +17,8 @@ typedef struct {
 	float Kp;    // proportionnal gain
 	float Ki;    // integral gain
 	float gamma; // desired closed-loop dynamic
-
-	float K1;
-	float K2;
+	float eIMax; // Max integral error
+	float eIMin; // Max integral error
 
 	// the MNRC variables
 	float w[4];      // Wheel speed measurements [rad/s]
