@@ -44,7 +44,7 @@ void log_broadcast(const char *pLogType, const char *pMessage){
 	char metaData[MAX_METADATA_LEN];
 	const TickType_t msSinceStartup = xTaskGetTickCount() * portTICK_PERIOD_MS;
 
-	snprintf(metaData, MAX_METADATA_LEN, "%s|%06u|R%d|B%2.1f|", pLogType, (unsigned)msSinceStartup, robot_getID(), s_batteryVoltage);
+	snprintf(metaData, MAX_METADATA_LEN, "%s|%06u|R%d|B%2.1f|", pLogType, (unsigned)msSinceStartup, robot_getPlayerID(), s_batteryVoltage);
 
 	// Start of critical zone
 	xSemaphoreTake(s_logLock, portMAX_DELAY);

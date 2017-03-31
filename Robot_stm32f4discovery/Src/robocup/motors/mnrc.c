@@ -17,13 +17,12 @@ const float ROBOT_MODEL_M2[4][4] = {
 MNRC_t MNRC_init(float Kp, float Ki, float gamma){
 
 	MNRC_t mnrc;
-	
 	mnrc.Kp = Kp;
 	mnrc.Ki = Ki;
 	mnrc.gamma = gamma;
 
-	mnrc->eIMax =  3.14f;
-	mnrc->eIMin = -3.14f;
+	mnrc.eIMax =  3.14f;
+	mnrc.eIMin = -3.14f;
 
 	int i = 0;
 	for (i = 0; i < 4; i++) {
@@ -47,7 +46,7 @@ void MNRC_update(MNRC_t *mnrc){
 
 	for (size_t i = 0; i < 4; ++i) {
 
-		GT = gamma * CONTROL_LOOP_DELTA_T;
+		float GT = mnrc->gamma * CONTROL_LOOP_DELTA_T;
 		mnrc->w_m[i] = (1 + GT) * mnrc->w_m[i] - GT * mnrc->w_ref[i];
 
 		mnrc->e[i] = mnrc->w_m[i] - mnrc->w[i];
