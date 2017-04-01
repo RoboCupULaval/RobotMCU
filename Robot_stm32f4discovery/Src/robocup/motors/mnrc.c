@@ -53,7 +53,7 @@ void MNRC_update(MNRC_t *mnrc){
 
 		PI_action[i] = mnrc->Kp * mnrc->e[i] + mnrc->Ki * mnrc->eI[i];
 
-		dynamic_diff[i] = mnrc->gamma * ( mnrc->w_m[i] - mnrc->w_ref[i] );
+		dynamic_diff[i] = mnrc->gamma * ( mnrc->w[i] - mnrc->w_ref[i] );
 
 		for (size_t j = 0; j < 4; ++j) {
 			speed_state[i] += ROBOT_MODEL_M2[i][j] * mnrc->w[j];
