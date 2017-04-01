@@ -21,8 +21,8 @@ MNRC_t MNRC_init(float Kp, float Ki, float gamma){
 	mnrc.Ki = Ki;
 	mnrc.gamma = gamma;
 
-	mnrc.eIMax =  3.14f;
-	mnrc.eIMin = -3.14f;
+	mnrc.eIMax =  1.0f;
+	mnrc.eIMin = -1.0f;
 
 	int i = 0;
 	for (i = 0; i < 4; i++) {

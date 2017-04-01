@@ -31,7 +31,7 @@ void wheel_setPWM(const Wheel_t *wheel, float speed) {
 	int pwm = (int) ((float)invertedSpeed * 6500.0f);
 
 	// Less than BREAKING_DEADZONE of power we break
-	if((float)fabs(speed) < BRAKING_THRESHOLD){
+	if(speed == MOTOR_BREAK) {
 		pwm = 6500;
 	}
 
