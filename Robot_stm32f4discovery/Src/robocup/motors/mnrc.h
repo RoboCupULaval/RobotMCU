@@ -16,7 +16,7 @@ typedef struct {
 	// the MNRC parameters
 	float Kp;    // proportionnal gain
 	float Ki;    // integral gain
-	float gamma; // desired closed-loop dynamic
+	float lambda; // desired closed-loop dynamic
 
 	float K1;
 	float K2;

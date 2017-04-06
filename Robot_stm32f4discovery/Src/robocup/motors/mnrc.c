@@ -14,16 +14,16 @@ const float ROBOT_MODEL_M2[4][4] = {
 	{0.7098f,  0.1451f,  0.2896f,  3.3578f}
 };
 
-MNRC_t MNRC_init(float Kp, float Ki, float gamma){
+MNRC_t MNRC_init(float Kp, float Ki, float lambda){
 
 	MNRC_t mnrc;
 	
 	mnrc.Kp = Kp;
 	mnrc.Ki = Ki;
-	mnrc.gamma = gamma;
+	mnrc.lambda = lambda;
 
-	mnrc.K1 = 1.0f / (1.0f - gamma * CONTROL_LOOP_DELTA_T);
-	mnrc.K2 = gamma * CONTROL_LOOP_DELTA_T / (1.0f - gamma * CONTROL_LOOP_DELTA_T);
+	mnrc.K1 = (1.0f + CONTROL_LOOP_DELTA_T * lambda);
+	mnrc.K2 = lambda * CONTROL_LOOP_DELTA_T;
 
 	int i = 0;
 	for (i = 0; i < 4; i++) {
@@ -53,7 +53,7 @@ void MNRC_update(MNRC_t *mnrc){
 
 		PI_action[i] = mnrc->Kp * mnrc->e[i] + mnrc->Ki * mnrc->eI[i];
 
-		dynamic_diff[i] = mnrc->gamma * ( mnrc->w[i] - mnrc->w_ref[i] );
+		dynamic_diff[i] = mnrc->lambda * ( mnrc->w_m[i] - mnrc->w_ref[i] );
 
 		for (size_t j = 0; j < 4; ++j) {
 			speed_state[i] += ROBOT_MODEL_M2[i][j] * mnrc->w[j];
