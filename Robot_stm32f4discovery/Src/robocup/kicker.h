@@ -7,6 +7,10 @@
 #include "cmsis_os.h"
 #include "stm32f4xx_hal.h"
 
+#include "ball_detector.h"
+
+#define KICKER_WAIT_BALL_TIME_IN_TICK 5000
+
 typedef enum  {
 	KICKER_FORCE_1 = 1, //time in tick
 	KICKER_FORCE_2 = 5,

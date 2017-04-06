@@ -4,12 +4,14 @@ typedef enum  {
 	KICKER_IDLE,
 	KICKER_CHARGING,
 	KICKER_KICKING,
-	KICKER_READY_TO_KICK
+	KICKER_READY_TO_KICK,
+	KICKER_WAIT_FOR_BALL
 } KickerState_t;
 
 static KickerState_t s_kicker_state = KICKER_IDLE;
 static uint8_t s_kicker_time_in_tick = 0;
 static TickType_t s_tickWhenStartKicking = 0;
+static TickType_t s_tickWhenWaitingForBall = 0;
 
 void kicker_init(void) {
 	s_kicker_state = KICKER_IDLE;
@@ -26,7 +28,8 @@ void kicker_charge(void) {
 void kicker_kick(KickerForce_t time) {
 	if (s_kicker_state == KICKER_READY_TO_KICK) {
 		s_kicker_time_in_tick = (uint8_t)time;
-		s_kicker_state = KICKER_KICKING;
+		s_tickWhenWaitingForBall = xTaskGetTickCount();
+		s_kicker_state = KICKER_WAIT_FOR_BALL;
 	}
 }
 
@@ -42,7 +45,6 @@ void kicker_update(void) {
 			kicker_kickOff();
 			if (kicker_isBankFull()) {
 				s_kicker_state = KICKER_READY_TO_KICK;
-				s_tickWhenStartKicking = xTaskGetTickCount();
 			}
 			break;
 		case KICKER_KICKING:
@@ -52,6 +54,13 @@ void kicker_update(void) {
 				s_kicker_state = KICKER_IDLE;
 			}
 			break;
+		case KICKER_WAIT_FOR_BALL:
+			if (ball_getState() == BALL_CENTERED) {
+				s_tickWhenStartKicking = xTaskGetTickCount();
+				s_kicker_state = KICKER_KICKING;
+			} else if (xTaskGetTickCount() - s_tickWhenWaitingForBall > KICKER_WAIT_BALL_TIME_IN_TICK) {
+				s_kicker_state = KICKER_IDLE;
+			}
 	}
 }
 
