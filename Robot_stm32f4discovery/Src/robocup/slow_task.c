@@ -9,6 +9,7 @@ void slow_taskEntryPoint(void) {
 	dribbler_init();
 	led_init();
 	kicker_init();
+	ball_init();
 
 	dribbler_setPWM(0.0f);
 
@@ -27,7 +28,7 @@ void slow_taskEntryPoint(void) {
 			id = robot_getID();
 			led_turnOn(id);
 		}
-
+		ball_updateADC();
 		kicker_update();
 
 		log_setBatteryVoltage(pmu_getBattVoltage());

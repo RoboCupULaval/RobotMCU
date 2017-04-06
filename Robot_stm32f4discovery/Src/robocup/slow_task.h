@@ -6,6 +6,7 @@
 #include "led.h"
 #include "util.h"
 #include "kicker.h"
+#include "ball_detector.h"
 
 void slow_taskEntryPoint(void);
 
