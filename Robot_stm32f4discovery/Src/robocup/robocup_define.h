@@ -37,8 +37,8 @@ typedef enum {
  */
 
 
-#define MNRC_KP					7.0f
-#define MNRC_KI					25.0f
+#define MNRC_KP					5.0f
+#define MNRC_KI					5.0f
 #define MNRC_GAMMA				-3.0f
 
 #define CONTROL_LOOP_PERIOD_MS 	50
