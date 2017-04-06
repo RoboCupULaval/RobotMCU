@@ -10,7 +10,7 @@
 
 #include "adc.h"
 
-#define BALL_ADC_THRESHOLD	1500
+#define BALL_ADC_THRESHOLD	1200
 
 typedef enum {
 	BALL_NOBALL = 0,
