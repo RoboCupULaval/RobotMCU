@@ -17,7 +17,7 @@ void slow_taskEntryPoint(void) {
 		led_swipingLedTest();
 	}
 
-	uint8_t id = robot_getID();
+	uint8_t id = robot_getPlayerID();
 	for(;;) {
 		//Debug modee
 		if(robot_isDebug()) {
@@ -25,7 +25,7 @@ void slow_taskEntryPoint(void) {
 
 			//ID selection
 			led_turnOff(id);
-			id = robot_getID();
+			id = robot_getPlayerID();
 			led_turnOn(id);
 		}
 		ball_updateADC();
