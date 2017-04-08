@@ -30,6 +30,7 @@ void convertBytesToStr(const void * ptr, size_t len, char* str){
 static comHandle_t s_logHandle;
 static SemaphoreHandle_t s_logLock = NULL;
 static volatile double s_batteryVoltage = 0.0;
+static volatile double s_current = 0.0;
 
 void log_init(comHandle_t comInterface) {
 	s_logHandle = comInterface;
@@ -38,6 +39,10 @@ void log_init(comHandle_t comInterface) {
 
 void log_setBatteryVoltage(const double batteryVoltage) {
 	s_batteryVoltage = batteryVoltage;
+}
+
+void log_setCurrent(const double current) {
+	s_current = current;
 }
 
 void log_broadcast(const char *pLogType, const char *pMessage){
@@ -55,6 +60,21 @@ void log_broadcast(const char *pLogType, const char *pMessage){
 	// End of critical zone
 	xSemaphoreGive(s_logLock);
 
+}
+
+void log_metadata(void) {
+	char metaData[MAX_METADATA_LEN];
+	const TickType_t msSinceStartup = xTaskGetTickCount() * portTICK_PERIOD_MS;
+
+	snprintf(metaData, MAX_METADATA_LEN, "%s|%06u|R%d|B%2.1f V - %5.2f mA|\r\n", "INFO", (unsigned)msSinceStartup, robot_getPlayerID(), s_batteryVoltage, s_current);
+
+	// Start of critical zone
+	xSemaphoreTake(s_logLock, portMAX_DELAY);
+
+	s_logHandle.write(metaData, strlen(metaData));
+
+	// End of critical zone
+	xSemaphoreGive(s_logLock);
 }
 
 void log_messageWithBufferDump(const char *pLogType, const char * pMessage, void * pBuffer, size_t length) {

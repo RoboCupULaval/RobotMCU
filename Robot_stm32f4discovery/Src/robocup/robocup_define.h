@@ -21,13 +21,14 @@ typedef struct {
 } hermesHandle_t;
 extern hermesHandle_t g_hermesHandle;
 extern comHandle_t g_logHandle;
-
+extern comHandle_t g_consoleHandle;
 
 //PMU
 typedef enum {
 	POWER_OK, //Possible to enable power
 	POWER_WARNING, //Power stays enable if already enabled, but can't enable it otherwise
 	POWER_CRITICAL, //Disabled automatically
+	POWER_OVERRIDE //Bypass protection
 } powerState;
 
 

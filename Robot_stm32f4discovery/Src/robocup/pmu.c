@@ -11,6 +11,8 @@
 
 #include "pmu.h"
 
+static bool s_protectionOverrided = false;
+
 //Init I2C device + enable power if batt voltage OK
 void pmu_init(void) {
 	pmu_disablePower();
@@ -81,6 +83,8 @@ uint8_t pmu_isPowerEnabled(void) {
 //Automatically reads batt voltage and deduces the power state
 //Returns the power state
 powerState pmu_checkBattVoltage(void) {
+	if(s_protectionOverrided)
+		return POWER_OVERRIDE;
 	double battVoltage = pmu_getBattVoltage();
 	if (battVoltage < PMU_BATT_SHUTDOWN_TRESHOLD) {
 		return POWER_CRITICAL;
@@ -93,4 +97,11 @@ powerState pmu_checkBattVoltage(void) {
 	}
 }
 
+void pmu_overrideProtection(void){
+	s_protectionOverrided = true;
+}
+
+void pmu_resetProtection(void){
+	s_protectionOverrided = false;
+}
 

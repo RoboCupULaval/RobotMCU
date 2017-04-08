@@ -32,6 +32,7 @@ void slow_taskEntryPoint(void) {
 		kicker_update();
 
 		log_setBatteryVoltage(pmu_getBattVoltage());
+		log_setCurrent(pmu_getCurrent());
 
 		slow_handleBattProtection();
 

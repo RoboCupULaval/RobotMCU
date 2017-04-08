@@ -22,5 +22,6 @@ typedef enum {
 void ball_init(void);
 void ball_updateADC(void);
 BallState ball_getState(void);
+uint32_t ball_getSensorValue(uint32_t sensorId);
 
 #endif /* ROBOCUP_BALL_DETECTOR_H_ */

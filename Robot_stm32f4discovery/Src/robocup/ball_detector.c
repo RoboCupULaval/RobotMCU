@@ -15,9 +15,13 @@ void ball_updateADC(void) {
 	HAL_ADCEx_InjectedStart(&hadc1);
 }
 
+uint32_t ball_getSensorValue(uint32_t sensorId) {
+	return HAL_ADCEx_InjectedGetValue(&hadc1, sensorId);
+}
+
 BallState ball_getState(void) {
-	uint16_t adcValue1 = HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_1);
-	uint16_t adcValue2 = HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_2);
+	uint16_t adcValue1 = ball_getSensorValue(1);
+	uint16_t adcValue2 = ball_getSensorValue(2);
 
 	BallState ballState = BALL_NOBALL;
 

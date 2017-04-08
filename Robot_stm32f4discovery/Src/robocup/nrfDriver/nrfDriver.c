@@ -65,3 +65,11 @@ uint8_t nrfRetransmitCount(void) {
 uint8_t nrfGetStatus(void) {
 	return TM_NRF24L01_GetStatus();
 }
+
+bool nrfVerifySPI(void) {
+	uint8_t val = TM_NRF24L01_ReadRegister(0x05);
+	if(val == 100)
+		return true;
+	else
+		return false;
+}

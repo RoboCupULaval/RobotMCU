@@ -3,6 +3,10 @@
 
 // This is the main task, it is intended to run indefinitely
 void hermes_taskEntryPoint(void) {
+	if(robot_isDebug())
+		vTaskSuspend(NULL); //No hermes in debug mode
+
+
 	// We have a small stack, this is why they are static
 	static char packetBuffer[COBS_MAX_PAYLOAD_LEN];
 	static unsigned char dataBuffer[COBS_MAX_PACKET_LEN];
@@ -49,7 +53,7 @@ void hermes_taskEntryPoint(void) {
 		// Find the corresponding packet in the packet table
 		packet_t packet = g_packetsTable[(size_t) (currentPacketHeaderPtr->packetType)];
 
-		LOG_INFO("Success!!!\r\n");
+		//LOG_INFO("Success!!!\r\n");
 		// Call callback that handle the packet
 		packet.callback(dataBuffer);
 

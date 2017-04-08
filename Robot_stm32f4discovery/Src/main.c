@@ -123,13 +123,13 @@ int main(void)
 
 
   	// Init communication
-
-  	comHandle_t comBluetooth = bluetooth_init();
-
-
   	comHandle_t comNrf = nrf_init();
   	hermes_init(comNrf);
+
+  	comHandle_t comBluetooth = bluetooth_init(robot_isDebug());
   	log_init(comBluetooth);
+  	if(robot_isDebug()) console_init(comBluetooth);
+
 	ctrl_emergencyBreak();
 
   /* USER CODE END 2 */

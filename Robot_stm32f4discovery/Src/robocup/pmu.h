@@ -11,6 +11,8 @@
 #ifndef ROBOCUP_PMU_H_
 #define ROBOCUP_PMU_H_
 
+#include <stdbool.h>
+
 #include "robocup_define.h"
 #include "gpio.h"
 #include "i2c.h"
@@ -41,5 +43,8 @@ uint8_t pmu_isPowerEnabled(void);
 
 powerState pmu_checkBattVoltage(void);
 powerState pmu_handleBattProtection(void);//Call this as frequently as possible!
+
+void pmu_overrideProtection(void);
+void pmu_resetProtection(void);
 
 #endif /* ROBOCUP_PMU_H_ */

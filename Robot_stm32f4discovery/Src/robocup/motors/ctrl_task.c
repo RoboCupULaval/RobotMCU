@@ -40,7 +40,7 @@ volatile SpeedCommandOpen_t g_speedCommandOpen = {
 // This tasks deals with the movements of the robot
 void ctrl_taskEntryPoint(void) {
 	//test_startUp();
-	if (robot_isDebug()) {
+	if (robot_isDebug() && robot_isBtnPressed()) {
 		while(!test_startUp());
 	}
   	LOG_INFO("Starting!!!\r\n");
@@ -100,7 +100,7 @@ void ctrl_taskEntryPoint(void) {
 				speedCommandTimeout = hasSpeedCommandTimeout();
 				if (speedCommandTimeout) {
 					if (c == 0 || speedCommandTimeout != lastSpeedCommandTimeout)
-						LOG_ERROR("Timeout on command\r\n");
+						if(!robot_isDebug()) LOG_ERROR("Timeout on command\r\n");
 					ctrl_emergencyBreak();
 					continue;
 				}
