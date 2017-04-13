@@ -35,8 +35,9 @@ void pmu_init(void) {
 double pmu_getBattVoltage(void) {
 	uint8_t data[2];
 	I2C_read(PMU_ADDRESS, PMU_REG_BUS_VOLT, data, 2);
-
-	double value = (double)(((data[0] << 8) + data[1]) >> 3) * PMU_VOLTAGE_LSB;
+	uint16_t left_align_value = (data[0] << 8) + data[1];
+	uint16_t right_align_value = left_align_value >> 3;
+	double value = (double)(right_align_value) * PMU_VOLTAGE_LSB;
 
 	return value;
 }
@@ -44,11 +45,13 @@ double pmu_getBattVoltage(void) {
 //Returns current consumption in mA
 double pmu_getCurrent(void) {
 	uint8_t data[2];
-	I2C_read(PMU_ADDRESS, PMU_REG_CURRENT, data, 2);
+	I2C_read(PMU_ADDRESS, PMU_REG_SHUNT_VOLT, data, 2);
 
-	double value = (double)((data[0] << 8) + data[1]) * PMU_CURRENT_LSB;
+	int16_t shunt_volt_in_10uV = ((int16_t)((data[0] << 8) + data[1])); // in 10 uV
+	double shunt_volt_in_mV = (double)shunt_volt_in_10uV * 0.01;
+	double current = shunt_volt_in_mV / SHUNT_RESISTANCE;
 
-	return value;
+	return current;
 }
 
 //Manually enables motors power if PowerStatus is OK
