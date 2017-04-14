@@ -10,6 +10,7 @@ CONTROL_ADDR = 0x00  # The computer's address
 
 class McuCommunicator(McuCommunicatorBarebones):
     """This module controls one stm32f407 discovery."""
+
     def ping_robot(self, robot_id):
         """Pings a robot.
 

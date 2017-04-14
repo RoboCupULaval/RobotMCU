@@ -59,7 +59,7 @@ class McuCommunicatorBarebones(object):
                                        dest_addr, packet_id, 0))
         # append the payload
         if payload is not None:
-            packet.append(payload)
+            packet.extend(payload)
         # compute and insert the checksum
         checksum_value = sum(int(a_byte)
                              for a_byte in packet) & BYTE_MASK
