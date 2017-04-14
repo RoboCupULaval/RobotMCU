@@ -2,15 +2,20 @@
 """This file contains the definitions for the packets
 """
 
+import enum
+
 # To create a new packet and command, please:
 # 1) insert its ID in the enum below
 # 2) insert its payload length and return id in the packet_info struct
 # 3) create the relevant function in mcu_communicator.py
 
-#
-PING_REQUEST = 0x00
-PING_RESPOND = 0x01
-SPEED_MOVE = 0x02
+
+class PacketID(enum.IntEnum):
+    """ The packet IDs for each type of normal command.
+    """
+    PING_REQUEST = 0x00
+    PING_RESPOND = 0x01
+    SPEED_MOVE = 0x02
 
 # This data structure has the following information
 # packet_id :  (pack_string, return_packet_id)
@@ -18,8 +23,10 @@ SPEED_MOVE = 0x02
 # Note: return_packet_id may be None if there is no expected return packet
 # note: See the documention of the struct module for the pack string format
 
-PACKET_INFO = {
-    PING_REQUEST: (None, PING_RESPOND),
-    PING_RESPOND: (None, None),
-    SPEED_MOVE: ('fff', None),
-    }
+
+class PacketInfo(enum.Enum):
+    """ The packet definitions.
+    """
+    PacketID.PING_REQUEST = (None, PacketID.PING_RESPOND)
+    PacketID.PING_RESPOND = (None, None)
+    PacketID.SPEED_MOVE = ('fff', None)
