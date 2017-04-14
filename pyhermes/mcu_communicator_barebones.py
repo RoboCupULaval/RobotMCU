@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """This modules contains a barebones interface to communicate with
-a robot. It is not very useful by itself."""
+a robot. It is not very useful by itself since it only contains
+the functional primitives."""
 
 import os
 import threading
@@ -108,10 +109,12 @@ class mcu_communicator_barebones(object):
 
         @classmethod
         def _check_packet(cls, packet_bytes, wanted_id):
-            # checks the ID
+            # check the ID
             # TODO
-            # checks the payload length
+            # check the payload length
             # TODO
-            # checks the checksum
+            # check the checksum
+            # TODO
+            # check the destination
             # TODO
             pass
