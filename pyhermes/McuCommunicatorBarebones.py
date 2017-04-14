@@ -15,6 +15,7 @@ COBS_EXTRA_BYTES = 2
 HEADER_SIZE = 5
 VERSION = 1
 BYTE_MASK = 0xFF
+CONTROL_ADDR = 0x00
 
 
 class WrongPacketException(Exception):
@@ -61,8 +62,7 @@ class McuCommunicatorBarebones(object):
         if payload is not None:
             packet.extend(payload)
         # compute and insert the checksum
-        checksum_value = sum(int(a_byte)
-                             for a_byte in packet) & BYTE_MASK
+        checksum_value = self._compute_checksum(packet)
 
         packet[4] = struct.pack('B', checksum_value)[0]
 
@@ -85,8 +85,8 @@ class McuCommunicatorBarebones(object):
         packet_to_return = None
         my_packet = bytearray()
 
-        payload_size = 0  # TODO
-        wanted_id = None  # TODO
+        payload_size = struct.calcsize(PACKET_INFO[packet_id][0])
+        wanted_id = PACKET_INFO[packet_id][1]
 
         wanted_byte_number = (payload_size +
                               COBS_EXTRA_BYTES +
@@ -101,7 +101,7 @@ class McuCommunicatorBarebones(object):
         packet_to_return = cobs.decode(my_packet)
 
         try:
-            self._check_packet(packet_to_return)
+            self._check_packet(packet_to_return, wanted_id)
         except WrongPacketException as my_exception:
             print(my_exception)
             print("Restarting serial port...")
@@ -111,12 +111,29 @@ class McuCommunicatorBarebones(object):
 
     @classmethod
     def _check_packet(cls, packet_bytes, wanted_id):
+        payload_size = PACKET_INFO[wanted_id][0]
+        # check if there is at least enough bytes for the header
+        if len(packet_bytes) <= HEADER_SIZE:
+            raise Exception("Not enough bytes in packet")
+        # check protocol version
+        if packet_bytes[0] != VERSION:
+            raise Exception("Wrong protocol version on the packet!")
         # check the ID
-        # TODO
+        if packet_bytes[3] != wanted_id:
+            raise WrongPacketException(packet_bytes)
         # check the payload length
-        # TODO
+        if len(packet_bytes) - HEADER_SIZE != payload_size:
+            raise WrongPacketException(packet_bytes)
         # check the checksum
-        # TODO
+        checksum = cls._compute_checksum(packet_bytes)
+        if packet_bytes[4] != checksum:
+            raise WrongPacketException(packet_bytes)
         # check the destination
-        # TODO
-        pass
+        if packet_bytes[2] != CONTROL_ADDR:
+            raise Exception("Wrong destination!")
+
+    @classmethod
+    def _compute_checksum(cls, packet):
+        checksum_value = sum(int(a_byte)
+                             for a_byte in packet) & BYTE_MASK
+        return checksum_value
