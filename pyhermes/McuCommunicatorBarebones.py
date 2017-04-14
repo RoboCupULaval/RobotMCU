@@ -9,6 +9,7 @@ import struct
 import serial
 import serial.tools.list_ports
 from cobs import cobs
+from packet_definitions import PACKET_INFO
 
 COBS_EXTRA_BYTES = 2
 HEADER_SIZE = 5
@@ -27,7 +28,7 @@ class WrongPacketException(Exception):
         super(WrongPacketException, self).__init__(message)
 
 
-class mcu_communicator_barebones(object):
+class McuCommunicatorBarebones(object):
     """This modules communicates with the communication tower"""
     def __init__(self):
         self.serial_port = None
@@ -57,7 +58,8 @@ class mcu_communicator_barebones(object):
             packet = struct.pack('BBBBB', VERSION, orig_addr, dest_addr,
                                  packet_id, 0)
             # append the payload
-            packet.append(payload)
+            if payload is not None:
+                packet.append(payload)
             # compute and insert the checksum
             checksum_value = sum(int(a_byte)
                                  for a_byte in packet) & BYTE_MASK
@@ -84,7 +86,7 @@ class mcu_communicator_barebones(object):
             my_packet = bytearray()
 
             payload_size = 0  # TODO
-            wanted_id = packet_id + 1  # TODO
+            wanted_id = None  # TODO
 
             wanted_byte_number = (payload_size +
                                   COBS_EXTRA_BYTES +
@@ -99,7 +101,7 @@ class mcu_communicator_barebones(object):
             packet_to_return = cobs.decode(my_packet)
 
             try:
-                self._check_packet(packet_to_return, wanted_id)
+                self._check_packet(packet_to_return)
             except WrongPacketException as my_exception:
                 print(my_exception)
                 print("Restarting serial port...")

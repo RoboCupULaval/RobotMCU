@@ -24,9 +24,8 @@ class PacketID(enum.IntEnum):
 # note: See the documention of the struct module for the pack string format
 
 
-class PacketInfo(enum.Enum):
-    """ The packet definitions.
-    """
-    PacketID.PING_REQUEST = (None, PacketID.PING_RESPOND)
-    PacketID.PING_RESPOND = (None, None)
-    PacketID.SPEED_MOVE = ('fff', None)
+PACKET_INFO = {
+    PacketID.PING_REQUEST: (None, PacketID.PING_RESPOND),
+    PacketID.PING_RESPOND: (None, None),
+    PacketID.SPEED_MOVE: ('fff', None),
+    }
