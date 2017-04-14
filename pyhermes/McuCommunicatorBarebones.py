@@ -55,8 +55,8 @@ class McuCommunicatorBarebones(object):
 
     def _send_packet(self, orig_addr, dest_addr, packet_id, payload):
         # generate the header
-        packet = struct.pack('BBBBB', VERSION, orig_addr, dest_addr,
-                             packet_id, 0)
+        packet = bytearray(struct.pack('BBBBB', VERSION, orig_addr,
+                                       dest_addr, packet_id, 0))
         # append the payload
         if payload is not None:
             packet.append(payload)
@@ -64,7 +64,7 @@ class McuCommunicatorBarebones(object):
         checksum_value = sum(int(a_byte)
                              for a_byte in packet) & BYTE_MASK
 
-        packet[4] = struct.pack('B', checksum_value)
+        packet[4] = struct.pack('B', checksum_value)[0]
 
         # transform the packet using COBS
         my_packet = bytearray(cobs.encode(bytearray(packet)))
