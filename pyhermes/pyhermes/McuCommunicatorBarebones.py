@@ -9,7 +9,7 @@ import struct
 import serial
 import serial.tools.list_ports
 from cobs import cobs
-from packet_definitions import PACKET_INFO
+from .packet_definitions import PACKET_INFO
 
 COBS_EXTRA_BYTES = 2
 HEADER_SIZE = 5

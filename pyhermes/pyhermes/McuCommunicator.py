@@ -2,8 +2,8 @@
 """This module contains an interface to communicate with the robots."""
 
 import struct
-from McuCommunicatorBarebones import McuCommunicatorBarebones
-from packet_definitions import PacketID, PACKET_INFO
+from .McuCommunicatorBarebones import McuCommunicatorBarebones
+from .packet_definitions import PacketID, PACKET_INFO
 
 CONTROL_ADDR = 0x00  # The computer's address
 
