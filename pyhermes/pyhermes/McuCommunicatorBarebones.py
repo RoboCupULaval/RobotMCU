@@ -8,7 +8,11 @@ import threading
 import struct
 import serial
 import serial.tools.list_ports
-from cobs import cobs
+try:
+    from cobs import cobs
+except ModuleNotFoundError:
+    from cobs.cobs import cobs
+
 from .packet_definitions import PACKET_INFO
 
 COBS_EXTRA_BYTES = 2
