@@ -16,6 +16,8 @@ class PacketID(enum.IntEnum):
     PING_REQUEST = 0x00
     PING_RESPOND = 0x01
     SPEED_MOVE = 0x02
+    OPEN_LOOP_COMMAND = 0x2E
+    SET_REGISTER = 0x03
 
 # This data structure has the following information
 # packet_id :  (pack_string, return_packet_id)
@@ -28,4 +30,5 @@ PACKET_INFO = {
     PacketID.PING_REQUEST: (None, PacketID.PING_RESPOND),
     PacketID.PING_RESPOND: (None, None),
     PacketID.SPEED_MOVE: ('fff', None),
+    PacketID.OPEN_LOOP_COMMAND: ('ffff', None)
     }
