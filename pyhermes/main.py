@@ -9,11 +9,11 @@ import sys
 import argparse
 import csv
 
-from mcu_serial_com import *
-from ctrl_test_cli import *
-from joystick_cli import joystick_cli
-from joystick_pygame_cli import joystick_pygame_cli
-from diagnostic import *
+from pyhermes.McuCommunicator import McuCommunicator
+from utils.ctrl_test_cli import *
+from utils.joystick_cli import joystick_cli
+from utils.joystick_pygame_cli import joystick_pygame_cli
+from utils.diagnostic import *
 
 
 if __name__ == '__main__':
@@ -39,6 +39,7 @@ if __name__ == '__main__':
     ctrl_parser.add_argument('ctrl_loop_type', choices={'open_loop', 'close_loop'}, help='Type of control loop')
     ctrl_parser.add_argument('speed_commands_file', type=str, help='Path to the txt file containing rows of speed commands')
     ctrl_parser.add_argument('robot_id', type=int, help='ID of the robot')
+
 
     args = main_parser.parse_args()
 
@@ -66,4 +67,6 @@ if __name__ == '__main__':
 
     elif args.command == 'test_rotate':
         rotate_test(args.robot_id)
+    elif args.command == None:
+        print("You probably want to use the --help option!")
 

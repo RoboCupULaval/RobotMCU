@@ -1,7 +1,7 @@
-from mcu_serial_com import *
+from pyhermes.McuCommunicator import McuCommunicator
 from time import sleep
 import time
-from joystick.jstick import *
+from .joystick.jstick import *
 from math import *
 
 JOYSTICK_DEAD_ZONE = 0.1

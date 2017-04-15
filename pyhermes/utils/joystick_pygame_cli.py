@@ -1,7 +1,7 @@
-from mcu_serial_com import *
+from pyhermes.McuCommunicator import McuCommunicator
 from time import sleep
 import time
-from joystick_pygame.joystick import RobotJoystick
+from .joystick_pygame.joystick import RobotJoystick
 from math import *
 
 
