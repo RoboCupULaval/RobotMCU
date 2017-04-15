@@ -17,9 +17,9 @@ from diagnostic import *
 
 
 if __name__ == '__main__':
-    print('==== pyhermes ====')
+    print('==== Pyhermes simple usage interface ====')
     if sys.version_info[0] < 3:
-        raise 'Must be python 3'
+        raise 'You are not using python3!'
 
     main_parser = argparse.ArgumentParser(description='Utilities for communication between ULtron robots and base station')
 
