@@ -1,15 +1,11 @@
 #!/usr/bin/env python3
+""" This is the main interface script to interact directly with pyhermes
+and other included test tools."""
 
-# To install dependency : 
-# pip install cobs bitstring pyserial
-
-from threading import Thread
-from time import sleep
 import sys
 import argparse
 import csv
 
-from pyhermes.McuCommunicator import McuCommunicator
 from utils.ctrl_test_cli import *
 from utils.joystick_cli import joystick_cli
 from utils.joystick_pygame_cli import joystick_pygame_cli
@@ -21,14 +17,17 @@ if __name__ == '__main__':
     if sys.version_info[0] < 3:
         raise 'You are not using python3!'
 
-    main_parser = argparse.ArgumentParser(description='Utilities for communication between ULtron robots and base station')
+    my_description = 'Utilities for communication between ULtron robots and base station'
+
+    main_parser = argparse.ArgumentParser(description=my_description)
 
     subparsers = main_parser.add_subparsers(dest='command')
 
     ping_parser = subparsers.add_parser('ping', help='Send ping to a robot')
     ping_parser.add_argument('robot_id', type=int, help='ID of the robot')
 
-    ping_parser = subparsers.add_parser('test_rotate', help='Send a rotation command to the robot')
+    ping_parser=subparsers.add_parser('test_rotate',
+                                        help='Send a rotation command to the robot')
     ping_parser.add_argument('robot_id', type=int, help='ID of the robot')
 
     joystick_parser = subparsers.add_parser('joystick', help='Control a robot using a joystick')
@@ -67,6 +66,7 @@ if __name__ == '__main__':
 
     elif args.command == 'test_rotate':
         rotate_test(args.robot_id)
-    elif args.command == None:
+
+    elif args.command is None:
         print("You probably want to use the --help option!")
 
