@@ -128,13 +128,9 @@ void communicationTask(void const * argument)
 
 	  //Read a packet from usb
 	  if (SerialRead(packetBytesReceived) >= 0) {
-		  // Uncobs the packet
-		  size_t receivedLen = strlen(packetBytesReceived);
-		  if (receivedLen == 0) {
-			  continue;
-		  }
-
-		  int result = decobifyData(packetBytesReceived, receivedLen +1, decobifiedPacketBytes, &REMOVETHISVARIABLEITSUSELESS);
+		  // Decobify
+		  size_t decobifiedLen = 0;
+          int result = decobifyData(packetBytesReceived, decobifiedPacketBytes, &decobifiedLen);
 
 		  // Check if decobification was successful
 		  if (result == -1) {
