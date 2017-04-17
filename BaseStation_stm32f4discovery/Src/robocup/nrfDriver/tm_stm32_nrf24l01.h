@@ -114,7 +114,6 @@ IRQ			Not used	Interrupt pin. Goes low when active. Pin functionality is active,
 #include "stm32f4xx_hal.h"
 //#include "defines.h"
 #include "tm_stm32_spi.h"
-#include "tm_stm32_gpio.h"
 
 /**
  * @defgroup TM_NRF24L01P_Macros
@@ -140,10 +139,10 @@ IRQ			Not used	Interrupt pin. Goes low when active. Pin functionality is active,
 #endif
 
 /* Pins configuration */
-#define NRF24L01_CE_LOW				TM_GPIO_SetPinLow(NRF24L01_CE_PORT, NRF24L01_CE_PIN)
-#define NRF24L01_CE_HIGH			TM_GPIO_SetPinHigh(NRF24L01_CE_PORT, NRF24L01_CE_PIN)
-#define NRF24L01_CSN_LOW			TM_GPIO_SetPinLow(NRF24L01_CSN_PORT, NRF24L01_CSN_PIN)
-#define NRF24L01_CSN_HIGH			TM_GPIO_SetPinHigh(NRF24L01_CSN_PORT, NRF24L01_CSN_PIN)
+#define NRF24L01_CE_LOW				(NRF24L01_CE_PORT)->BSRR = (uint32_t)(NRF24L01_CE_PIN) << 16
+#define NRF24L01_CE_HIGH			(NRF24L01_CE_PORT)->BSRR = (uint32_t)(NRF24L01_CE_PIN)
+#define NRF24L01_CSN_LOW			(NRF24L01_CSN_PORT)->BSRR = (uint32_t)(NRF24L01_CSN_PIN) << 16
+#define NRF24L01_CSN_HIGH			(NRF24L01_CSN_PORT)->BSRR = (uint32_t)(NRF24L01_CSN_PIN)
 
 /* Interrupt masks */
 #define NRF24L01_IRQ_DATA_READY     0x40 /*!< Data ready for receive */

@@ -10,14 +10,13 @@
 
 /* Private functions */
 static void TM_SPIx_Init(SPI_TypeDef* SPIx, TM_SPI_Mode_t SPI_Mode, uint16_t SPI_BaudRatePrescaler, uint16_t SPI_MasterSlave, uint16_t SPI_FirstBit);
-void TM_SPI1_INT_InitPins();
-void TM_SPI2_INT_InitPins();
 
 void TM_SPI_Init(SPI_TypeDef* SPIx) {
 	/* Init with default settings */
 #ifdef SPI1
 	if (SPIx == SPI1) {
 		TM_SPIx_Init(SPI1, TM_SPI1_MODE, TM_SPI1_PRESCALER, TM_SPI1_MASTERSLAVE, TM_SPI1_FIRSTBIT);
+
 	}
 #endif
 #ifdef SPI2
@@ -97,7 +96,8 @@ static void TM_SPIx_Init(SPI_TypeDef* SPIx, TM_SPI_Mode_t SPI_Mode, uint16_t SPI
 		__HAL_RCC_SPI1_CLK_ENABLE();
 		
 		/* Init pins */
-		TM_SPI1_INT_InitPins();
+		// this is done in cubemx configuration!
+
 		
 		/* Set options */
 		SPIHandle.Init.DataSize = TM_SPI1_DATASIZE;
@@ -151,20 +151,4 @@ static void TM_SPIx_Init(SPI_TypeDef* SPIx, TM_SPI_Mode_t SPI_Mode, uint16_t SPI
 	/* Enable SPI */
 	__HAL_SPI_ENABLE(&SPIHandle);
 }
-
-/* Private functions */
-#ifdef SPI1
-void TM_SPI1_INT_InitPins() {
-	/* Init SPI pins */
-	TM_GPIO_InitAlternate(GPIOA, GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7, TM_GPIO_OType_PP, TM_GPIO_PuPd_NOPULL, TM_GPIO_Speed_High, GPIO_AFx_SPI1);
-}
-#endif
-
-#ifdef SPI2
-void TM_SPI2_INT_InitPins() {
-	/* Init SPI pins */
-	TM_GPIO_InitAlternate(GPIOB, GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15, TM_GPIO_OType_PP, TM_GPIO_PuPd_NOPULL, TM_GPIO_Speed_High, GPIO_AFx_SPI2);
-	TM_GPIO_InitAlternate(GPIOC, GPIO_PIN_2, TM_GPIO_OType_PP, TM_GPIO_PuPd_NOPULL, TM_GPIO_Speed_High, GPIO_AFx_SPI2);
-}
-#endif
 

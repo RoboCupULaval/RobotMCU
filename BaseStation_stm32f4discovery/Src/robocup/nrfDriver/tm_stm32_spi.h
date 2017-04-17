@@ -113,7 +113,6 @@ SPI6    |PG14   PG12    PG13    |
  */
 
 #include "stm32f4xx_hal.h"
-#include "tm_stm32_gpio.h"
 
 /**
  * @defgroup TM_SPI_Typedefs

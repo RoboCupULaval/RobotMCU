@@ -203,7 +203,6 @@ typedef struct {
 } TM_NRF24L01_t;
 
 /* Private functions */
-void TM_NRF24L01_InitPins(void);
 void TM_NRF24L01_WriteBit(uint8_t reg, uint8_t bit, uint8_t value);
 uint8_t TM_NRF24L01_ReadBit(uint8_t reg, uint8_t bit);
 uint8_t TM_NRF24L01_ReadRegister(uint8_t reg);
@@ -214,21 +213,6 @@ uint8_t TM_NRF24L01_RxFifoEmpty(void);
 
 /* NRF structure */
 static TM_NRF24L01_t TM_NRF24L01_Struct;
-
-void TM_NRF24L01_InitPins(void) {
-	/* Init pins */
-	/* CNS pin */
-	TM_GPIO_Init(NRF24L01_CSN_PORT, NRF24L01_CSN_PIN, TM_GPIO_Mode_OUT, TM_GPIO_OType_PP, TM_GPIO_PuPd_UP, TM_GPIO_Speed_Low);
-	
-	/* CE pin */
-	TM_GPIO_Init(NRF24L01_CE_PORT, NRF24L01_CE_PIN, TM_GPIO_Mode_OUT, TM_GPIO_OType_PP, TM_GPIO_PuPd_UP, TM_GPIO_Speed_Low);
-	
-	/* CSN high = disable SPI */
-	NRF24L01_CSN_HIGH;
-	
-	/* CE low = disable TX/RX */
-	NRF24L01_CE_LOW;
-}
 
 uint8_t TM_NRF24L01_Init(uint8_t channel, uint8_t payload_size) {
 	/* Initialize CE and CSN pins */
@@ -574,6 +558,7 @@ void TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_t DataRate, TM_NRF24L01_OutputPower_
 
 uint8_t TM_NRF24L01_Read_Interrupts(TM_NRF24L01_IRQ_t* IRQ) {
 	IRQ->Status = TM_NRF24L01_GetStatus();
+	return 0;
 }
 
 void TM_NRF24L01_Clear_Interrupts(void) {
