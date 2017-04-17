@@ -104,4 +104,3 @@ int decobifyData(uint8_t *msg, uint8_t *dstOut, size_t *dst_len) {
 	// Process over, success status is returned.
 	return 0;
 }
-
