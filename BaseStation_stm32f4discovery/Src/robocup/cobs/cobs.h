@@ -23,8 +23,7 @@ typedef struct __attribute__((__packed__)) {
 	uint8_t checksum;
 } packetHeaderStruct_t;
 
-
-int cobifyData(const void *ptr, size_t msg_len,   char *dst);
+int cobifyData(uint8_t *data, uint8_t *dstOut, size_t msg_len);
 int decobifyData(uint8_t *msg, uint8_t *dstOut, size_t *dst_len);
 
 #endif // HERMES_H_
