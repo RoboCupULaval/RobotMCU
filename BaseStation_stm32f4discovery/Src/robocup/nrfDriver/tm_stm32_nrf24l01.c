@@ -341,7 +341,24 @@ uint8_t TM_NRF24L01_ReadRegister(uint8_t reg) {
 void TM_NRF24L01_ReadRegisterMulti(uint8_t reg, uint8_t* data, uint8_t count) {
 	NRF24L01_CSN_LOW;
 	TM_SPI_Send(NRF24L01_SPI, NRF24L01_READ_REGISTER_MASK(reg));
-	TM_SPI_ReadMulti(NRF24L01_SPI, data, NRF24L01_NOP_MASK, count);
+	uint8_t* my_data_ptr = data;
+	uint8_t my_count = count;
+
+	while (my_count--) {
+		/* Wait busy */
+		SPI_WAIT_TX(NRF24L01_SPI);
+
+		/* Fill output buffer with data */
+		*(__IO uint8_t *)&NRF24L01_SPI->DR = NRF24L01_NOP_MASK;
+
+		/* Wait for SPI to end everything */
+		SPI_WAIT_RX(NRF24L01_SPI);
+
+		/* Save data to buffer */
+		*my_data_ptr = *(__IO uint8_t *)&NRF24L01_SPI->DR;
+		my_data_ptr++;
+	}
+
 	NRF24L01_CSN_HIGH;
 }
 

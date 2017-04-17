@@ -5,6 +5,9 @@ void TM_GPIO_INT_Init(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin,
 		TM_GPIO_Mode_t GPIO_Mode, TM_GPIO_OType_t GPIO_OType,
 		TM_GPIO_PuPd_t GPIO_PuPd, TM_GPIO_Speed_t GPIO_Speed);
 
+
+
+
 void TM_GPIO_Init(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin,
 		TM_GPIO_Mode_t GPIO_Mode, TM_GPIO_OType_t GPIO_OType,
 		TM_GPIO_PuPd_t GPIO_PuPd, TM_GPIO_Speed_t GPIO_Speed) {

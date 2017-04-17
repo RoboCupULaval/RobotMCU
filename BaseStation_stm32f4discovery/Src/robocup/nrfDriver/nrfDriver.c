@@ -2,7 +2,8 @@
  * nrfDriver.c
  *
  *  Created on: Nov 18, 2016
- *      Author: znuxor
+ *      Author: Frederic St-Pierre
+ *      This is basically an interface.
  */
 #include "nrfDriver.h"
 #include "tm_stm32_nrf24l01.h"

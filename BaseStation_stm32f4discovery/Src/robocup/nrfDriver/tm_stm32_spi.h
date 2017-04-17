@@ -276,17 +276,5 @@ void TM_SPI_SendMulti(SPI_TypeDef* SPIx, uint8_t* dataOut, uint8_t* dataIn, uint
  */
 void TM_SPI_WriteMulti(SPI_TypeDef* SPIx, uint8_t* dataOut, uint32_t count);
 
-/**
- * @brief  Receives multiple data bytes over SPI
- * @note   Selected SPI must be set in 16-bit mode
- * @param  *SPIx: Pointer to SPIx peripheral you will use, where x is between 1 to 6
- * @param  *dataIn: Pointer to 8-bit array to save data into
- * @param  dummy: Dummy byte  to be sent over SPI, to receive data back. In most cases 0x00 or 0xFF
- * @param  count: Number of bytes you want read from device
- * @retval None
- */
-void TM_SPI_ReadMulti(SPI_TypeDef* SPIx, uint8_t *dataIn, uint8_t dummy, uint32_t count);
-
-
 #endif
 
