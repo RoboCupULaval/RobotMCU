@@ -25,6 +25,6 @@ typedef struct __attribute__((__packed__)) {
 
 
 int cobifyData(const void *ptr, size_t msg_len,   char *dst);
-int decobifyData(const char *ptr, size_t len, void *dst, size_t *dst_len);
+int decobifyData(uint8_t *msg, uint8_t *dstOut, size_t *dst_len);
 
 #endif // HERMES_H_

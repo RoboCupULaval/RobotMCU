@@ -48,8 +48,9 @@
 
 /* USER CODE BEGIN Includes */     
 #include "../../../Src/robocup/nrfDriver/nrfDriver.h"
-#include "../../../Src/robocup/hermes/hermes.h"
 #include "usbd_cdc_if.h"
+
+#include "robocup/cobs/cobs.h"
 /* USER CODE END Includes */
 
 /* Variables -----------------------------------------------------------------*/
