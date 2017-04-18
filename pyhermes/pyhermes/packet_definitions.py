@@ -9,6 +9,7 @@ import enum
 # 2) insert its payload length and return id in the packet_info struct
 # 3) create the relevant function in mcu_communicator.py
 
+#TODO: autogenerate this file content from the C code
 
 class PacketID(enum.IntEnum):
     """ The packet IDs for each type of normal command.
@@ -30,5 +31,6 @@ PACKET_INFO = {
     PacketID.PING_REQUEST: (None, PacketID.PING_RESPOND),
     PacketID.PING_RESPOND: (None, None),
     PacketID.SPEED_MOVE: ('fff', None),
-    PacketID.OPEN_LOOP_COMMAND: ('ffff', None)
+    PacketID.OPEN_LOOP_COMMAND: ('ffff', None),
+    PacketID.SET_REGISTER: ('BB', None)
     }
