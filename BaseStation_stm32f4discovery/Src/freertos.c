@@ -149,7 +149,9 @@ void communicationTask(void const * argument)
 			  lastDestAddress = packet->destAddress;
 			  nrfSetRobotTX(packet->destAddress);
 		  }
-		  nrfSend(packetBytesToSend);
+		  nrfSend(packetBytesReceived);
+		  uint8_t volatile someStatus = nrfGetStatus();
+		  uint8_t volatile someCount = nrfRetransmitCount();
 	  }
 
 	  /* if (nrfReceiveReady()) {
