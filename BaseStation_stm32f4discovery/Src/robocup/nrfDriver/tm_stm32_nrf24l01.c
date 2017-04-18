@@ -331,17 +331,9 @@ void TM_NRF24L01_WriteRegisterMulti(uint8_t reg, uint8_t *data, uint8_t count) {
 
 	uint8_t count2 = count;
 	while (count2--) {
-		/* Wait busy */
-		while ((hspi2.Instance->SR & SPI_FLAG_TXE) == 0 || (hspi2.Instance->SR & SPI_FLAG_BSY));
-
-		/* Fill output buffer with data */
-		*(__IO uint8_t *)&hspi2.Instance->DR = *data++;
-
-		/* Wait for SPI to end everything */
-		while ((hspi2.Instance->SR & SPI_FLAG_RXNE) == 0 || (hspi2.Instance->SR & SPI_FLAG_BSY));
-
-		/* Read data register */
-		(void)*(__IO uint16_t *)&hspi2.Instance->DR;
+		uint8_t data2 = 0;
+		HAL_SPI_TransmitReceive(&hspi2, data, &data2, 1, 0);
+		data++;
 	}
 
 	CS_high();
@@ -425,19 +417,10 @@ void TM_NRF24L01_GetData(uint8_t* data) {
 	/* Read payload */
 	uint32_t count = PayloadSize;
 	while (count--) {
-		/* Wait busy */
-		while ((hspi2.Instance->SR & SPI_FLAG_TXE) == 0 || (hspi2.Instance->SR & SPI_FLAG_BSY))
-
-		/* Fill output buffer with data */
-		*(__IO uint8_t *)&hspi2.Instance->DR = *data++;
-
-		/* Wait for SPI to end everything */
-		while ((hspi2.Instance->SR & SPI_FLAG_RXNE) == 0 || (hspi2.Instance->SR & SPI_FLAG_BSY))
-
-		/* Read data register */
-		*data++ = *(__IO uint8_t *)&hspi2.Instance->DR;
+		uint8_t data2 = 0;
+		HAL_SPI_TransmitReceive(&hspi2, data, &data2, 1, 0);
+		data++;
 	}
-
 
 	/* Pull up chip select */
 	CS_high();
