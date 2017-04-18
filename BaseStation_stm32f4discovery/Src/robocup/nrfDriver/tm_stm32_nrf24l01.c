@@ -184,7 +184,7 @@ uint8_t PayloadSize;  //Payload size
 
 /* Private functions */
 void TM_NRF24L01_WriteRegisterMulti(uint8_t reg, uint8_t *data, uint8_t count);
-static __INLINE uint8_t TM_SPI_Send(SPI_TypeDef* SPIx, uint8_t data);
+static uint8_t TM_NRF24L01_SPI_Send(uint8_t data);
 void TM_NRF24L01_WriteRegister(uint8_t reg, uint8_t value);
 void CE_low();
 void CE_high();
@@ -290,11 +290,11 @@ uint8_t TM_NRF24L01_Init(uint8_t channel, uint8_t payload_size) {
 	
 	/* Clear FIFOs */
 	CS_low();
-	TM_SPI_Send(hspi2.Instance, NRF24L01_FLUSH_TX_MASK);
+	TM_NRF24L01_SPI_Send(NRF24L01_FLUSH_TX_MASK);
 	CS_high();
 
 	CS_low();
-	TM_SPI_Send(hspi2.Instance, NRF24L01_FLUSH_RX_MASK);
+	TM_NRF24L01_SPI_Send(NRF24L01_FLUSH_RX_MASK);
 	CS_high();
 	
 	/* Clear interrupts */
@@ -320,14 +320,14 @@ void TM_NRF24L01_SetTxAddress(uint8_t *adr) {
 
 void TM_NRF24L01_WriteRegister(uint8_t reg, uint8_t value) {
 	CS_low();
-	TM_SPI_Send(hspi2.Instance, NRF24L01_WRITE_REGISTER_MASK(reg));
-	TM_SPI_Send(hspi2.Instance, value);
+	TM_NRF24L01_SPI_Send(NRF24L01_WRITE_REGISTER_MASK(reg));
+	TM_NRF24L01_SPI_Send(value);
 	CS_high();
 }
 
 void TM_NRF24L01_WriteRegisterMulti(uint8_t reg, uint8_t *data, uint8_t count) {
 	CS_low();
-	TM_SPI_Send(hspi2.Instance, NRF24L01_WRITE_REGISTER_MASK(reg));
+	TM_NRF24L01_SPI_Send(NRF24L01_WRITE_REGISTER_MASK(reg));
 
 	uint8_t count2 = count;
 	while (count2--) {
@@ -357,7 +357,7 @@ void TM_NRF24L01_PowerUpRx(void) {
 	CE_low();
 	/* Clear RX buffer */
 	CS_low();
-	TM_SPI_Send(hspi2.Instance, NRF24L01_FLUSH_RX_MASK);
+	TM_NRF24L01_SPI_Send(NRF24L01_FLUSH_RX_MASK);
 	CS_high();
 
 	/* Clear interrupts */
@@ -373,8 +373,8 @@ void TM_NRF24L01_PowerDown(void) {
 
 	uint8_t tmp;
 	CS_low();
-	TM_SPI_Send(hspi2.Instance, NRF24L01_READ_REGISTER_MASK(NRF24L01_REG_CONFIG));
-	tmp = TM_SPI_Send(hspi2.Instance, NRF24L01_NOP_MASK);
+	TM_NRF24L01_SPI_Send(NRF24L01_READ_REGISTER_MASK(NRF24L01_REG_CONFIG));
+	tmp = TM_NRF24L01_SPI_Send(NRF24L01_NOP_MASK);
 	CS_high();
 	tmp &= ~(1 << NRF24L01_PWR_UP);
 	TM_NRF24L01_WriteRegister(NRF24L01_REG_CONFIG, tmp);
@@ -393,13 +393,13 @@ void TM_NRF24L01_Transmit(uint8_t *data) {
 	
 	/* Clear TX FIFO from NRF24L01+ */
 	CS_low();
-    TM_SPI_Send(hspi2.Instance, NRF24L01_FLUSH_TX_MASK);
+    TM_NRF24L01_SPI_Send(NRF24L01_FLUSH_TX_MASK);
     CS_high();
 	
 	/* Send payload to nRF24L01+ */
     CS_low();
 	/* Send write payload command */
-	TM_SPI_Send(hspi2.Instance, NRF24L01_W_TX_PAYLOAD_MASK);
+	TM_NRF24L01_SPI_Send(NRF24L01_W_TX_PAYLOAD_MASK);
 
 	/* Fill payload with data*/
 	while (count--) {
@@ -427,7 +427,7 @@ void TM_NRF24L01_GetData(uint8_t* data) {
 	/* Pull down chip select */
 	CS_low();
 	/* Send read payload command*/
-	TM_SPI_Send(hspi2.Instance, NRF24L01_R_RX_PAYLOAD_MASK);
+	TM_NRF24L01_SPI_Send(NRF24L01_R_RX_PAYLOAD_MASK);
 	/* Read payload */
 	uint32_t count = PayloadSize;
 	while (count--) {
@@ -460,8 +460,8 @@ uint8_t TM_NRF24L01_DataReady(void) {
 	}
 
 	CS_low();
-	TM_SPI_Send(hspi2.Instance, NRF24L01_READ_REGISTER_MASK(NRF24L01_REG_FIFO_STATUS));
-	uint8_t reg = TM_SPI_Send(hspi2.Instance, NRF24L01_NOP_MASK);
+	TM_NRF24L01_SPI_Send(NRF24L01_READ_REGISTER_MASK(NRF24L01_REG_FIFO_STATUS));
+	uint8_t reg = TM_NRF24L01_SPI_Send(NRF24L01_NOP_MASK);
 	CS_high();
 
 
@@ -474,7 +474,7 @@ uint8_t TM_NRF24L01_GetStatus(void) {
 	
 	CS_low();
 	/* First received byte is always status register */
-	status = TM_SPI_Send(hspi2.Instance, NRF24L01_NOP_MASK);
+	status = TM_NRF24L01_SPI_Send(NRF24L01_NOP_MASK);
 	/* Pull up chip select */
 	CS_high();
 	
@@ -501,8 +501,8 @@ TM_NRF24L01_Transmit_Status_t TM_NRF24L01_GetTransmissionStatus(void) {
 uint8_t TM_NRF24L01_GetRetransmissionsCount(void) {
 	/* Low 4 bits */
 	CS_low();
-	TM_SPI_Send(hspi2.Instance, NRF24L01_READ_REGISTER_MASK(NRF24L01_REG_OBSERVE_TX));
-	uint8_t retransmit_cnt = TM_SPI_Send(hspi2.Instance, NRF24L01_NOP_MASK) & 0x0F;
+	TM_NRF24L01_SPI_Send(NRF24L01_READ_REGISTER_MASK(NRF24L01_REG_OBSERVE_TX));
+	uint8_t retransmit_cnt = TM_NRF24L01_SPI_Send(NRF24L01_NOP_MASK) & 0x0F;
 	CS_high();
 
 	return retransmit_cnt;
@@ -546,23 +546,11 @@ void TM_NRF24L01_Clear_Interrupts(void) {
  * @param  data: 8-bit data size to send over SPI
  * @retval Received byte from slave device
  */
-static __INLINE uint8_t TM_SPI_Send(SPI_TypeDef* SPIx, uint8_t data) {
-	/* Check if SPI is enabled */
-	if (!((SPIx)->CR1 & SPI_CR1_SPE)) {
-		return 0;
-	}
+static uint8_t TM_NRF24L01_SPI_Send(uint8_t data) {
 
-	/* Wait for previous transmissions to complete if DMA TX enabled for SPI */
-	while ((SPIx->SR & SPI_FLAG_TXE) == 0 || (SPIx->SR & SPI_FLAG_BSY));
-
-	/* Fill output buffer with data */
-	SPIx->DR = data;
-
-	/* Wait for transmission to complete */
-	while ((SPIx->SR & SPI_FLAG_RXNE) == 0 || (SPIx->SR & SPI_FLAG_BSY));
-
-	/* Return data from buffer */
-	return SPIx->DR;
+	uint8_t returnedData = 0;
+	HAL_SPI_TransmitReceive(&hspi2, &data, &returnedData, 1, 0);
+	return returnedData;
 }
 
 void CE_low() {
