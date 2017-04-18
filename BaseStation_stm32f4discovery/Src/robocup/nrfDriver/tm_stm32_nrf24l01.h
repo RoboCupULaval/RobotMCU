@@ -103,18 +103,6 @@ IRQ			Not used	Interrupt pin. Goes low when active. Pin functionality is active,
  */
 #include "stm32f4xx_hal.h"
 
-// REMOVE THIS WE SHOULD USE CUBEMX CONFIG INSTEAD
-/* Chip enable for transmitting */
-#ifndef NRF24L01_CE_PIN
-#define NRF24L01_CE_PORT			GPIOC
-#define NRF24L01_CE_PIN				GPIO_PIN_1
-#endif
-
-// REMOVE THIS WE SHOULD USE CUBEMX CONFIG INSTEAD PUT THIS IN THE CODE DIRECTLY AND REMOVE THE VARIABLES
-/* Pins configuration */
-#define NRF24L01_CE_LOW				HAL_GPIO_WritePin(NRF24L01_CE_PORT, NRF24L01_CE_PIN, GPIO_PIN_RESET)
-#define NRF24L01_CE_HIGH			HAL_GPIO_WritePin(NRF24L01_CE_PORT, NRF24L01_CE_PIN, GPIO_PIN_SET)
-
 /**
  * @brief  Transmission status enumeration
  */

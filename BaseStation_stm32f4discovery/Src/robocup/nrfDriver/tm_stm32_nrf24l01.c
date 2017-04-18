@@ -186,6 +186,10 @@ uint8_t PayloadSize;  //Payload size
 void TM_NRF24L01_WriteRegisterMulti(uint8_t reg, uint8_t *data, uint8_t count);
 static __INLINE uint8_t TM_SPI_Send(SPI_TypeDef* SPIx, uint8_t data);
 void TM_NRF24L01_WriteRegister(uint8_t reg, uint8_t value);
+void CE_low();
+void CE_high();
+void CS_low();
+void CS_high();
 
 uint8_t TM_NRF24L01_Init(uint8_t channel, uint8_t payload_size) {
 	
@@ -285,13 +289,13 @@ uint8_t TM_NRF24L01_Init(uint8_t channel, uint8_t payload_size) {
 	TM_NRF24L01_WriteRegister(NRF24L01_REG_DYNPD, (0 << NRF24L01_DPL_P0) | (0 << NRF24L01_DPL_P1) | (0 << NRF24L01_DPL_P2) | (0 << NRF24L01_DPL_P3) | (0 << NRF24L01_DPL_P4) | (0 << NRF24L01_DPL_P5));
 	
 	/* Clear FIFOs */
-	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
+	CS_low();
 	TM_SPI_Send(hspi2.Instance, NRF24L01_FLUSH_TX_MASK);
-	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
+	CS_high();
 
-	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
+	CS_low();
 	TM_SPI_Send(hspi2.Instance, NRF24L01_FLUSH_RX_MASK);
-	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
+	CS_high();
 	
 	/* Clear interrupts */
 	TM_NRF24L01_Clear_Interrupts();
@@ -304,9 +308,9 @@ uint8_t TM_NRF24L01_Init(uint8_t channel, uint8_t payload_size) {
 }
 
 void TM_NRF24L01_SetMyAddress(uint8_t *adr) {
-	NRF24L01_CE_LOW;
+	CE_low();
 	TM_NRF24L01_WriteRegisterMulti(NRF24L01_REG_RX_ADDR_P1, adr, 5);
-	NRF24L01_CE_HIGH;
+	CE_high();
 }
 
 void TM_NRF24L01_SetTxAddress(uint8_t *adr) {
@@ -315,14 +319,14 @@ void TM_NRF24L01_SetTxAddress(uint8_t *adr) {
 }
 
 void TM_NRF24L01_WriteRegister(uint8_t reg, uint8_t value) {
-	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
+	CS_low();
 	TM_SPI_Send(hspi2.Instance, NRF24L01_WRITE_REGISTER_MASK(reg));
 	TM_SPI_Send(hspi2.Instance, value);
-	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
+	CS_high();
 }
 
 void TM_NRF24L01_WriteRegisterMulti(uint8_t reg, uint8_t *data, uint8_t count) {
-	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
+	CS_low();
 	TM_SPI_Send(hspi2.Instance, NRF24L01_WRITE_REGISTER_MASK(reg));
 
 	uint8_t count2 = count;
@@ -340,7 +344,7 @@ void TM_NRF24L01_WriteRegisterMulti(uint8_t reg, uint8_t *data, uint8_t count) {
 		(void)*(__IO uint16_t *)&hspi2.Instance->DR;
 	}
 
-	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
+	CS_high();
 }
 
 void TM_NRF24L01_PowerUpTx(void) {
@@ -350,28 +354,28 @@ void TM_NRF24L01_PowerUpTx(void) {
 
 void TM_NRF24L01_PowerUpRx(void) {
 	/* Disable RX/TX mode */
-	NRF24L01_CE_LOW;
+	CE_low();
 	/* Clear RX buffer */
-	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
+	CS_low();
 	TM_SPI_Send(hspi2.Instance, NRF24L01_FLUSH_RX_MASK);
-	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
+	CS_high();
 
 	/* Clear interrupts */
 	TM_NRF24L01_Clear_Interrupts();
 	/* Setup RX mode */
 	TM_NRF24L01_WriteRegister(NRF24L01_REG_CONFIG, NRF24L01_CONFIG | 1 << NRF24L01_PWR_UP | 1 << NRF24L01_PRIM_RX);
 	/* Start listening */
-	NRF24L01_CE_HIGH;
+	CE_high();
 }
 
 void TM_NRF24L01_PowerDown(void) {
-	NRF24L01_CE_LOW;
+	CE_low();
 
 	uint8_t tmp;
-	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
+	CS_low();
 	TM_SPI_Send(hspi2.Instance, NRF24L01_READ_REGISTER_MASK(NRF24L01_REG_CONFIG));
 	tmp = TM_SPI_Send(hspi2.Instance, NRF24L01_NOP_MASK);
-	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
+	CS_high();
 	tmp &= ~(1 << NRF24L01_PWR_UP);
 	TM_NRF24L01_WriteRegister(NRF24L01_REG_CONFIG, tmp);
 
@@ -382,18 +386,18 @@ void TM_NRF24L01_Transmit(uint8_t *data) {
 	uint8_t count = PayloadSize;
 
 	/* Chip enable put to low, disable it */
-	NRF24L01_CE_LOW;
+	CE_low();
 	
 	/* Go to power up tx mode */
 	TM_NRF24L01_PowerUpTx();
 	
 	/* Clear TX FIFO from NRF24L01+ */
-	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
+	CS_low();
     TM_SPI_Send(hspi2.Instance, NRF24L01_FLUSH_TX_MASK);
-    HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
+    CS_high();
 	
 	/* Send payload to nRF24L01+ */
-    HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
+    CS_low();
 	/* Send write payload command */
 	TM_SPI_Send(hspi2.Instance, NRF24L01_W_TX_PAYLOAD_MASK);
 
@@ -413,15 +417,15 @@ void TM_NRF24L01_Transmit(uint8_t *data) {
 		}
 
 	/* Disable SPI */
-	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
+	CS_high();
 	
 	/* Send data! */
-	NRF24L01_CE_HIGH;
+	CE_high();
 }
 
 void TM_NRF24L01_GetData(uint8_t* data) {
 	/* Pull down chip select */
-	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
+	CS_low();
 	/* Send read payload command*/
 	TM_SPI_Send(hspi2.Instance, NRF24L01_R_RX_PAYLOAD_MASK);
 	/* Read payload */
@@ -442,7 +446,7 @@ void TM_NRF24L01_GetData(uint8_t* data) {
 
 
 	/* Pull up chip select */
-	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
+	CS_high();
 	
 	/* Reset status register, clear RX_DR interrupt flag */
 	TM_NRF24L01_WriteRegister(NRF24L01_REG_STATUS, (1 << NRF24L01_RX_DR));
@@ -455,10 +459,10 @@ uint8_t TM_NRF24L01_DataReady(void) {
 		return 1;
 	}
 
-	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
+	CS_low();
 	TM_SPI_Send(hspi2.Instance, NRF24L01_READ_REGISTER_MASK(NRF24L01_REG_FIFO_STATUS));
 	uint8_t reg = TM_SPI_Send(hspi2.Instance, NRF24L01_NOP_MASK);
-	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
+	CS_high();
 
 
 	uint8_t isRxFifoEmpty = reg&(1<<NRF24L01_RX_EMPTY);
@@ -468,11 +472,11 @@ uint8_t TM_NRF24L01_DataReady(void) {
 uint8_t TM_NRF24L01_GetStatus(void) {
 	uint8_t status;
 	
-	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
+	CS_low();
 	/* First received byte is always status register */
 	status = TM_SPI_Send(hspi2.Instance, NRF24L01_NOP_MASK);
 	/* Pull up chip select */
-	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
+	CS_high();
 	
 	return status;
 }
@@ -496,10 +500,10 @@ TM_NRF24L01_Transmit_Status_t TM_NRF24L01_GetTransmissionStatus(void) {
 
 uint8_t TM_NRF24L01_GetRetransmissionsCount(void) {
 	/* Low 4 bits */
-	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
+	CS_low();
 	TM_SPI_Send(hspi2.Instance, NRF24L01_READ_REGISTER_MASK(NRF24L01_REG_OBSERVE_TX));
 	uint8_t retransmit_cnt = TM_SPI_Send(hspi2.Instance, NRF24L01_NOP_MASK) & 0x0F;
-	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
+	CS_high();
 
 	return retransmit_cnt;
 }
@@ -559,4 +563,20 @@ static __INLINE uint8_t TM_SPI_Send(SPI_TypeDef* SPIx, uint8_t data) {
 
 	/* Return data from buffer */
 	return SPIx->DR;
+}
+
+void CE_low() {
+	HAL_GPIO_WritePin(NRF_CE_GPIO_Port, NRF_CE_Pin, GPIO_PIN_RESET);
+}
+
+void CE_high() {
+	HAL_GPIO_WritePin(NRF_CE_GPIO_Port, NRF_CE_Pin, GPIO_PIN_SET);
+}
+
+void CS_low(){
+	HAL_GPIO_WritePin(NRF_CS_GPIO_Port, NRF_CS_Pin, GPIO_PIN_RESET);
+}
+
+void CS_high(){
+	HAL_GPIO_WritePin(NRF_CS_GPIO_Port, NRF_CS_Pin, GPIO_PIN_SET);
 }
