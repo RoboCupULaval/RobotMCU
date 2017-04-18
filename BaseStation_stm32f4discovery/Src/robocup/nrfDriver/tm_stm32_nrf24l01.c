@@ -195,6 +195,7 @@ typedef struct {
 
 /* Private functions */
 void TM_NRF24L01_WriteRegisterMulti(uint8_t reg, uint8_t *data, uint8_t count);
+static __INLINE uint8_t TM_SPI_Send(SPI_TypeDef* SPIx, uint8_t data);
 
 /* NRF structure */
 static TM_NRF24L01_t TM_NRF24L01_Struct;
@@ -373,13 +374,13 @@ void TM_NRF24L01_WriteRegisterMulti(uint8_t reg, uint8_t *data, uint8_t count) {
 	uint8_t count2 = count;
 	while (count2--) {
 		/* Wait busy */
-		SPI_WAIT_TX(NRF24L01_SPI);
+		while ((NRF24L01_SPI->SR & SPI_FLAG_TXE) == 0 || (NRF24L01_SPI->SR & SPI_FLAG_BSY));
 
 		/* Fill output buffer with data */
 		*(__IO uint8_t *)&NRF24L01_SPI->DR = *data++;
 
 		/* Wait for SPI to end everything */
-		SPI_WAIT_RX(NRF24L01_SPI);
+		while ((NRF24L01_SPI->SR & SPI_FLAG_RXNE) == 0 || (NRF24L01_SPI->SR & SPI_FLAG_BSY));
 
 		/* Read data register */
 		(void)*(__IO uint16_t *)&NRF24L01_SPI->DR;
@@ -440,13 +441,13 @@ void TM_NRF24L01_Transmit(uint8_t *data) {
 	/* Fill payload with data*/
 	while (count--) {
 			/* Wait busy */
-			SPI_WAIT_TX(NRF24L01_SPI);
+			while ((NRF24L01_SPI->SR & SPI_FLAG_TXE) == 0 || (NRF24L01_SPI->SR & SPI_FLAG_BSY))
 
 			/* Fill output buffer with data */
 			*(__IO uint8_t *)&NRF24L01_SPI->DR = *data++;
 
 			/* Wait for SPI to end everything */
-			SPI_WAIT_RX(NRF24L01_SPI);
+			while ((NRF24L01_SPI->SR & SPI_FLAG_RXNE) == 0 || (NRF24L01_SPI->SR & SPI_FLAG_BSY));
 
 			/* Read data register */
 			(void)*(__IO uint16_t *)&NRF24L01_SPI->DR;
@@ -468,13 +469,13 @@ void TM_NRF24L01_GetData(uint8_t* data) {
 	uint32_t my_count_2 = TM_NRF24L01_Struct.PayloadSize;
 	while (my_count_2--) {
 		/* Wait busy */
-		SPI_WAIT_TX(NRF24L01_SPI);
+		while ((NRF24L01_SPI->SR & SPI_FLAG_TXE) == 0 || (NRF24L01_SPI->SR & SPI_FLAG_BSY))
 
 		/* Fill output buffer with data */
 		*(__IO uint8_t *)&NRF24L01_SPI->DR = *data++;
 
 		/* Wait for SPI to end everything */
-		SPI_WAIT_RX(NRF24L01_SPI);
+		while ((NRF24L01_SPI->SR & SPI_FLAG_RXNE) == 0 || (NRF24L01_SPI->SR & SPI_FLAG_BSY))
 
 		/* Read data register */
 		*data++ = *(__IO uint8_t *)&NRF24L01_SPI->DR;
@@ -578,4 +579,31 @@ void TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_t DataRate, TM_NRF24L01_OutputPower_
 
 void TM_NRF24L01_Clear_Interrupts(void) {
 	TM_NRF24L01_WriteRegister(0x07, 0x70);
+}
+
+
+
+/**
+ * @brief  Sends single byte over SPI
+ * @param  *SPIx: Pointer to SPIx peripheral you will use, where x is between 1 to 6
+ * @param  data: 8-bit data size to send over SPI
+ * @retval Received byte from slave device
+ */
+static __INLINE uint8_t TM_SPI_Send(SPI_TypeDef* SPIx, uint8_t data) {
+	/* Check if SPI is enabled */
+	if (!((SPIx)->CR1 & SPI_CR1_SPE)) {
+		return 0;
+	}
+
+	/* Wait for previous transmissions to complete if DMA TX enabled for SPI */
+	while ((SPIx->SR & SPI_FLAG_TXE) == 0 || (SPIx->SR & SPI_FLAG_BSY));
+
+	/* Fill output buffer with data */
+	SPIx->DR = data;
+
+	/* Wait for transmission to complete */
+	while ((SPIx->SR & SPI_FLAG_RXNE) == 0 || (SPIx->SR & SPI_FLAG_BSY));
+
+	/* Return data from buffer */
+	return SPIx->DR;
 }

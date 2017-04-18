@@ -173,50 +173,6 @@ typedef enum _TM_NRF24L01_OutputPower_t {
 	TM_NRF24L01_OutputPower_0dBm          /*!< Output power set to 0dBm */
 } TM_NRF24L01_OutputPower_t;
 
-//Legacy stuff from the spi module
-#define SPI_IS_BUSY(SPIx)                   (((SPIx)->SR & (SPI_SR_TXE | SPI_SR_RXNE)) == 0)
-
-/**
- * @brief  SPI wait till end
- */
-#define SPI_WAIT_TX(SPIx)                   while ((SPIx->SR & SPI_FLAG_TXE) == 0 || (SPIx->SR & SPI_FLAG_BSY))
-#define SPI_WAIT_RX(SPIx)                   while ((SPIx->SR & SPI_FLAG_RXNE) == 0 || (SPIx->SR & SPI_FLAG_BSY))
-
-/**
- * @brief  Checks if SPI is enabled
- */
-#define SPI_CHECK_ENABLED(SPIx)             if (!((SPIx)->CR1 & SPI_CR1_SPE)) {return;}
-
-/**
- * @brief  Checks if SPI is enabled and returns value from function if not
- */
-#define SPI_CHECK_ENABLED_RESP(SPIx, val)   if (!((SPIx)->CR1 & SPI_CR1_SPE)) {return (val);}
-
-/**
- * @brief  Sends single byte over SPI
- * @param  *SPIx: Pointer to SPIx peripheral you will use, where x is between 1 to 6
- * @param  data: 8-bit data size to send over SPI
- * @retval Received byte from slave device
- */
-static __INLINE uint8_t TM_SPI_Send(SPI_TypeDef* SPIx, uint8_t data) {
-	/* Check if SPI is enabled */
-	SPI_CHECK_ENABLED_RESP(SPIx, 0);
-
-	/* Wait for previous transmissions to complete if DMA TX enabled for SPI */
-	SPI_WAIT_TX(SPIx);
-
-	/* Fill output buffer with data */
-	SPIx->DR = data;
-
-	/* Wait for transmission to complete */
-	SPI_WAIT_RX(SPIx);
-
-	/* Return data from buffer */
-	return SPIx->DR;
-}
-
-
-
 /**
  * @brief  Initializes NRF24L01+ module
  * @param  channel: channel you will use for communication, from 0 to 125 eg. working frequency from 2.4 to 2.525 GHz
