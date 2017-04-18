@@ -37,16 +37,6 @@
 #ifndef TM_NRF24L01_H
 #define TM_NRF24L01_H 100
 
-/* C++ detection */
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/**
- * @addtogroup TM_STM32Fxxx_HAL_Libraries
- * @{
- */
-
 /**
  * @defgroup TM_NRF24L01P
  * @brief    nRF24L01+ library for STM32xxx devices - http://stm32f4-discovery.com/2015/09/hal-library-25-nrf24l01-for-stm32fxxx/
@@ -113,13 +103,7 @@ IRQ			Not used	Interrupt pin. Goes low when active. Pin functionality is active,
  */
 #include "stm32f4xx_hal.h"
 
-/**
- * @defgroup TM_NRF24L01P_Macros
- * @brief    Library defines
- * @{
- */
-
-/* Default SPI used */
+/* default spi used */
 #ifndef NRF24L01_SPI
 #define NRF24L01_SPI				SPI2
 #endif
@@ -146,16 +130,6 @@ IRQ			Not used	Interrupt pin. Goes low when active. Pin functionality is active,
 #define NRF24L01_IRQ_DATA_READY     0x40 /*!< Data ready for receive */
 #define NRF24L01_IRQ_TRAN_OK        0x20 /*!< Transmission went OK */
 #define NRF24L01_IRQ_MAX_RT         0x10 /*!< Max retransmissions reached, last transmission failed */
-
-/**
- * @}
- */
- 
-/**
- * @defgroup TM_NRF24L01P_Typedefs
- * @brief    Library Typedefs
- * @{
- */
 
 /**
  * @brief  Interrupt structure 
@@ -242,19 +216,6 @@ static __INLINE uint8_t TM_SPI_Send(SPI_TypeDef* SPIx, uint8_t data) {
 }
 
 
-
-/**
- * @}
- */
-
-/**
- * @defgroup TM_NRF24L01P_Functions
- * @brief    Library Functions
- *
- * Here are listed very basic functions to work with NRF modules
- *
- * @{
- */
 
 /**
  * @brief  Initializes NRF24L01+ module
@@ -372,15 +333,6 @@ void TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_t DataRate, TM_NRF24L01_OutputPower_
 uint8_t TM_NRF24L01_GetStatus(void);
 
 /**
- * @brief  Reads interrupts from NRF 
- * @param  *IRQ: Pointer to @ref TM_NRF24L01_IRQ_t where IRQ status will be saved
- * @retval IRQ status
- *            - 0: No interrupts are active
- *            - > 0: At least one interrupt is active
- */
-uint8_t TM_NRF24L01_Read_Interrupts(TM_NRF24L01_IRQ_t* IRQ);
-
-/**
  * @brief  Clears interrupt status
  * @param  None
  * @retval None
@@ -389,23 +341,6 @@ void TM_NRF24L01_Clear_Interrupts(void);
 
 /* Private */
 void TM_NRF24L01_WriteRegister(uint8_t reg, uint8_t value);
-
-/**
- * @}
- */
- 
-/**
- * @}
- */
- 
-/**
- * @}
- */
-
-/* C++ detection */
-#ifdef __cplusplus
-}
-#endif
 
 #endif
 
