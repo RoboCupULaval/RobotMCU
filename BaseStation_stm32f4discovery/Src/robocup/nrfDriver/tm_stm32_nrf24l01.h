@@ -103,47 +103,17 @@ IRQ			Not used	Interrupt pin. Goes low when active. Pin functionality is active,
  */
 #include "stm32f4xx_hal.h"
 
-/* default spi used */
-#ifndef NRF24L01_SPI
-#define NRF24L01_SPI				SPI2
-#endif
-
-/* SPI chip enable pin */
-#ifndef NRF24L01_CSN_PIN
-#define NRF24L01_CSN_PORT			GPIOB
-#define NRF24L01_CSN_PIN			GPIO_PIN_12
-#endif
-
+// REMOVE THIS WE SHOULD USE CUBEMX CONFIG INSTEAD
 /* Chip enable for transmitting */
 #ifndef NRF24L01_CE_PIN
 #define NRF24L01_CE_PORT			GPIOC
 #define NRF24L01_CE_PIN				GPIO_PIN_1
 #endif
 
+// REMOVE THIS WE SHOULD USE CUBEMX CONFIG INSTEAD PUT THIS IN THE CODE DIRECTLY AND REMOVE THE VARIABLES
 /* Pins configuration */
-#define NRF24L01_CE_LOW				(NRF24L01_CE_PORT)->BSRR = (uint32_t)(NRF24L01_CE_PIN) << 16
-#define NRF24L01_CE_HIGH			(NRF24L01_CE_PORT)->BSRR = (uint32_t)(NRF24L01_CE_PIN)
-#define NRF24L01_CSN_LOW			(NRF24L01_CSN_PORT)->BSRR = (uint32_t)(NRF24L01_CSN_PIN) << 16
-#define NRF24L01_CSN_HIGH			(NRF24L01_CSN_PORT)->BSRR = (uint32_t)(NRF24L01_CSN_PIN)
-
-/* Interrupt masks */
-#define NRF24L01_IRQ_DATA_READY     0x40 /*!< Data ready for receive */
-#define NRF24L01_IRQ_TRAN_OK        0x20 /*!< Transmission went OK */
-#define NRF24L01_IRQ_MAX_RT         0x10 /*!< Max retransmissions reached, last transmission failed */
-
-/**
- * @brief  Interrupt structure 
- */
-typedef union _TM_NRF24L01_IRQ_t {
-	struct {
-		uint8_t reserved0:4;
-		uint8_t MaxRT:1;     /*!< Set to 1 if MAX retransmissions flag is set */
-		uint8_t DataSent:1;  /*!< Set to 1 if last transmission is OK */
-		uint8_t DataReady:1; /*!< Set to 1 if data are ready to be read */
-		uint8_t reserved1:1;
-	} F;
-	uint8_t Status;          /*!< NRF status register value */
-} TM_NRF24L01_IRQ_t;
+#define NRF24L01_CE_LOW				HAL_GPIO_WritePin(NRF24L01_CE_PORT, NRF24L01_CE_PIN, GPIO_PIN_RESET)
+#define NRF24L01_CE_HIGH			HAL_GPIO_WritePin(NRF24L01_CE_PORT, NRF24L01_CE_PIN, GPIO_PIN_SET)
 
 /**
  * @brief  Transmission status enumeration
@@ -294,9 +264,6 @@ uint8_t TM_NRF24L01_GetStatus(void);
  * @retval None
  */
 void TM_NRF24L01_Clear_Interrupts(void);
-
-/* Private */
-void TM_NRF24L01_WriteRegister(uint8_t reg, uint8_t value);
 
 #endif
 

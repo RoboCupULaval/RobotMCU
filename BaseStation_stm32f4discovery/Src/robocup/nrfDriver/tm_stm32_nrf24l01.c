@@ -24,6 +24,7 @@
  * |----------------------------------------------------------------------
  */
 #include "tm_stm32_nrf24l01.h"
+#include "spi.h"
 
 /* NRF24L01+ registers*/
 #define NRF24L01_REG_CONFIG			0x00	//Configuration Register
@@ -179,22 +180,12 @@
 #define NRF24L01_R_RX_PL_WID_MASK			0x60
 #define NRF24L01_NOP_MASK					0xFF
 
-typedef struct {
-	uint8_t PayloadSize;				//Payload size
-	uint8_t Channel;					//Channel selected
-	TM_NRF24L01_OutputPower_t OutPwr;	//Output power
-	TM_NRF24L01_DataRate_t DataRate;	//Data rate
-} TM_NRF24L01_t;
-
-
-
+uint8_t PayloadSize;  //Payload size
 
 /* Private functions */
 void TM_NRF24L01_WriteRegisterMulti(uint8_t reg, uint8_t *data, uint8_t count);
 static __INLINE uint8_t TM_SPI_Send(SPI_TypeDef* SPIx, uint8_t data);
-
-/* NRF structure */
-static TM_NRF24L01_t TM_NRF24L01_Struct;
+void TM_NRF24L01_WriteRegister(uint8_t reg, uint8_t value);
 
 uint8_t TM_NRF24L01_Init(uint8_t channel, uint8_t payload_size) {
 	
@@ -209,11 +200,7 @@ uint8_t TM_NRF24L01_Init(uint8_t channel, uint8_t payload_size) {
 		payload_size = 32;
 	}
 	
-	/* Fill structure */
-	TM_NRF24L01_Struct.Channel = !channel; /* Set channel to some different value for TM_NRF24L01_SetChannel() function */
-	TM_NRF24L01_Struct.PayloadSize = payload_size;
-	TM_NRF24L01_Struct.OutPwr = TM_NRF24L01_OutputPower_0dBm;
-	TM_NRF24L01_Struct.DataRate = TM_NRF24L01_DataRate_2M;
+	PayloadSize = payload_size;
 	
 	/* Reset nRF24L01+ to power on registers values */
 	uint8_t data[5];
@@ -272,15 +259,15 @@ uint8_t TM_NRF24L01_Init(uint8_t channel, uint8_t payload_size) {
 	TM_NRF24L01_SetChannel(channel);
 	
 	/* Set pipeline to max possible 32 bytes */
-	TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P0, TM_NRF24L01_Struct.PayloadSize); // Auto-ACK pipe
-	TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P1, TM_NRF24L01_Struct.PayloadSize); // Data payload pipe
-	TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P2, TM_NRF24L01_Struct.PayloadSize);
-	TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P3, TM_NRF24L01_Struct.PayloadSize);
-	TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P4, TM_NRF24L01_Struct.PayloadSize);
-	TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P5, TM_NRF24L01_Struct.PayloadSize);
+	TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P0, payload_size); // Auto-ACK pipe
+	TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P1, payload_size); // Data payload pipe
+	TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P2, payload_size);
+	TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P3, payload_size);
+	TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P4, payload_size);
+	TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P5, payload_size);
 	
 	/* Set RF settings (2mbps, output power) */
-	TM_NRF24L01_SetRF(TM_NRF24L01_Struct.DataRate, TM_NRF24L01_Struct.OutPwr);
+	TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_2M, TM_NRF24L01_OutputPower_0dBm);
 	
 	/* Config register */
 	TM_NRF24L01_WriteRegister(NRF24L01_REG_CONFIG, NRF24L01_CONFIG);
@@ -298,13 +285,13 @@ uint8_t TM_NRF24L01_Init(uint8_t channel, uint8_t payload_size) {
 	TM_NRF24L01_WriteRegister(NRF24L01_REG_DYNPD, (0 << NRF24L01_DPL_P0) | (0 << NRF24L01_DPL_P1) | (0 << NRF24L01_DPL_P2) | (0 << NRF24L01_DPL_P3) | (0 << NRF24L01_DPL_P4) | (0 << NRF24L01_DPL_P5));
 	
 	/* Clear FIFOs */
-	NRF24L01_CSN_LOW;
-	TM_SPI_Send(NRF24L01_SPI, NRF24L01_FLUSH_TX_MASK);
-	NRF24L01_CSN_HIGH;
+	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
+	TM_SPI_Send(hspi2.Instance, NRF24L01_FLUSH_TX_MASK);
+	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
 
-	NRF24L01_CSN_LOW;
-	TM_SPI_Send(NRF24L01_SPI, NRF24L01_FLUSH_RX_MASK);
-	NRF24L01_CSN_HIGH;
+	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
+	TM_SPI_Send(hspi2.Instance, NRF24L01_FLUSH_RX_MASK);
+	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
 	
 	/* Clear interrupts */
 	TM_NRF24L01_Clear_Interrupts();
@@ -328,32 +315,32 @@ void TM_NRF24L01_SetTxAddress(uint8_t *adr) {
 }
 
 void TM_NRF24L01_WriteRegister(uint8_t reg, uint8_t value) {
-	NRF24L01_CSN_LOW;
-	TM_SPI_Send(NRF24L01_SPI, NRF24L01_WRITE_REGISTER_MASK(reg));
-	TM_SPI_Send(NRF24L01_SPI, value);
-	NRF24L01_CSN_HIGH;
+	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
+	TM_SPI_Send(hspi2.Instance, NRF24L01_WRITE_REGISTER_MASK(reg));
+	TM_SPI_Send(hspi2.Instance, value);
+	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
 }
 
 void TM_NRF24L01_WriteRegisterMulti(uint8_t reg, uint8_t *data, uint8_t count) {
-	NRF24L01_CSN_LOW;
-	TM_SPI_Send(NRF24L01_SPI, NRF24L01_WRITE_REGISTER_MASK(reg));
+	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
+	TM_SPI_Send(hspi2.Instance, NRF24L01_WRITE_REGISTER_MASK(reg));
 
 	uint8_t count2 = count;
 	while (count2--) {
 		/* Wait busy */
-		while ((NRF24L01_SPI->SR & SPI_FLAG_TXE) == 0 || (NRF24L01_SPI->SR & SPI_FLAG_BSY));
+		while ((hspi2.Instance->SR & SPI_FLAG_TXE) == 0 || (hspi2.Instance->SR & SPI_FLAG_BSY));
 
 		/* Fill output buffer with data */
-		*(__IO uint8_t *)&NRF24L01_SPI->DR = *data++;
+		*(__IO uint8_t *)&hspi2.Instance->DR = *data++;
 
 		/* Wait for SPI to end everything */
-		while ((NRF24L01_SPI->SR & SPI_FLAG_RXNE) == 0 || (NRF24L01_SPI->SR & SPI_FLAG_BSY));
+		while ((hspi2.Instance->SR & SPI_FLAG_RXNE) == 0 || (hspi2.Instance->SR & SPI_FLAG_BSY));
 
 		/* Read data register */
-		(void)*(__IO uint16_t *)&NRF24L01_SPI->DR;
+		(void)*(__IO uint16_t *)&hspi2.Instance->DR;
 	}
 
-	NRF24L01_CSN_HIGH;
+	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
 }
 
 void TM_NRF24L01_PowerUpTx(void) {
@@ -365,9 +352,9 @@ void TM_NRF24L01_PowerUpRx(void) {
 	/* Disable RX/TX mode */
 	NRF24L01_CE_LOW;
 	/* Clear RX buffer */
-	NRF24L01_CSN_LOW;
-	TM_SPI_Send(NRF24L01_SPI, NRF24L01_FLUSH_RX_MASK);
-	NRF24L01_CSN_HIGH;
+	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
+	TM_SPI_Send(hspi2.Instance, NRF24L01_FLUSH_RX_MASK);
+	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
 
 	/* Clear interrupts */
 	TM_NRF24L01_Clear_Interrupts();
@@ -381,10 +368,10 @@ void TM_NRF24L01_PowerDown(void) {
 	NRF24L01_CE_LOW;
 
 	uint8_t tmp;
-	NRF24L01_CSN_LOW;
-	TM_SPI_Send(NRF24L01_SPI, NRF24L01_READ_REGISTER_MASK(NRF24L01_REG_CONFIG));
-	tmp = TM_SPI_Send(NRF24L01_SPI, NRF24L01_NOP_MASK);
-	NRF24L01_CSN_HIGH;
+	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
+	TM_SPI_Send(hspi2.Instance, NRF24L01_READ_REGISTER_MASK(NRF24L01_REG_CONFIG));
+	tmp = TM_SPI_Send(hspi2.Instance, NRF24L01_NOP_MASK);
+	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
 	tmp &= ~(1 << NRF24L01_PWR_UP);
 	TM_NRF24L01_WriteRegister(NRF24L01_REG_CONFIG, tmp);
 
@@ -392,7 +379,7 @@ void TM_NRF24L01_PowerDown(void) {
 }
 
 void TM_NRF24L01_Transmit(uint8_t *data) {
-	uint8_t count = TM_NRF24L01_Struct.PayloadSize;
+	uint8_t count = PayloadSize;
 
 	/* Chip enable put to low, disable it */
 	NRF24L01_CE_LOW;
@@ -401,32 +388,32 @@ void TM_NRF24L01_Transmit(uint8_t *data) {
 	TM_NRF24L01_PowerUpTx();
 	
 	/* Clear TX FIFO from NRF24L01+ */
-    NRF24L01_CSN_LOW;
-    TM_SPI_Send(NRF24L01_SPI, NRF24L01_FLUSH_TX_MASK);
-    NRF24L01_CSN_HIGH;
+	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
+    TM_SPI_Send(hspi2.Instance, NRF24L01_FLUSH_TX_MASK);
+    HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
 	
 	/* Send payload to nRF24L01+ */
-	NRF24L01_CSN_LOW;
+    HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
 	/* Send write payload command */
-	TM_SPI_Send(NRF24L01_SPI, NRF24L01_W_TX_PAYLOAD_MASK);
+	TM_SPI_Send(hspi2.Instance, NRF24L01_W_TX_PAYLOAD_MASK);
 
 	/* Fill payload with data*/
 	while (count--) {
 			/* Wait busy */
-			while ((NRF24L01_SPI->SR & SPI_FLAG_TXE) == 0 || (NRF24L01_SPI->SR & SPI_FLAG_BSY))
+			while ((hspi2.Instance->SR & SPI_FLAG_TXE) == 0 || (hspi2.Instance->SR & SPI_FLAG_BSY))
 
 			/* Fill output buffer with data */
-			*(__IO uint8_t *)&NRF24L01_SPI->DR = *data++;
+			*(__IO uint8_t *)&hspi2.Instance->DR = *data++;
 
 			/* Wait for SPI to end everything */
-			while ((NRF24L01_SPI->SR & SPI_FLAG_RXNE) == 0 || (NRF24L01_SPI->SR & SPI_FLAG_BSY));
+			while ((hspi2.Instance->SR & SPI_FLAG_RXNE) == 0 || (hspi2.Instance->SR & SPI_FLAG_BSY));
 
 			/* Read data register */
-			(void)*(__IO uint16_t *)&NRF24L01_SPI->DR;
+			(void)*(__IO uint16_t *)&hspi2.Instance->DR;
 		}
 
 	/* Disable SPI */
-	NRF24L01_CSN_HIGH;
+	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
 	
 	/* Send data! */
 	NRF24L01_CE_HIGH;
@@ -434,28 +421,28 @@ void TM_NRF24L01_Transmit(uint8_t *data) {
 
 void TM_NRF24L01_GetData(uint8_t* data) {
 	/* Pull down chip select */
-	NRF24L01_CSN_LOW;
+	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
 	/* Send read payload command*/
-	TM_SPI_Send(NRF24L01_SPI, NRF24L01_R_RX_PAYLOAD_MASK);
+	TM_SPI_Send(hspi2.Instance, NRF24L01_R_RX_PAYLOAD_MASK);
 	/* Read payload */
-	uint32_t my_count_2 = TM_NRF24L01_Struct.PayloadSize;
-	while (my_count_2--) {
+	uint32_t count = PayloadSize;
+	while (count--) {
 		/* Wait busy */
-		while ((NRF24L01_SPI->SR & SPI_FLAG_TXE) == 0 || (NRF24L01_SPI->SR & SPI_FLAG_BSY))
+		while ((hspi2.Instance->SR & SPI_FLAG_TXE) == 0 || (hspi2.Instance->SR & SPI_FLAG_BSY))
 
 		/* Fill output buffer with data */
-		*(__IO uint8_t *)&NRF24L01_SPI->DR = *data++;
+		*(__IO uint8_t *)&hspi2.Instance->DR = *data++;
 
 		/* Wait for SPI to end everything */
-		while ((NRF24L01_SPI->SR & SPI_FLAG_RXNE) == 0 || (NRF24L01_SPI->SR & SPI_FLAG_BSY))
+		while ((hspi2.Instance->SR & SPI_FLAG_RXNE) == 0 || (hspi2.Instance->SR & SPI_FLAG_BSY))
 
 		/* Read data register */
-		*data++ = *(__IO uint8_t *)&NRF24L01_SPI->DR;
+		*data++ = *(__IO uint8_t *)&hspi2.Instance->DR;
 	}
 
 
 	/* Pull up chip select */
-	NRF24L01_CSN_HIGH;
+	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
 	
 	/* Reset status register, clear RX_DR interrupt flag */
 	TM_NRF24L01_WriteRegister(NRF24L01_REG_STATUS, (1 << NRF24L01_RX_DR));
@@ -468,10 +455,10 @@ uint8_t TM_NRF24L01_DataReady(void) {
 		return 1;
 	}
 
-	NRF24L01_CSN_LOW;
-	TM_SPI_Send(NRF24L01_SPI, NRF24L01_READ_REGISTER_MASK(NRF24L01_REG_FIFO_STATUS));
-	uint8_t reg = TM_SPI_Send(NRF24L01_SPI, NRF24L01_NOP_MASK);
-	NRF24L01_CSN_HIGH;
+	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
+	TM_SPI_Send(hspi2.Instance, NRF24L01_READ_REGISTER_MASK(NRF24L01_REG_FIFO_STATUS));
+	uint8_t reg = TM_SPI_Send(hspi2.Instance, NRF24L01_NOP_MASK);
+	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
 
 
 	uint8_t isRxFifoEmpty = reg&(1<<NRF24L01_RX_EMPTY);
@@ -481,11 +468,11 @@ uint8_t TM_NRF24L01_DataReady(void) {
 uint8_t TM_NRF24L01_GetStatus(void) {
 	uint8_t status;
 	
-	NRF24L01_CSN_LOW;
+	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
 	/* First received byte is always status register */
-	status = TM_SPI_Send(NRF24L01_SPI, NRF24L01_NOP_MASK);
+	status = TM_SPI_Send(hspi2.Instance, NRF24L01_NOP_MASK);
 	/* Pull up chip select */
-	NRF24L01_CSN_HIGH;
+	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
 	
 	return status;
 }
@@ -509,27 +496,22 @@ TM_NRF24L01_Transmit_Status_t TM_NRF24L01_GetTransmissionStatus(void) {
 
 uint8_t TM_NRF24L01_GetRetransmissionsCount(void) {
 	/* Low 4 bits */
-	NRF24L01_CSN_LOW;
-	TM_SPI_Send(NRF24L01_SPI, NRF24L01_READ_REGISTER_MASK(NRF24L01_REG_OBSERVE_TX));
-	uint8_t retransmit_cnt = TM_SPI_Send(NRF24L01_SPI, NRF24L01_NOP_MASK) & 0x0F;
-	NRF24L01_CSN_HIGH;
+	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_RESET);
+	TM_SPI_Send(hspi2.Instance, NRF24L01_READ_REGISTER_MASK(NRF24L01_REG_OBSERVE_TX));
+	uint8_t retransmit_cnt = TM_SPI_Send(hspi2.Instance, NRF24L01_NOP_MASK) & 0x0F;
+	HAL_GPIO_WritePin(nRF2_CS_GPIO_Port, nRF2_CS_Pin, GPIO_PIN_SET);
 
 	return retransmit_cnt;
 }
 
 void TM_NRF24L01_SetChannel(uint8_t channel) {
-	if (channel <= 125 && channel != TM_NRF24L01_Struct.Channel) {
-		/* Store new channel setting */
-		TM_NRF24L01_Struct.Channel = channel;
-		/* Write channel */
+	if (channel <= 125) {
 		TM_NRF24L01_WriteRegister(NRF24L01_REG_RF_CH, channel);
 	}
 }
 
 void TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_t DataRate, TM_NRF24L01_OutputPower_t OutPwr) {
 	uint8_t tmp = 0;
-	TM_NRF24L01_Struct.DataRate = DataRate;
-	TM_NRF24L01_Struct.OutPwr = OutPwr;
 	
 	if (DataRate == TM_NRF24L01_DataRate_2M) {
 		tmp |= 1 << NRF24L01_RF_DR_HIGH;
