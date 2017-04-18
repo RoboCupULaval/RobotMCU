@@ -52,6 +52,7 @@
 
 #include "robocup/cobs/cobs.h"
 #include "robocup/hermes/hermes.h"
+#include "robocup/usb/serialUsb.h"
 /* USER CODE END Includes */
 
 /* Variables -----------------------------------------------------------------*/
