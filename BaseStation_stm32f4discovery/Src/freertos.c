@@ -140,7 +140,7 @@ void communicationTask(void const * argument)
 		  // Extract useful info
 
 		  // Recob it if necessary
-		  cobifyData(decobifiedPacketBytes, receivedLen-1, packetBytesToSend);
+		  cobifyData(decobifiedPacketBytes, packetBytesToSend, decobifiedLen);
 
 		  // Send to Destination through NRF if necessary
 		  packetHeaderStruct_t* packet = (packetHeaderStruct_t*)decobifiedPacketBytes;
