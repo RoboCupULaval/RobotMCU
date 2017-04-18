@@ -44,6 +44,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_cdc_if.h"
 /* USER CODE BEGIN INCLUDE */
+#include "robocup/usb/serialUsb.h"
 /* USER CODE END INCLUDE */
 
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
@@ -70,17 +71,7 @@
   * @{
   */ 
 /* USER CODE BEGIN PRIVATE_DEFINES */
-/* Define size for the receive and transmit buffer over CDC */
-/* It's up to user to redefine and/or remove those define */
-#define APP_RX_DATA_SIZE  260
-#define APP_TX_DATA_SIZE  260
-#define CBPACKETNUMBER 16
-typedef struct simpleCB {
-	uint8_t dataTable[CBPACKETNUMBER][APP_TX_DATA_SIZE];
-	int readIndex; // index of next item to read
-	int writeIndex; // index of next item to write
-} simpleCB;
-volatile simpleCB myCircularBuffer;
+
 /* USER CODE END PRIVATE_DEFINES */
 /**
   * @}
@@ -119,6 +110,7 @@ uint8_t UserTxBufferFS[APP_TX_DATA_SIZE];
   */ 
   extern USBD_HandleTypeDef hUsbDeviceFS;
 /* USER CODE BEGIN EXPORTED_VARIABLES */
+  extern simpleCB myCircularBuffer;
 /* USER CODE END EXPORTED_VARIABLES */
 
 /**
@@ -284,7 +276,7 @@ static int8_t CDC_Receive_FS (uint8_t* Buf, uint32_t *Len)
 	// Sanity check: if the circular buffer is full,
 	// reject the packet and toggle a led
     if (((myCircularBuffer.readIndex + 1) % CBPACKETNUMBER) == myCircularBuffer.writeIndex) {
-    	// Send warning packet TODO
+    	// Send mini ack packet TODO
     	//static uint32_t packetLost = 0;
     	//packetLost++;
     	HAL_GPIO_TogglePin(GPIOD, LD4_Pin);
@@ -330,33 +322,7 @@ uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len)
 }
 
 /* USER CODE BEGIN PRIVATE_FUNCTIONS_IMPLEMENTATION */
-// not private, but I don't know in which file they should go
-// This function reads a single cobs-encoded packet that was previously read through USB
-// It returns 0 if success. If no packet, then it returns -1
-int SerialRead(uint8_t* dataBuffer) {
-	// check if there is a packet available
-	// copy the indexes
-	const int currReadIndex = myCircularBuffer.readIndex;
-	const int currWriteIndex = myCircularBuffer.writeIndex;
-	if (currReadIndex == currWriteIndex) {
-		return -1;
-	}
-	else {
-		// careful: a packet reception might happen anywhere in this function!
 
-		// copy the packet into the buffer, must be cobs-encoded!!!
-		strcpy(dataBuffer, myCircularBuffer.dataTable[currReadIndex]);
-
-		// check if we need to upgrade the read index
-		myCircularBuffer.readIndex = (myCircularBuffer.readIndex + 1) % CBPACKETNUMBER;
-		return 0;
-	}
-}
-
-// This function writes a single (preferably) cobs-encoded packet and sends it through USB
-uint8_t SerialWrite(uint8_t* Buf, uint32_t Len) {
-	return CDC_Transmit_FS(Buf, Len);
-}
 /* USER CODE END PRIVATE_FUNCTIONS_IMPLEMENTATION */
 
 /**
