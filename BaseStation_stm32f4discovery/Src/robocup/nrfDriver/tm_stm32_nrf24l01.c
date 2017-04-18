@@ -219,7 +219,42 @@ uint8_t TM_NRF24L01_Init(uint8_t channel, uint8_t payload_size) {
 	//TM_NRF24L01_InitPins();
 	
 	/* Initialize SPI */
-	TM_SPI_Init(NRF24L01_SPI);
+	SPI_HandleTypeDef SPIHandle;
+	/* Init with default settings */
+
+	/* Save instance */
+	SPIHandle.Instance = NRF24L01_SPI;
+
+	__HAL_RCC_SPI1_CLK_ENABLE();
+	__HAL_RCC_SPI2_CLK_ENABLE();
+
+
+	SPIHandle.Init.DataSize = SPI_DATASIZE_8BIT;
+
+	/* Fill SPI settings */
+	SPIHandle.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+	SPIHandle.Init.FirstBit = SPI_FIRSTBIT_MSB;
+	SPIHandle.Init.Mode = SPI_MODE_MASTER;
+
+	SPIHandle.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+	SPIHandle.Init.CRCPolynomial = 7;
+	SPIHandle.Init.TIMode = SPI_TIMODE_DISABLE;
+	SPIHandle.Init.NSS = SPI_NSS_SOFT;
+	SPIHandle.Init.Direction = SPI_DIRECTION_2LINES;
+
+	/* SPI mode */
+	SPIHandle.Init.CLKPolarity = SPI_POLARITY_LOW;
+	SPIHandle.Init.CLKPhase = SPI_PHASE_1EDGE;
+
+
+	/* Disable first */
+	__HAL_SPI_DISABLE(&SPIHandle);
+
+	/* Init SPI */
+	HAL_SPI_Init(&SPIHandle);
+
+	/* Enable SPI */
+	__HAL_SPI_ENABLE(&SPIHandle);
 	
 	/* Max payload is 32bytes */
 	if (payload_size > 32) {
@@ -356,7 +391,22 @@ void TM_NRF24L01_WriteRegister(uint8_t reg, uint8_t value) {
 void TM_NRF24L01_WriteRegisterMulti(uint8_t reg, uint8_t *data, uint8_t count) {
 	NRF24L01_CSN_LOW;
 	TM_SPI_Send(NRF24L01_SPI, NRF24L01_WRITE_REGISTER_MASK(reg));
-	TM_SPI_WriteMulti(NRF24L01_SPI, data, count);
+
+	uint8_t count2 = count;
+	while (count2--) {
+		/* Wait busy */
+		SPI_WAIT_TX(NRF24L01_SPI);
+
+		/* Fill output buffer with data */
+		*(__IO uint8_t *)&NRF24L01_SPI->DR = *data++;
+
+		/* Wait for SPI to end everything */
+		SPI_WAIT_RX(NRF24L01_SPI);
+
+		/* Read data register */
+		(void)*(__IO uint16_t *)&NRF24L01_SPI->DR;
+	}
+
 	NRF24L01_CSN_HIGH;
 }
 
@@ -399,8 +449,22 @@ void TM_NRF24L01_Transmit(uint8_t *data) {
 	NRF24L01_CSN_LOW;
 	/* Send write payload command */
 	TM_SPI_Send(NRF24L01_SPI, NRF24L01_W_TX_PAYLOAD_MASK);
+
 	/* Fill payload with data*/
-	TM_SPI_WriteMulti(NRF24L01_SPI, data, count);
+	while (count--) {
+			/* Wait busy */
+			SPI_WAIT_TX(NRF24L01_SPI);
+
+			/* Fill output buffer with data */
+			*(__IO uint8_t *)&NRF24L01_SPI->DR = *data++;
+
+			/* Wait for SPI to end everything */
+			SPI_WAIT_RX(NRF24L01_SPI);
+
+			/* Read data register */
+			(void)*(__IO uint16_t *)&NRF24L01_SPI->DR;
+		}
+
 	/* Disable SPI */
 	NRF24L01_CSN_HIGH;
 	
@@ -414,7 +478,22 @@ void TM_NRF24L01_GetData(uint8_t* data) {
 	/* Send read payload command*/
 	TM_SPI_Send(NRF24L01_SPI, NRF24L01_R_RX_PAYLOAD_MASK);
 	/* Read payload */
-	TM_SPI_SendMulti(NRF24L01_SPI, data, data, TM_NRF24L01_Struct.PayloadSize);
+	uint32_t my_count_2 = TM_NRF24L01_Struct.PayloadSize;
+	while (my_count_2--) {
+		/* Wait busy */
+		SPI_WAIT_TX(NRF24L01_SPI);
+
+		/* Fill output buffer with data */
+		*(__IO uint8_t *)&NRF24L01_SPI->DR = *data++;
+
+		/* Wait for SPI to end everything */
+		SPI_WAIT_RX(NRF24L01_SPI);
+
+		/* Read data register */
+		*data++ = *(__IO uint8_t *)&NRF24L01_SPI->DR;
+	}
+
+
 	/* Pull up chip select */
 	NRF24L01_CSN_HIGH;
 	
