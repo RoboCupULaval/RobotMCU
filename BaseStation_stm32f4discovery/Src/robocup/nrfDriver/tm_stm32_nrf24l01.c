@@ -179,10 +179,6 @@
 #define NRF24L01_R_RX_PL_WID_MASK			0x60
 #define NRF24L01_NOP_MASK					0xFF
 
-/* Flush FIFOs */
-#define NRF24L01_FLUSH_TX					do { NRF24L01_CSN_LOW; TM_SPI_Send(NRF24L01_SPI, NRF24L01_FLUSH_TX_MASK); NRF24L01_CSN_HIGH; } while (0)
-#define NRF24L01_FLUSH_RX					do { NRF24L01_CSN_LOW; TM_SPI_Send(NRF24L01_SPI, NRF24L01_FLUSH_RX_MASK); NRF24L01_CSN_HIGH; } while (0)
-
 typedef struct {
 	uint8_t PayloadSize;				//Payload size
 	uint8_t Channel;					//Channel selected
@@ -336,8 +332,13 @@ uint8_t TM_NRF24L01_Init(uint8_t channel, uint8_t payload_size) {
 	TM_NRF24L01_WriteRegister(NRF24L01_REG_DYNPD, (0 << NRF24L01_DPL_P0) | (0 << NRF24L01_DPL_P1) | (0 << NRF24L01_DPL_P2) | (0 << NRF24L01_DPL_P3) | (0 << NRF24L01_DPL_P4) | (0 << NRF24L01_DPL_P5));
 	
 	/* Clear FIFOs */
-	NRF24L01_FLUSH_TX;
-	NRF24L01_FLUSH_RX;
+	NRF24L01_CSN_LOW;
+	TM_SPI_Send(NRF24L01_SPI, NRF24L01_FLUSH_TX_MASK);
+	NRF24L01_CSN_HIGH;
+
+	NRF24L01_CSN_LOW;
+	TM_SPI_Send(NRF24L01_SPI, NRF24L01_FLUSH_RX_MASK);
+	NRF24L01_CSN_HIGH;
 	
 	/* Clear interrupts */
 	TM_NRF24L01_Clear_Interrupts();
@@ -398,7 +399,10 @@ void TM_NRF24L01_PowerUpRx(void) {
 	/* Disable RX/TX mode */
 	NRF24L01_CE_LOW;
 	/* Clear RX buffer */
-	NRF24L01_FLUSH_RX;
+	NRF24L01_CSN_LOW;
+	TM_SPI_Send(NRF24L01_SPI, NRF24L01_FLUSH_RX_MASK);
+	NRF24L01_CSN_HIGH;
+
 	/* Clear interrupts */
 	TM_NRF24L01_Clear_Interrupts();
 	/* Setup RX mode */
@@ -431,7 +435,9 @@ void TM_NRF24L01_Transmit(uint8_t *data) {
 	TM_NRF24L01_PowerUpTx();
 	
 	/* Clear TX FIFO from NRF24L01+ */
-	NRF24L01_FLUSH_TX;
+    NRF24L01_CSN_LOW;
+    TM_SPI_Send(NRF24L01_SPI, NRF24L01_FLUSH_TX_MASK);
+    NRF24L01_CSN_HIGH;
 	
 	/* Send payload to nRF24L01+ */
 	NRF24L01_CSN_LOW;
@@ -580,7 +586,6 @@ void TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_t DataRate, TM_NRF24L01_OutputPower_
 void TM_NRF24L01_Clear_Interrupts(void) {
 	TM_NRF24L01_WriteRegister(0x07, 0x70);
 }
-
 
 
 /**
