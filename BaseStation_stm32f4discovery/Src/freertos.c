@@ -51,6 +51,7 @@
 #include "usbd_cdc_if.h"
 
 #include "robocup/cobs/cobs.h"
+#include "robocup/hermes/hermes.h"
 /* USER CODE END Includes */
 
 /* Variables -----------------------------------------------------------------*/
