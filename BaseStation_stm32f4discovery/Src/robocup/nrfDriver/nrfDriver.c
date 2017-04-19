@@ -2,7 +2,8 @@
  * nrfDriver.c
  *
  *  Created on: Nov 18, 2016
- *      Author: znuxor
+ *      Author: Frederic St-Pierre
+ *      This is basically an interface.
  */
 #include "nrfDriver.h"
 #include "tm_stm32_nrf24l01.h"
@@ -52,7 +53,12 @@ void nrfSend(uint8_t * dataOut) {//, bool forceRetryBool) {
 		//myStatus = TM_NRF24L01_GetStatus();
 	} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Sending);
 	//} while (forceRetryBool && transmissionStatus == TM_NRF24L01_Transmit_Status_Lost);
-
+    if (transmissionStatus == TM_NRF24L01_Transmit_Status_Lost) {
+    	HAL_GPIO_TogglePin(LD5_GPIO_Port, LD5_Pin);
+    }
+    if (transmissionStatus == TM_NRF24L01_Transmit_Status_Ok) {
+    	HAL_GPIO_TogglePin(LD6_GPIO_Port, LD6_Pin);
+    }
 	//Get back into RX mode
 	TM_NRF24L01_PowerUpRx();
 }
