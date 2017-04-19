@@ -1,5 +1,7 @@
 #include "cobs.h"
 
+#define FinishBlock(X) (*code_ptr = (X), code_ptr = dst++, code = 0x01)
+
 // This function creates a cobified copy of the data packet
 // data -- A pointer to the raw payload.
 // dstOut -- A pointer to the encoded packet.
@@ -7,43 +9,25 @@
 // Return value: 0 if success, something else otherwise.
 // Note: the destination location must have msg_len+2 bytes available in it.
 int cobifyData(uint8_t *data, uint8_t *dstOut, size_t msg_len) {
-	// The temporary pointers are initialized.
-	uint8_t* ptr = data;
-	uint8_t* dst = dstOut;
-	uint8_t* code_ptr = dst; // the location at which to put the computed length code
-	dst++; // skip the first position
+	const unsigned char *ptr = (const unsigned char *) data;
+	unsigned char *dst = (unsigned char *) dstOut;
+	const unsigned char *end = (const unsigned char*) (ptr) + msg_len;
+	unsigned char *code_ptr = dst++;
+	unsigned char code = 0x01;
 
-	uint8_t code = 0x01; // the default code when the next byte is 0
-
-	while (ptr < data+msg_len) {
-
-		// if the current byte is zero
-		if (*ptr == 0) {
-			*code_ptr = code; // put the code at the appropriate location
-			code_ptr = dst; // update the pointer to the next appropriate location
-			code = 0x01; // code is reset
-		}
-		// otherwise the current byte is a regular one
+	while (ptr < end) {
+		if (*ptr == 0)
+			FinishBlock(code);
 		else {
-			// copy the byte, update the pointers.
-			*dst = *ptr;
-			code++;
-
-			// the whole packet is non-zero and longer than 255 (the code variable has wrapped), this is abnormal.
-			if (code == 0x00) {
-				return -1;
-			}
+			*dst++ = *ptr;
+			if (++code == 0xFF)
+				FinishBlock(code);
 		}
-
-		// update the pointers
 		ptr++;
-		dst++;
 	}
-    // we add the final code value and then put the zero terminator at the end.
-	*code_ptr = code;
-	*dst = 0;
 
-	// procedure over, return success
+	FinishBlock(code);
+	*code_ptr = 0;
 	return 0;
 }
 
