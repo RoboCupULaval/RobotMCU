@@ -20,6 +20,7 @@ HEADER_SIZE = 5
 VERSION = 1
 BYTE_MASK = 0xFF
 CONTROL_ADDR = 0x00
+CHECKSUM_BYTE_NUMBER = 4
 
 
 class WrongPacketException(Exception):
@@ -56,7 +57,7 @@ class McuCommunicatorBarebones(object):
                                              timeout=0.2)
         self.serial_lock = threading.RLock()
         if self.serial_port is None:
-            raise Exception("Aucun port fonctionnel n'as pu être détecté!")
+            raise Exception("No stm32 serial port was detected!")
 
     def _send_packet(self, orig_addr, dest_addr, packet_id, payload):
         # generate the header
@@ -68,7 +69,7 @@ class McuCommunicatorBarebones(object):
         # compute and insert the checksum
         checksum_value = self._compute_checksum(packet)
 
-        packet[4] = struct.pack('B', checksum_value)[0]
+        packet[CHECKSUM_BYTE_NUMBER] = struct.pack('B', checksum_value)[0]
 
         # transform the packet using COBS
         my_packet = bytearray(cobs.encode(bytearray(packet)))
