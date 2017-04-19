@@ -1,8 +1,9 @@
-from mcu_serial_com import *
+from pyhermes.McuCommunicator import McuCommunicator
 from time import sleep
 import time
-from joystick.jstick import *
+from .joystick.jstick import *
 from math import *
+import glob
 
 JOYSTICK_DEAD_ZONE = 0.1
 
@@ -66,8 +67,8 @@ def joystick_cli(robot_id):
     joy_robot_list = [(Joystick(joy_list[i]), robot_id + i) for i in range(len(joy_list))]     
     global MAX_SPEED
     MAX_SPEED  = 1.0
-    port = getFirstSerialPort()
-    com = McuCom(port)
+    #port = getFirstSerialPort()
+    com = McuCommunicator()
     # com.setRegister(robot_id, REG_CTRL_LOOP_STATE, 1)
     while True:
         for (joy, robot_id) in joy_robot_list:
