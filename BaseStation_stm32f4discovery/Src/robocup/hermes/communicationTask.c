@@ -22,7 +22,6 @@ void communicationTask(void const * argument)
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
 
-  /* USER CODE BEGIN communicationTask */
   nrfInit();
   /* Infinite loop */
   uint8_t packetBytesReceived[260] = {0};
@@ -60,8 +59,6 @@ void communicationTask(void const * argument)
 			  nrfSetRobotTX(packet->destAddress);
 		  }
 		  nrfSend(packetBytesReceived);
-		  //uint8_t volatile someStatus = nrfGetStatus();
-		  //uint8_t volatile someCount = nrfRetransmitCount();
 	  }
 
 	  /* if (nrfReceiveReady()) {
@@ -73,5 +70,4 @@ void communicationTask(void const * argument)
 	  }*/
 
   }
-  /* USER CODE END communicationTask */
 }
