@@ -54,10 +54,10 @@ void nrfSend(uint8_t * dataOut) {//, bool forceRetryBool) {
 	} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Sending);
 	//} while (forceRetryBool && transmissionStatus == TM_NRF24L01_Transmit_Status_Lost);
     if (transmissionStatus == TM_NRF24L01_Transmit_Status_Lost) {
-    	HAL_GPIO_TogglePin(GPIOD, LD3_Pin);
+    	HAL_GPIO_TogglePin(LD5_GPIO_Port, LD5_Pin);
     }
     if (transmissionStatus == TM_NRF24L01_Transmit_Status_Ok) {
-    	HAL_GPIO_TogglePin(GPIOD, LD4_Pin);
+    	HAL_GPIO_TogglePin(LD6_GPIO_Port, LD6_Pin);
     }
 	//Get back into RX mode
 	TM_NRF24L01_PowerUpRx();
