@@ -55,7 +55,7 @@ void kicker_update(void) {
 			}
 			break;
 		case KICKER_WAIT_FOR_BALL:
-			if (ball_getState() == BALL_CENTERED) {
+			if (ball_getState() == BALL_READY_TO_KICK) {
 				s_tickWhenStartKicking = xTaskGetTickCount();
 				s_kicker_state = KICKER_KICKING;
 			} else if (xTaskGetTickCount() - s_tickWhenWaitingForBall > KICKER_WAIT_BALL_TIME_IN_TICK) {

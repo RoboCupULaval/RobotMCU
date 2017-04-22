@@ -72,7 +72,8 @@ void console_taskEntryPoint(void) {
 		else if(!strcmp("printBallSensors", parsedCommand[0])) {
 			TickType_t start = xTaskGetTickCount();
 			while(xTaskGetTickCount() - start < atoi(parsedCommand[1])) {
-				sprintf(buffer, "Sensors : %d and %d\r\n", ball_getSensorValue(1), ball_getSensorValue(2));
+				sprintf(buffer, "Sensors : %d and %d, moy : %d\r\n",
+						ball_getSensorValue(1), ball_getSensorValue(2), ball_getSensorsMeanValue());
 				LOG_INFO(buffer);
 				osDelay(50);
 			}

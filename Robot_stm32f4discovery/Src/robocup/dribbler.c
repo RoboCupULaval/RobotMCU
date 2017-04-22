@@ -33,7 +33,7 @@ void dribbler_setPWM(float speed) {
 
 
 void dribbler_handleDribbler(void) {
-	if(ball_getState() == BALL_CENTERED) {
+	if(ball_getState() >= BALL_READY_TO_DRIBBLE) {
 		dribbler_setPWM(0.5f);
 	} else {
 		if (xTaskGetTickCount() - s_timeSinceLastDribbler > DRIBBLER_SPIN_TIME_IN_TICK) {
