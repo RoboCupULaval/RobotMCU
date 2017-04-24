@@ -128,7 +128,7 @@ int main(void)
 
 
   	comHandle_t comNrf = nrf_init();
-  	hermes_init(comNrf);
+  	hermes_init(&comNrf);
   	log_init(comBluetooth);
 	ctrl_emergencyBreak();
 
