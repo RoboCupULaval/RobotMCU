@@ -12,6 +12,13 @@
 
 #include "commands.h"
 
+typedef struct __attribute__((__packed__)) {
+	uint8_t protocolVersion;
+	uint8_t srcAddress;
+	uint8_t destAddress;
+	uint8_t packetType;
+	uint8_t checksum;
+} packetHeaderStruct_t;
 
 // This defines the ID number for each packet.
 enum packetTypes_t {
@@ -23,6 +30,7 @@ enum packetTypes_t {
 };
 
 typedef void (*cmd_func_t)(const void *msg);
+
 typedef struct {
 	int        id;
 	cmd_func_t callback;
@@ -38,6 +46,5 @@ static const packet_t g_packetsTable[] = {
 };
 
 static const size_t g_packetsTableLen = sizeof(g_packetsTable) / sizeof(packet_t);
-
 
 #endif /* ROBOCUP_PACKETS_TABLE_H_ */

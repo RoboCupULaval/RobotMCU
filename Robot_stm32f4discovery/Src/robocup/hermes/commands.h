@@ -10,15 +10,6 @@
 
 #include "stdint.h"
 
-typedef struct __attribute__((__packed__)) {
-	uint8_t protocolVersion;
-	uint8_t srcAddress;
-	uint8_t destAddress;
-	uint8_t packetType;
-	uint8_t checksum;
-} packetHeaderStruct_t;
-
-
 /**** DEFINITION OF COMMAND MESSAGE STRUCT ****/
 
 typedef struct __attribute__((__packed__)) {
