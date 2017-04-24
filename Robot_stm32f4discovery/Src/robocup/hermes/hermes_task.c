@@ -40,7 +40,7 @@ void hermes_taskEntryPoint(void) {
 		}
 
 		packetHeaderStruct_t* currentPacketHeaderPtr = (packetHeaderStruct_t *) dataBuffer;
-		res = validate_payload(currentPacketHeaderPtr, payloadLen);
+		res = hermes_validate_payload(currentPacketHeaderPtr, payloadLen);
 
 		if (res == RESULT_FAILURE) {
 			continue;

@@ -8,7 +8,7 @@ void hermes_init(comHandle_t com){
 	g_hermesHandle.com = com;
 }
 
-Result_t validate_payload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen) {
+Result_t hermes_validate_payload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen) {
 	uint8_t id = currentPacketHeaderPtr->packetType;
 	if(currentPacketHeaderPtr->protocolVersion != PROTOCOL_VERSION){
 		LOG_ERROR("Invalid protocol version\r\n");
@@ -44,7 +44,7 @@ Result_t validate_payload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t p
 	return RESULT_SUCCESS;
 }
 
-packetHeaderStruct_t hermes_createHeader(uint8_t packetType){
+packetHeaderStruct_t hermes_create_header(uint8_t packetType){
 	packetHeaderStruct_t header;
 	header.protocolVersion = PROTOCOL_VERSION;
 	header.srcAddress = robot_getID();
@@ -54,7 +54,7 @@ packetHeaderStruct_t hermes_createHeader(uint8_t packetType){
 	return header;
 }
 
-void hermes_sendRespond(uint8_t packetType, char* pData, size_t dataLen){
+void hermes_send(uint8_t packetType, char* pData, size_t dataLen){
 	size_t payloadLen =  sizeof(packetHeaderStruct_t) + dataLen;
 
 	// Initialize temporary buffer
@@ -63,7 +63,7 @@ void hermes_sendRespond(uint8_t packetType, char* pData, size_t dataLen){
 
 	// Initialize the header
 	packetHeaderStruct_t *header = (packetHeaderStruct_t *)payload;
-	*header = hermes_createHeader(packetType);
+	*header = hermes_create_header(packetType);
 
 	// Copy data after the header
 	if (dataLen > 0) {

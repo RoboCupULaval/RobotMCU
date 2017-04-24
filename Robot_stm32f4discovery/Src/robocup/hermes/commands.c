@@ -17,7 +17,7 @@ void nop(const void *msg){}
 
 
 void command_heartbeatRequest(const void *msg){
-	hermes_sendRespond(HeartbeatResponse, NULL, 0);
+	hermes_send(HeartbeatResponse, NULL, 0);
 }
 
 // Extracts the speed commands and puts it into the global speed command
