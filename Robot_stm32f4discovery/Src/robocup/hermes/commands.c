@@ -102,7 +102,4 @@ void command_setRegister(uint8_t origin_id, uint8_t* msg){
 		default:
 			LOG_ERROR("Unknown register");
 	}
-
-	// TODO: Uncomment when bidirectional implemented
-	//hermes_sendAcknowledgment();
 }
