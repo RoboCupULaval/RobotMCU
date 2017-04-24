@@ -1,1 +1,1 @@
-from McuCommunicator import McuCommunicator
+from .McuCommunicator import McuCommunicator
