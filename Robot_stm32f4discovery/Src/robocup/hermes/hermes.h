@@ -24,6 +24,7 @@ static const uint8_t PROTOCOL_VERSION  = 0x01;
 
 void hermes_init(comHandle_t com);
 int hermes_validate_payload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen);
+size_t hermes_read(uint8_t* packetBuffer, int maxBytes);
 void hermes_send(uint8_t packetType, uint8_t* pData, size_t dataLen);
 
 #endif // HERMES_H_

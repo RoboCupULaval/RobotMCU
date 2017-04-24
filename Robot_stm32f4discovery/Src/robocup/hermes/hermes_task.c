@@ -10,12 +10,12 @@ void hermes_task_slave(void) {
 	int result_status;
 	for(;;) {
 		// Get data from device
-		size_t bytesReceived = g_hermesHandle.com.readUntilZero(packetBuffer, COBS_MAX_PACKET_LEN);
+		size_t bytesReceived = hermes_read(packetBuffer, COBS_MAX_PACKET_LEN);
 
 		// Check if we actually have received a packet
 		if(bytesReceived == 0){
 			// It's more efficient to wait a few ticks before trying again
-			// TODO: REMOVE the wait!
+			// TODO: REMOVE the wait! Maybe taskYIELD?
 			osDelay(1);
 			continue;
 		}
@@ -51,7 +51,7 @@ void hermes_task_slave(void) {
 		}
 
 		// This is use to give back control to other task
-		// TODO: REMOVE!
+		// TODO: REMOVE the wait! Maybe taskYIELD?
 		osDelay(1);
 	}
 }

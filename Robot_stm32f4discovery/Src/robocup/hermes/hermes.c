@@ -59,16 +59,20 @@ packetHeaderStruct_t hermes_create_header(uint8_t packetType){
 	return header;
 }
 
+size_t hermes_read(uint8_t* packetBuffer, int maxBytes){
+	return g_hermesHandle.com.readUntilZero(packetBuffer, maxBytes);
+}
+
 void hermes_send(uint8_t packetType, uint8_t* pData, size_t dataLen){
-	size_t payloadLen =  sizeof(packetHeaderStruct_t) + dataLen;
+	size_t packetLen =  sizeof(packetHeaderStruct_t) + dataLen;
 
 	// Initialize temporary buffer
 	uint8_t payload[255];
 	char packet[257];
 
 	// Initialize the header
-	packetHeaderStruct_t *header = (packetHeaderStruct_t *)payload;
-	*header = hermes_create_header(packetType);
+	packetHeaderStruct_t* headerPtr = (packetHeaderStruct_t *)payload;
+	*headerPtr = hermes_create_header(packetType);
 
 	// Copy data after the header
 	if (dataLen > 0) {
@@ -76,6 +80,6 @@ void hermes_send(uint8_t packetType, uint8_t* pData, size_t dataLen){
 	}
 
 	// Package and send the the respond
-	cobifyData(&payload, payloadLen, packet);
+	cobifyData(&payload, packetLen, packet);
 	g_hermesHandle.com.write(packet, strlen(packet) + 1); // The packet must be zero terminated
 }
