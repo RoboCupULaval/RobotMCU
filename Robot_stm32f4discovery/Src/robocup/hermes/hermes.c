@@ -8,8 +8,7 @@ void hermes_init(comHandle_t com){
 	g_hermesHandle.com = com;
 }
 
-
-Result_t validatePayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen) {
+Result_t validate_payload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen) {
 	uint8_t id = currentPacketHeaderPtr->packetType;
 	if(currentPacketHeaderPtr->protocolVersion != PROTOCOL_VERSION){
 		LOG_ERROR("Invalid protocol version\r\n");
@@ -45,12 +44,6 @@ Result_t validatePayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t pa
 	return RESULT_SUCCESS;
 }
 
-//
-void hermes_sendError(char * pStr){
-	hermes_sendRespond(RobotCrashedNotification, pStr, strlen(pStr));
-}
-
-
 packetHeaderStruct_t hermes_createHeader(uint8_t packetType){
 	packetHeaderStruct_t header;
 	header.protocolVersion = PROTOCOL_VERSION;
@@ -59,19 +52,6 @@ packetHeaderStruct_t hermes_createHeader(uint8_t packetType){
 	header.packetType = packetType;
 	header.checksum = 0;
 	return header;
-}
-
-void hermes_sendAcknowledgment(void) {
-	hermes_sendPayloadLessRespond(Ack);
-}
-
-void hermes_sendPayloadLessRespond(uint8_t packetType){
-	packetHeaderStruct_t payload = hermes_createHeader(packetType);
-	char buff[sizeof(packetHeaderStruct_t) + 2];
-
-	//convertBytesToStr(&payload, sizeof(packetHeaderStruct_t), buff2);
-	cobifyData(&payload, sizeof(packetHeaderStruct_t), buff);
-	g_hermesHandle.com.write(buff, strlen(buff) + 1);// The packet must be zero terminated
 }
 
 void hermes_sendRespond(uint8_t packetType, char* pData, size_t dataLen){
