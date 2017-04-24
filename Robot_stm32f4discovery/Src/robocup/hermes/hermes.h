@@ -11,13 +11,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../robocup_define.h"
-#include "../com_interfaces/com_interface.h"
-#include "../util.h"
+#include "com_interfaces/com_interface.h"
 #include "packets_definitions.h"
-
-#define COBS_MAX_PAYLOAD_LEN 255
-#define COBS_MAX_PACKET_LEN (COBS_MAX_PAYLOAD_LEN + 2)
 
 static const uint8_t ADDR_BASE_STATION = 0x00;
 static const uint8_t PROTOCOL_VERSION  = 0x01;

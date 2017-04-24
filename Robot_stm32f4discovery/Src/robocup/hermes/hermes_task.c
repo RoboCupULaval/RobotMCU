@@ -1,5 +1,6 @@
 #include "hermes_task.h"
 #include "../nrfDriver/nrfDriver.h"
+#include "../cobs/cobs.h"
 
 // This is the main task, it is intended to run indefinitely
 void hermes_task_slave(void) {
