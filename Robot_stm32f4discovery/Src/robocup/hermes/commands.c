@@ -14,7 +14,7 @@
 #include "../kicker.h"
 
 void command_heartbeatRequest(const void *msg){
-	hermes_send(HeartbeatResponse, NULL, 0);
+	hermes_send(PING_RESPONSE, NULL, 0);
 }
 
 // Extracts the speed commands and puts it into the global speed command

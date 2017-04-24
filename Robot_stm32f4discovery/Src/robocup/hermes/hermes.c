@@ -15,7 +15,7 @@ Result_t hermes_validate_payload(packetHeaderStruct_t *currentPacketHeaderPtr, s
 		return RESULT_FAILURE;
 	}
 
-	if(id >= g_packetsTableLen || g_packetsTable[id].callback == nop){
+	if(id >= g_packetsTableLen){
 		LOG_ERROR("Invalid command\r\n");
 		return RESULT_FAILURE;
 	}

@@ -14,7 +14,7 @@
 #include "../robocup_define.h"
 #include "../com_interfaces/com_interface.h"
 #include "../util.h"
-#include "packets_table.h"
+#include "packets_definitions.h"
 
 #define COBS_MAX_PAYLOAD_LEN 255
 // Packet = Offset(1 byte) + Payload + \0(1 byte)

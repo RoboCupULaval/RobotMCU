@@ -56,6 +56,7 @@ void hermes_taskEntryPoint(void) {
 		}
 
 		// This is use to give back control to other task
+		// TODO: REMOVE!
 		osDelay(1);
 	}
 }
