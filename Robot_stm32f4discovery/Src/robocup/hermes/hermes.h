@@ -44,7 +44,5 @@ packetHeaderStruct_t hermes_createHeader(uint8_t packetType);
 void                 hermes_sendAcknowledgment(void);
 void                 hermes_sendPayloadLessRespond(uint8_t packetType);
 void                 hermes_sendRespond(uint8_t packetType, char* pData, size_t dataLen);
-Result_t             cobifyData(const void *ptr, size_t msg_len,   char *dst);
-Result_t             decobifyData(const char *ptr, size_t len, void *dst, size_t *dst_len);
 
 #endif // HERMES_H_
