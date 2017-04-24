@@ -3,7 +3,7 @@
 // This is the file containing everything about the packaging/unpackaging of command
 
 // Private functions
-packetHeaderStruct_t hermes_create_header(uint8_t packetType);
+void hermes_create_header(uint8_t packetType, packetHeaderStruct_t* header);
 
 comHandle_t* g_hermesHandle;
 
@@ -49,14 +49,12 @@ int hermes_validate_payload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t
 	return 0;
 }
 
-packetHeaderStruct_t hermes_create_header(uint8_t packetType){
-	packetHeaderStruct_t header;
+void hermes_create_header(uint8_t packetType, packetHeaderStruct_t* header){
 	header.protocolVersion = PROTOCOL_VERSION;
 	header.srcAddress = robot_getID();
 	header.destAddress = ADDR_BASE_STATION;
 	header.packetType = packetType;
 	header.checksum = 0;
-	return header;
 }
 
 size_t hermes_read(uint8_t* packetBuffer, int maxBytes){
@@ -72,7 +70,7 @@ void hermes_send(uint8_t packetType, uint8_t* pData, size_t dataLen){
 
 	// Initialize the header
 	packetHeaderStruct_t* headerPtr = (packetHeaderStruct_t *)payload;
-	*headerPtr = hermes_create_header(packetType);
+	hermes_create_header(packetType, payload);
 
 	// Copy data after the header
 	if (dataLen > 0) {
