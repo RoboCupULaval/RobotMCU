@@ -13,12 +13,12 @@
 #include "hermes_task.h"
 #include "../kicker.h"
 
-void command_heartbeatRequest(const void *msg){
+void command_heartbeatRequest(uint8_t origin_id, uint8_t* msg){
 	hermes_send(PING_RESPONSE, NULL, 0);
 }
 
 // Extracts the speed commands and puts it into the global speed command
-void command_movementCommand(const void *msg){
+void command_movementCommand(uint8_t origin_id, uint8_t* msg){
     msg_set_speed_t * movementMsg = (msg_set_speed_t *) msg;
     g_speedCommand.vx = movementMsg->vx;
     g_speedCommand.vy = movementMsg->vy;
@@ -26,7 +26,7 @@ void command_movementCommand(const void *msg){
     g_speedCommand.tickSinceLastUpdate = xTaskGetTickCount();
 }
 
-void command_movementCommandOpen(const void *msg){
+void command_movementCommandOpen(uint8_t origin_id, uint8_t* msg){
 	// TODO: should add timing information, so if connection lost, we break
     msg_set_speed_open_t * movementMsg = (msg_set_speed_open_t *) msg;
     g_speedCommandOpen.cmd1 = movementMsg->cmd1;
@@ -36,7 +36,7 @@ void command_movementCommandOpen(const void *msg){
     g_speedCommandOpen.tickSinceLastUpdate = xTaskGetTickCount();
 }
 
-void command_setRegister(const void *msg) {
+void command_setRegister(uint8_t origin_id, uint8_t* msg){
 
 	msg_set_register_t * registerMsg = (msg_set_register_t *) msg;
 	switch (registerMsg->registerNumber) {

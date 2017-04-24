@@ -19,7 +19,7 @@ enum registerTypes_t {
 };
 
 
-typedef void (*cmd_func_t)(const void *msg);
+typedef void (*cmd_func_t)(uint8_t origin_id, uint8_t* msg);
 
 typedef struct {
 	int        id;
@@ -38,10 +38,10 @@ static const packet_t g_packetsTable[] = {
 static const size_t g_packetsTableLen = sizeof(g_packetsTable) / sizeof(packet_t);
 
 
-void command_heartbeatRequest(const void *msg);
-void command_movementCommand(const void *msg);
-void command_movementCommandOpen(const void *msg);
-void command_setRegister(const void *msg);
+void command_heartbeatRequest(uint8_t origin_id, uint8_t* msg);
+void command_movementCommand(uint8_t origin_id, uint8_t* msg);
+void command_movementCommandOpen(uint8_t origin_id, uint8_t* msg);
+void command_setRegister(uint8_t origin_id, uint8_t* msg);
 
 
 #endif /* ROBOCUP_COMMANDS_H_ */
