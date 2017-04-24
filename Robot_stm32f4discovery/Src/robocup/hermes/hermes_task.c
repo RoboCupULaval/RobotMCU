@@ -10,38 +10,34 @@ void hermes_task_slave(void) {
 	Result_t res;
 	for(;;) {
 		// Get data from device
-
 		size_t bytesReceived = g_hermesHandle.com.readUntilZero(packetBuffer, COBS_MAX_PACKET_LEN);
 
+		// Check if we actually have received a packet
 		if(bytesReceived == 0){
-			//LOG_INFO("Timeout on receiving\r\n");
 			// It's more efficient to wait a few ticks before trying again
+			// TODO: REMOVE the wait!
 			osDelay(1);
 			continue;
 		}
-		if(bytesReceived < sizeof(encodedPacketHeaderStruct_t)){
-			LOG_ERROR_AND_BUFFER("Too small packet", packetBuffer, bytesReceived);
+
+		// Check if we actually have received a possibly valid packet, which needs a complete header
+		if(bytesReceived < sizeof(packetHeaderStruct_t)+sizeof(uint8_t)){
+			LOG_ERROR_AND_BUFFER("The received packet is too small", packetBuffer, bytesReceived);
 			continue;
 	    }
 
-		// Check if our robot is recipient, before decoding
-		encodedPacketHeaderStruct_t* encodedHeader = (encodedPacketHeaderStruct_t *) packetBuffer;
-		if (encodedHeader->header.destAddress != robot_getID() && encodedHeader->header.destAddress != ADDR_BROADCAST) {
-			LOG_ERROR_AND_BUFFER("Wrong dest", packetBuffer, bytesReceived);
-			continue;
-		}
-
 		// The packet is decoded
 		res = decobifyData(packetBuffer, bytesReceived, dataBuffer, &payloadLen);
-		if (res == RESULT_FAILURE){
-			//LOG_ERROR("Fail decoding\r\n");
-			LOG_ERROR_AND_BUFFER("Fail decoding", packetBuffer, bytesReceived);
+		if (res != 0){
+			LOG_ERROR_AND_BUFFER("Failed decoding", packetBuffer, bytesReceived);
 			continue;
 		}
 
+		// The payload is validated
 		packetHeaderStruct_t* currentPacketHeaderPtr = (packetHeaderStruct_t *) dataBuffer;
 		res = hermes_validate_payload(currentPacketHeaderPtr, payloadLen);
 
+		// The packet is not to be executed
 		if (res == RESULT_FAILURE) {
 			continue;
 		}
@@ -49,8 +45,7 @@ void hermes_task_slave(void) {
 		// Find the corresponding packet in the packet table
 		packet_t packet = g_packetsTable[(size_t) (currentPacketHeaderPtr->packetType)];
 
-		LOG_INFO("Success!!!\r\n");
-		// Call callback that handle the packet
+		// Call callback that handles the packet if need be.
 		if (packet.callback != NULL) {
 		    packet.callback(1, dataBuffer + sizeof(packetHeaderStruct_t *));
 		}

@@ -9,6 +9,8 @@ void hermes_init(comHandle_t com){
 }
 
 Result_t hermes_validate_payload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen) {
+	// TODO: add destination checking (is it the correct robot?), reorder the checking: checksum first, valid protocol version, valid id, valid length
+
 	uint8_t id = currentPacketHeaderPtr->packetType;
 	if(currentPacketHeaderPtr->protocolVersion != PROTOCOL_VERSION){
 		LOG_ERROR("Invalid protocol version\r\n");
