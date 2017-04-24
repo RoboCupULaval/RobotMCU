@@ -66,7 +66,9 @@ void hermes_sendRespond(uint8_t packetType, char* pData, size_t dataLen){
 	*header = hermes_createHeader(packetType);
 
 	// Copy data after the header
-	memcpy(payload + sizeof(packetHeaderStruct_t), pData, dataLen);
+	if (dataLen > 0) {
+	    memcpy(payload + sizeof(packetHeaderStruct_t), pData, dataLen);
+	}
 
 	// Package and send the the respond
 	cobifyData(&payload, payloadLen, packet);
