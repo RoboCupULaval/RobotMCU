@@ -2,6 +2,9 @@
 
 // This is the file containing everything about the packaging/unpackaging of command
 
+// Private functions
+packetHeaderStruct_t hermes_create_header(uint8_t packetType);
+
 hermesHandle_t g_hermesHandle;
 
 void hermes_init(comHandle_t com){
@@ -56,7 +59,7 @@ packetHeaderStruct_t hermes_create_header(uint8_t packetType){
 	return header;
 }
 
-void hermes_send(uint8_t packetType, char* pData, size_t dataLen){
+void hermes_send(uint8_t packetType, uint8_t* pData, size_t dataLen){
 	size_t payloadLen =  sizeof(packetHeaderStruct_t) + dataLen;
 
 	// Initialize temporary buffer
