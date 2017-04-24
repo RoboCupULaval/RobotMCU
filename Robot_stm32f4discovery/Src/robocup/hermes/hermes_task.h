@@ -16,6 +16,6 @@ typedef struct __attribute__((__packed__)) {
 	packetHeaderStruct_t header;
 } encodedPacketHeaderStruct_t;
 
-void hermes_taskEntryPoint(void);
+void hermes_task_slave(void);
 
 #endif // HERMES_TASK_H_
