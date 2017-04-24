@@ -12,6 +12,7 @@
 
 // This is the protocol packet header
 typedef struct __attribute__((__packed__)) {
+	uint8_t protocolVersion;
 	uint8_t srcAddress;
 	uint8_t destAddress;
 	uint8_t packetType;
