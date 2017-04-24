@@ -39,7 +39,7 @@ void command_movementCommandOpen(const void *msg){
 void command_setRegister(const void *msg) {
 
 	msg_set_register_t * registerMsg = (msg_set_register_t *) msg;
-	switch (registerMsg->registe) {
+	switch (registerMsg->registerNumber) {
 		case CHARGE_KICKER_COMMAND:
 			LOG_INFO("Charging!!\r\n");
 			kicker_charge();

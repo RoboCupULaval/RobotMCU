@@ -51,7 +51,7 @@ typedef struct __attribute__((__packed__)) {
 
 typedef struct __attribute__((__packed__)) {
 	packetHeaderStruct_t header;
-	uint8_t register;
+	uint8_t registerNumber;
 	uint8_t value;
 } msg_set_register_t;
 
