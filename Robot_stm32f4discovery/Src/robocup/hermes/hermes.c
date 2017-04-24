@@ -8,23 +8,23 @@ void hermes_init(comHandle_t com){
 	g_hermesHandle.com = com;
 }
 
-Result_t hermes_validate_payload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen) {
+int hermes_validate_payload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen) {
 	// TODO: add destination checking (is it the correct robot?), reorder the checking: checksum first, valid protocol version, valid id, valid length
 
 	uint8_t id = currentPacketHeaderPtr->packetType;
 	if(currentPacketHeaderPtr->protocolVersion != PROTOCOL_VERSION){
 		LOG_ERROR("Invalid protocol version\r\n");
-		return RESULT_FAILURE;
+		return -1;
 	}
 
 	if(id >= g_packetsTableLen){
 		LOG_ERROR("Invalid command\r\n");
-		return RESULT_FAILURE;
+		return -1;
 	}
 
 	if(g_packetsTable[id].len != payloadLen){
 		LOG_ERROR("Too small payload\r\n");
-		return RESULT_FAILURE;
+		return -1;
 	}
 
 	// here the checksum is computed,
@@ -40,10 +40,10 @@ Result_t hermes_validate_payload(packetHeaderStruct_t *currentPacketHeaderPtr, s
 
 	if (checksum != currentPacketHeaderPtr->checksum) {
 		LOG_ERROR("Invalid checksum\r\n");
-		return RESULT_FAILURE;
+		return -1;
 	}
 
-	return RESULT_SUCCESS;
+	return 0;
 }
 
 packetHeaderStruct_t hermes_create_header(uint8_t packetType){

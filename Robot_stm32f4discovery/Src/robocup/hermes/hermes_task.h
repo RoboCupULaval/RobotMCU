@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
 #include "hermes.h"
 
 void hermes_task_slave(void);

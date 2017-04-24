@@ -7,7 +7,7 @@ void hermes_task_slave(void) {
 	static char packetBuffer[COBS_MAX_PAYLOAD_LEN];
 	static unsigned char dataBuffer[COBS_MAX_PACKET_LEN];
 	size_t payloadLen = 0;
-	Result_t res;
+	int result_status;
 	for(;;) {
 		// Get data from device
 		size_t bytesReceived = g_hermesHandle.com.readUntilZero(packetBuffer, COBS_MAX_PACKET_LEN);
@@ -27,18 +27,18 @@ void hermes_task_slave(void) {
 	    }
 
 		// The packet is decoded
-		res = decobifyData(packetBuffer, bytesReceived, dataBuffer, &payloadLen);
-		if (res != 0){
+		result_status = decobifyData(packetBuffer, bytesReceived, dataBuffer, &payloadLen);
+		if (result_status != 0){
 			LOG_ERROR_AND_BUFFER("Failed decoding", packetBuffer, bytesReceived);
 			continue;
 		}
 
 		// The payload is validated
 		packetHeaderStruct_t* currentPacketHeaderPtr = (packetHeaderStruct_t *) dataBuffer;
-		res = hermes_validate_payload(currentPacketHeaderPtr, payloadLen);
+		result_status = hermes_validate_payload(currentPacketHeaderPtr, payloadLen);
 
 		// The packet is not to be executed
-		if (res == RESULT_FAILURE) {
+		if (result_status != 0) {
 			continue;
 		}
 
