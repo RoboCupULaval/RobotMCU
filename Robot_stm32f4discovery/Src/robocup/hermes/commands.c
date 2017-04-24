@@ -13,9 +13,6 @@
 #include "hermes_task.h"
 #include "../kicker.h"
 
-void nop(const void *msg){}
-
-
 void command_heartbeatRequest(const void *msg){
 	hermes_send(HeartbeatResponse, NULL, 0);
 }

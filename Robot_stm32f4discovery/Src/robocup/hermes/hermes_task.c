@@ -51,7 +51,9 @@ void hermes_taskEntryPoint(void) {
 
 		LOG_INFO("Success!!!\r\n");
 		// Call callback that handle the packet
-		packet.callback(dataBuffer);
+		if (packet.callback != NULL) {
+		    packet.callback(dataBuffer);
+		}
 
 		// This is use to give back control to other task
 		osDelay(1);

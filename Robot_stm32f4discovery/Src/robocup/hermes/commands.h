@@ -65,7 +65,6 @@ enum registerTypes_t {
 	SET_DRIBBLER_SPEED_COMMAND = 3
 };
 
-void nop(const void *msg);
 void command_heartbeatRequest(const void *msg);
 void command_movementCommand(const void *msg);
 void command_movementCommandOpen(const void *msg);
