@@ -52,7 +52,7 @@ void hermes_task_slave(void) {
 		LOG_INFO("Success!!!\r\n");
 		// Call callback that handle the packet
 		if (packet.callback != NULL) {
-		    packet.callback(1, dataBuffer);
+		    packet.callback(1, dataBuffer + sizeof(packetHeaderStruct_t *));
 		}
 
 		// This is use to give back control to other task
