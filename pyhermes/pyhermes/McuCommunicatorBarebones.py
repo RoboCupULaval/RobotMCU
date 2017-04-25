@@ -41,7 +41,7 @@ class McuCommunicatorBarebones(object):
         # Serial port detection handling for windows
         if os.name == 'nt':
             available_ports = list(
-                serial.tools.list_ports.grep('STM'))
+                serial.tools.list_ports.comports())
             available_ports.sort()
             for a_port in available_ports:
                 try:
