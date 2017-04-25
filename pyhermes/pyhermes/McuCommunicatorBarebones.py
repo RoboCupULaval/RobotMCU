@@ -51,7 +51,7 @@ class McuCommunicatorBarebones(object):
         # Serial port detection handling for Linux
         else:
             available_ports = list(
-                serial.tools.list_ports.grep('STM32 Virtual ComPort'))
+                serial.tools.list_ports.grep(''))
             available_ports.sort()
             self.serial_port = serial.Serial(available_ports[0].device,
                                              timeout=0.2)
