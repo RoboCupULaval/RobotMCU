@@ -53,7 +53,11 @@ class McuCommunicatorBarebones(object):
             available_ports = list(
                 serial.tools.list_ports.grep(''))
             available_ports.sort()
-            self.serial_port = serial.Serial(available_ports[0].device,
+            try:
+                device_path = available_ports[0].device
+            except AttributeError:
+                device_path = available_ports[0][0]
+            self.serial_port = serial.Serial(device_path,
                                              timeout=0.2)
         self.serial_lock = threading.RLock()
         if self.serial_port is None:
