@@ -43,6 +43,7 @@ class McuCommunicatorBarebones(object):
             available_ports = list(
                 serial.tools.list_ports.comports())
             available_ports.sort()
+            print(available_ports)
             for a_port in available_ports:
                 try:
                     serial.serial_port = serial.Serial(a_port[0], timeout=1)
@@ -53,6 +54,7 @@ class McuCommunicatorBarebones(object):
             available_ports = list(
                 serial.tools.list_ports.grep(''))
             available_ports.sort()
+            print(available_ports)
             try:
                 device_path = available_ports[0].device
             except AttributeError:
