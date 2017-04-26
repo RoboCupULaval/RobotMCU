@@ -8,12 +8,28 @@
 #ifndef ROBOCUP_ROBOCUP_DEFINE_H_
 #define ROBOCUP_ROBOCUP_DEFINE_H_
 
+#include "com_interfaces/com_interface.h"
+
+
+
+// TODO find a way more elegant way to share interface and global variable
+/***
+ *  Global Variable
+ */
+typedef struct {
+	comHandle_t com;
+} hermesHandle_t;
+extern hermesHandle_t g_hermesHandle;
+extern comHandle_t g_logHandle;
+
+
 //PMU
 typedef enum {
 	POWER_OK, //Possible to enable power
 	POWER_WARNING, //Power stays enable if already enabled, but can't enable it otherwise
 	POWER_CRITICAL, //Disabled automatically
 } powerState;
+
 
 
 /***

@@ -6,10 +6,10 @@
 // Private functions
 void hermes_create_header(uint8_t packetType, packetHeaderStruct_t* header);
 
-comHandle_t* g_hermesHandle;
+hermesHandle_t g_hermesHandle;
 
-void hermes_init(comHandle_t* com){
-	g_hermesHandle = com;
+void hermes_init(comHandle_t com){
+	g_hermesHandle.com = com;
 }
 
 int hermes_validate_payload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen) {
@@ -59,7 +59,7 @@ void hermes_create_header(uint8_t packetType, packetHeaderStruct_t* header){
 }
 
 size_t hermes_read(uint8_t* packetBuffer, int maxBytes){
-	return g_hermesHandle->readUntilZero(packetBuffer, maxBytes);
+	return g_hermesHandle.com.readUntilZero(packetBuffer, maxBytes);
 }
 
 void hermes_send(uint8_t packetType, uint8_t* pData, size_t dataLen){
@@ -80,5 +80,5 @@ void hermes_send(uint8_t packetType, uint8_t* pData, size_t dataLen){
 
 	// Package and send the the respond
 	cobifyData(&payload, packetLen, packet);
-	g_hermesHandle->write(packet, strlen(packet) + 1); // The packet must be zero terminated
+	g_hermesHandle.com.write(packet, strlen(packet) + 1); // The packet must be zero terminated
 }
