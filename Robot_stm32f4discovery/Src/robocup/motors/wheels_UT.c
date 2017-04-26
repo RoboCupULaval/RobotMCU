@@ -91,7 +91,7 @@ int32_t test_spinAndStopWheel(Wheel_t* pWheel, float speed) {
 	readQuadsSpeed(&wheelSpeed);
 
 	// Stop it
-	wheel_break(pWheel);
+	wheel_brake(pWheel);
 	osDelay(TIME_BREAKING_MS);
 
 	// We check the absolute value first

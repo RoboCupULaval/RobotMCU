@@ -17,8 +17,8 @@ float wheel_setCommand(Wheel_t* wheel, const float vx, const float vy, const flo
 	return omega;
 }
 
-void wheel_break(const Wheel_t *wheel) {
-	wheel_setPWM(wheel, MOTOR_BREAK);
+void wheel_brake(const Wheel_t *wheel) {
+	wheel_setPWM(wheel, MOTOR_BRAKE);
 }
 
 void wheel_setPWM(const Wheel_t *wheel, float speed) {
@@ -30,8 +30,8 @@ void wheel_setPWM(const Wheel_t *wheel, float speed) {
 	float invertedSpeed = 1.0f - compensatedSpeed;
 	int pwm = (int) ((float)invertedSpeed * 6500.0f);
 
-	// Less than BREAKING_DEADZONE of power we break
-	if(speed == MOTOR_BREAK) {
+	// Less than BRAKING_DEADZONE of power we break
+	if(speed == MOTOR_BRAKE) {
 		pwm = 6500;
 	}
 
