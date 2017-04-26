@@ -103,3 +103,12 @@ class McuCommunicator(McuCommunicatorBarebones):
 
         super()._send_packet(CONTROL_ADDR, robot_addr,
                              packet_id, payload)
+
+    def setRegister(self, robot_id, register_id, value):
+        """ to remove"""
+        packet_id = PacketID.SET_REGISTER
+        struct_string = PACKET_INFO[packet_id][0]
+        payload = struct.pack(struct_string, register_id, value)
+        robot_addr = robot_id
+        super()._send_packet(CONTROL_ADDR, robot_addr,
+                             packet_id, payload)

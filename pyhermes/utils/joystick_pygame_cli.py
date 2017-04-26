@@ -68,7 +68,7 @@ def joystick_pygame_cli(robot_id):
 		robotJoystick.append((RobotJoystick(joystick), robot_id + i))
 
 	com = McuCommunicator()
-	# com.setRegister(robot_id, REG_CTRL_LOOP_STATE, 1)
+	com.setRegister(robot_id, REG_CTRL_LOOP_STATE, 1)
 
 	while True:
 		pygame.event.pump()
