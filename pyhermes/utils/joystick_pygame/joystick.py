@@ -3,7 +3,7 @@ import json
 import time
 from math import fabs
 
-from joystick_pygame.joystick_config import configs
+from utils.joystick_pygame.joystick_config import configs
 
 class RobotJoystick():
 

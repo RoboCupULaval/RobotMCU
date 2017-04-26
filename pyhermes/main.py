@@ -1,34 +1,33 @@
 #!/usr/bin/env python3
+""" This is the main interface script to interact directly with pyhermes
+and other included test tools."""
 
-# To install dependency : 
-# pip install cobs bitstring pyserial
-
-from threading import Thread
-from time import sleep
 import sys
 import argparse
 import csv
 
-from mcu_serial_com import *
-from ctrl_test_cli import *
-from joystick_cli import joystick_cli
-from joystick_pygame_cli import joystick_pygame_cli
-from diagnostic import *
+from utils.ctrl_test_cli import *
+from utils.joystick_cli import joystick_cli
+from utils.joystick_pygame_cli import joystick_pygame_cli
+from utils.diagnostic import *
 
 
 if __name__ == '__main__':
-    print('==== pyhermes ====')
+    print('==== Pyhermes simple usage interface ====')
     if sys.version_info[0] < 3:
-        raise 'Must be python 3'
+        raise 'You are not using python3!'
 
-    main_parser = argparse.ArgumentParser(description='Utilities for communication between ULtron robots and base station')
+    my_description = 'Utilities for communication between ULtron robots and base station'
+
+    main_parser = argparse.ArgumentParser(description=my_description)
 
     subparsers = main_parser.add_subparsers(dest='command')
 
     ping_parser = subparsers.add_parser('ping', help='Send ping to a robot')
     ping_parser.add_argument('robot_id', type=int, help='ID of the robot')
 
-    ping_parser = subparsers.add_parser('test_rotate', help='Send a rotation command to the robot')
+    ping_parser=subparsers.add_parser('test_rotate',
+                                        help='Send a rotation command to the robot')
     ping_parser.add_argument('robot_id', type=int, help='ID of the robot')
 
     joystick_parser = subparsers.add_parser('joystick', help='Control a robot using a joystick')
@@ -39,6 +38,7 @@ if __name__ == '__main__':
     ctrl_parser.add_argument('ctrl_loop_type', choices={'open_loop', 'close_loop'}, help='Type of control loop')
     ctrl_parser.add_argument('speed_commands_file', type=str, help='Path to the txt file containing rows of speed commands')
     ctrl_parser.add_argument('robot_id', type=int, help='ID of the robot')
+
 
     args = main_parser.parse_args()
 
@@ -66,4 +66,7 @@ if __name__ == '__main__':
 
     elif args.command == 'test_rotate':
         rotate_test(args.robot_id)
+
+    elif args.command is None:
+        print("You probably want to use the --help option!")
 

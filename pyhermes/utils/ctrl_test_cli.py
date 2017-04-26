@@ -1,4 +1,4 @@
-from mcu_serial_com import *
+from pyhermes.McuCommunicator import McuCommunicator
 from time import sleep
 import time
 

@@ -1,19 +1,12 @@
 /*
  * hermes.h
  *
- *  Created on: 2016-06-21
- *      Author: Philippe Babin
+ *  Created on: Apr 18, 2017
+ *      Author: znuxor
  */
 
-#ifndef HERMES_H_
-#define HERMES_H_
-
-#include <stdio.h>
-#include <string.h>
-
-#define COBS_MAX_PAYLOAD_LEN 255
-// Packet = Offset(1 byte) + Payload + \0(1 byte)
-#define COBS_MAX_PACKET_LEN 257
+#ifndef ROBOCUP_HERMES_HERMES_H_
+#define ROBOCUP_HERMES_HERMES_H_
 
 typedef struct __attribute__((__packed__)) {
 	uint8_t protocolVersion;
@@ -23,8 +16,4 @@ typedef struct __attribute__((__packed__)) {
 	uint8_t checksum;
 } packetHeaderStruct_t;
 
-
-int cobifyData(const void *ptr, size_t msg_len,   char *dst);
-int decobifyData(const char *ptr, size_t len, void *dst, size_t *dst_len);
-
-#endif // HERMES_H_
+#endif /* ROBOCUP_HERMES_HERMES_H_ */

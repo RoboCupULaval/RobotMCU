@@ -1,7 +1,7 @@
-from mcu_serial_com import *
+from pyhermes.McuCommunicator import McuCommunicator
 from time import sleep
 import time
-from joystick_pygame.joystick import RobotJoystick
+from .joystick_pygame.joystick import RobotJoystick
 from math import *
 
 
@@ -67,9 +67,8 @@ def joystick_pygame_cli(robot_id):
 		joystick.init()
 		robotJoystick.append((RobotJoystick(joystick), robot_id + i))
 
-	port = getFirstSerialPort()
-	com = McuCom(port)
-	com.setRegister(robot_id, REG_CTRL_LOOP_STATE, 1)
+	com = McuCommunicator()
+	com.setRegister(robot_id, 0x00, 1)
 
 	while True:
 		pygame.event.pump()

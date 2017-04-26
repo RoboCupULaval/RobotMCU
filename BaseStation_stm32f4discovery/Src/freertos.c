@@ -48,8 +48,12 @@
 
 /* USER CODE BEGIN Includes */     
 #include "../../../Src/robocup/nrfDriver/nrfDriver.h"
-#include "../../../Src/robocup/hermes/hermes.h"
 #include "usbd_cdc_if.h"
+
+#include "robocup/cobs/cobs.h"
+#include "robocup/hermes/hermes.h"
+#include "robocup/hermes/communicationTask.h"
+#include "robocup/usb/serialUsb.h"
 /* USER CODE END Includes */
 
 /* Variables -----------------------------------------------------------------*/
@@ -103,70 +107,6 @@ void MX_FREERTOS_Init(void) {
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
 }
-
-/* communicationTask function */
-void communicationTask(void const * argument)
-{
-  /* init code for USB_DEVICE */
-  MX_USB_DEVICE_Init();
-
-  /* USER CODE BEGIN communicationTask */
-  nrfInit();
-  /* Infinite loop */
-  uint8_t packetBytesReceived[260] = {0};
-  uint8_t decobifiedPacketBytes[260] = {0};
-  uint8_t packetBytesToSend[260] = {0};
-  unsigned int REMOVETHISVARIABLEITSUSELESS = 0;
-  int receivedLen;
-
-  uint8_t lastDestAddress = 0xF0;
-  TickType_t lastWakeTime = xTaskGetTickCount();
-  for(;;)
-  {
-
-
-	  //Read a packet from usb
-	  if (SerialRead(packetBytesReceived) >= 0) {
-		  // Uncobs the packet
-		  size_t receivedLen = strlen(packetBytesReceived);
-		  if (receivedLen == 0) {
-			  continue;
-		  }
-
-		  int result = decobifyData(packetBytesReceived, receivedLen +1, decobifiedPacketBytes, &REMOVETHISVARIABLEITSUSELESS);
-
-		  // Check if decobification was successful
-		  if (result == -1) {
-		      HAL_GPIO_TogglePin(GPIOD, LD3_Pin);
-			  continue;
-		  }
-		  // Extract useful info
-
-		  // Recob it if necessary
-		  cobifyData(decobifiedPacketBytes, receivedLen-1, packetBytesToSend);
-
-		  // Send to Destination through NRF if necessary
-		  packetHeaderStruct_t* packet = (packetHeaderStruct_t*)decobifiedPacketBytes;
-
-		  if (lastDestAddress != packet->destAddress) {
-			  lastDestAddress = packet->destAddress;
-			  nrfSetRobotTX(packet->destAddress);
-		  }
-		  nrfSend(packetBytesToSend);
-	  }
-
-	  /* if (nrfReceiveReady()) {
-		  //Read a packet from nrf
-		  nrfReceive(packetBytesToSend);
-
-		  // Send to Destination through USB if necessary
-		  SerialWrite(packetBytesToSend, strlen(packetBytesToSend));
-	  }*/
-
-  }
-  /* USER CODE END communicationTask */
-}
-
 /* USER CODE BEGIN Application */
      
 /* USER CODE END Application */
