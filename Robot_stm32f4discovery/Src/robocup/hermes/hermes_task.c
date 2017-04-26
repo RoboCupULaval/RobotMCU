@@ -7,8 +7,8 @@
 // This is the main task, it is intended to run indefinitely
 void hermes_task_slave(void) {
 	// We have a small stack, this is why they are static
-	static char packetBuffer[ COBS_MAX_PAYLOAD_LEN ];
-	static unsigned char dataBuffer[ COBS_MAX_PACKET_LEN ];
+	static uint8_t packetBuffer[ COBS_MAX_PAYLOAD_LEN ];
+	static uint8_t dataBuffer[ COBS_MAX_PACKET_LEN ];
 	size_t payloadLen = 0;
 	int result_status;
 	for(;;) {
@@ -50,7 +50,7 @@ void hermes_task_slave(void) {
 
 		// Call callback that handles the packet if need be.
 		if (packet.callback != NULL) {
-		    packet.callback(1, dataBuffer + sizeof(packetHeaderStruct_t *));
+		    packet.callback(1, dataBuffer + sizeof(packetHeaderStruct_t *) + 1);
 		}
 
 		// This is use to give back control to other task
