@@ -1,4 +1,5 @@
 #include "hermes.h"
+#include "commands.h"
 
 // This is the file containing everything about the packaging/unpackaging of command
 
@@ -50,11 +51,11 @@ int hermes_validate_payload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t
 }
 
 void hermes_create_header(uint8_t packetType, packetHeaderStruct_t* header){
-	header.protocolVersion = PROTOCOL_VERSION;
-	header.srcAddress = robot_getID();
-	header.destAddress = ADDR_BASE_STATION;
-	header.packetType = packetType;
-	header.checksum = 0;
+	header->protocolVersion = PROTOCOL_VERSION;
+	header->srcAddress = robot_getID();
+	header->destAddress = ADDR_BASE_STATION;
+	header->packetType = packetType;
+	header->checksum = 0;
 }
 
 size_t hermes_read(uint8_t* packetBuffer, int maxBytes){

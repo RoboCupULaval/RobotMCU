@@ -10,6 +10,7 @@
 
 #include "stdint.h"
 #include <stdlib.h>
+#include "packets_definitions.h"
 
 enum registerTypes_t {
 	CONTROL_LOOP_STATE = 0,
@@ -27,6 +28,11 @@ typedef struct {
 	size_t     len;
 } packet_t;
 
+void command_heartbeatRequest(uint8_t origin_id, uint8_t* msg);
+void command_movementCommand(uint8_t origin_id, uint8_t* msg);
+void command_movementCommandOpen(uint8_t origin_id, uint8_t* msg);
+void command_setRegister(uint8_t origin_id, uint8_t* msg);
+
 static const packet_t g_packetsTable[] = {
 		{PING_REQUEST,                   command_heartbeatRequest, sizeof(msg_no_arg_t)},
 		{PING_RESPONSE,                  NULL, (size_t)0},
@@ -36,12 +42,5 @@ static const packet_t g_packetsTable[] = {
 };
 
 static const size_t g_packetsTableLen = sizeof(g_packetsTable) / sizeof(packet_t);
-
-
-void command_heartbeatRequest(uint8_t origin_id, uint8_t* msg);
-void command_movementCommand(uint8_t origin_id, uint8_t* msg);
-void command_movementCommandOpen(uint8_t origin_id, uint8_t* msg);
-void command_setRegister(uint8_t origin_id, uint8_t* msg);
-
 
 #endif /* ROBOCUP_COMMANDS_H_ */

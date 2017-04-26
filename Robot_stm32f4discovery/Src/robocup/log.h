@@ -8,7 +8,7 @@
 #ifndef ROBOCUP_LOG_H_
 #define ROBOCUP_LOG_H_
 
-#include "com_interfaces/com_interface.h"
+#include "hermes/com_interfaces/com_interface.h"
 
 #define MAX_METADATA_LEN 128
 

@@ -1,12 +1,14 @@
 #include "hermes_task.h"
 #include "../nrfDriver/nrfDriver.h"
+#include "commands.h"
+#include "../log.h"
 #include "../cobs/cobs.h"
 
 // This is the main task, it is intended to run indefinitely
 void hermes_task_slave(void) {
 	// We have a small stack, this is why they are static
-	static char packetBuffer[COBS_MAX_PAYLOAD_LEN];
-	static unsigned char dataBuffer[COBS_MAX_PACKET_LEN];
+	static char packetBuffer[ COBS_MAX_PAYLOAD_LEN ];
+	static unsigned char dataBuffer[ COBS_MAX_PACKET_LEN ];
 	size_t payloadLen = 0;
 	int result_status;
 	for(;;) {
@@ -28,7 +30,7 @@ void hermes_task_slave(void) {
 	    }
 
 		// The packet is decoded
-		result_status = decobifyData(packetBuffer, bytesReceived, dataBuffer, &payloadLen);
+		result_status = decobifyData(packetBuffer, dataBuffer, &payloadLen);
 		if (result_status != 0){
 			LOG_ERROR_AND_BUFFER("Failed decoding", packetBuffer, bytesReceived);
 			continue;
