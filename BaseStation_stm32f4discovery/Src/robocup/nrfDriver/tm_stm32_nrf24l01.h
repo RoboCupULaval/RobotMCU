@@ -253,5 +253,7 @@ uint8_t TM_NRF24L01_GetStatus(void);
  */
 void TM_NRF24L01_Clear_Interrupts(void);
 
+uint8_t TM_NRF24L01_ReadRegister(uint8_t register_address);
+
 #endif
 
