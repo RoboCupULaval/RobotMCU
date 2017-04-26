@@ -29,24 +29,24 @@ void console_taskEntryPoint(void) {
 					"-------------------------------\r\n"
 					"-- Util --\r\n"
 					"ping\r\n"
-					"testNRF\r\n"
+					"test-nrf\r\n"
 					"-- Ball --\r\n"
 					"dribble                    speed\r\n"
-					"chargeKicker\r\n"
+					"charge-kicker\r\n"
 					"kick                       force\r\n"
-					"printBallSensors           time\r\n"
+					"print-ball-sensors           time\r\n"
 					"-- Motors --\r\n"
-					"motorsUnitTest\r\n"
-					"setPWM                     pwm1 pwm2 pwm3 pwm4 time\r\n"
-					"setSpeed                   vx vy vtheta time\r\n"
-					"setSpeedVerbose            vx vy vtheta time\r\n"
+					"motors-unit-test\r\n"
+					"set-pwm                     pwm1 pwm2 pwm3 pwm4 time\r\n"
+					"set-speed                   vx vy vtheta time\r\n"
+					"set-speed-verbose            vx vy vtheta time\r\n"
 					"-- Power management --\r\n"
-					"battInfo\r\n"
-					"battInfoRepeat             time\r\n"
-					"powerOff\r\n"
-					"powerOn\r\n"
-					"battProtectionOverride\r\n"
-					"battProtectionReset\r\n"
+					"batt-info\r\n"
+					"batt-info-repeat             time\r\n"
+					"power-off\r\n"
+					"power-on\r\n"
+					"batt-protection-override\r\n"
+					"batt-protection-reset\r\n"
 					"-------------------------------\r\n"
 					"\r\n");
 		}
@@ -54,7 +54,7 @@ void console_taskEntryPoint(void) {
 			sprintf(buffer, "Hello from Robot %d :)\r\n", robot_getPlayerID());
 			LOG_INFO(buffer);
 		}
-		else if(!strcmp("testNRF", parsedCommand[0])) {
+		else if(!strcmp("test-nrf", parsedCommand[0])) {
 			if(nrfVerifySPI())
 				LOG_INFO("NRF SPI BUS is ok!\r\n");
 			else
@@ -63,13 +63,13 @@ void console_taskEntryPoint(void) {
 		else if(!strcmp("dribble", parsedCommand[0])) {
 			dribbler_startDribbler((float)atof(parsedCommand[1]));
 		}
-		else if(!strcmp("chargeKicker", parsedCommand[0])) {
+		else if(!strcmp("charge-kicker", parsedCommand[0])) {
 			kicker_charge();
 		}
 		else if(!strcmp("kick", parsedCommand[0])) {
 			kicker_kick(atoi(parsedCommand[1]));
 		}
-		else if(!strcmp("printBallSensors", parsedCommand[0])) {
+		else if(!strcmp("print-ball-sensors", parsedCommand[0])) {
 			TickType_t start = xTaskGetTickCount();
 			while(xTaskGetTickCount() - start < atoi(parsedCommand[1])) {
 				sprintf(buffer, "Sensors : %d and %d, moy : %d\r\n",
@@ -78,20 +78,20 @@ void console_taskEntryPoint(void) {
 				osDelay(50);
 			}
 		}
-		else if(!strcmp("battInfo", parsedCommand[0])) {
+		else if(!strcmp("batt-info", parsedCommand[0])) {
 			log_metadata();
 		}
-		else if(!strcmp("battInfoRepeat", parsedCommand[0])) {
+		else if(!strcmp("batt-info-repeat", parsedCommand[0])) {
 			TickType_t start = xTaskGetTickCount();
 			while(xTaskGetTickCount() - start < atoi(parsedCommand[1])) {
 				log_metadata();
 				osDelay(50);
 			}
 		}
-		else if(!strcmp("motorsUnitTest", parsedCommand[0])) {
+		else if(!strcmp("motors-unit-test", parsedCommand[0])) {
 			test_startUp();
 		}
-		else if(!strcmp("setPWM", parsedCommand[0])) {
+		else if(!strcmp("set-pwm", parsedCommand[0])) {
 			g_ctrlLoopState = OPEN_LOOP;
 			TickType_t start = xTaskGetTickCount();
 			while(xTaskGetTickCount() - start < atoi(parsedCommand[5])) {
@@ -103,7 +103,7 @@ void console_taskEntryPoint(void) {
 			}
 			g_ctrlLoopState = CLOSE_LOOP_WITHOUT_LOGGING;
 		}
-		else if(!strcmp("setSpeed", parsedCommand[0])) {
+		else if(!strcmp("set-speed", parsedCommand[0])) {
 			g_ctrlLoopState = CLOSE_LOOP_WITHOUT_LOGGING;
 			TickType_t start = xTaskGetTickCount();
 			while(xTaskGetTickCount() - start < atoi(parsedCommand[4])) {
@@ -113,7 +113,7 @@ void console_taskEntryPoint(void) {
 				g_speedCommand.tickSinceLastUpdate = xTaskGetTickCount();
 			}
 		}
-		else if(!strcmp("setSpeedVerbose", parsedCommand[0])) {
+		else if(!strcmp("set-speed-verbose", parsedCommand[0])) {
 			g_ctrlLoopState = CLOSE_LOOP_WITH_LOGGING;
 			TickType_t start = xTaskGetTickCount();
 			while(xTaskGetTickCount() - start < atoi(parsedCommand[4])) {
@@ -124,17 +124,17 @@ void console_taskEntryPoint(void) {
 			}
 			g_ctrlLoopState = CLOSE_LOOP_WITHOUT_LOGGING;
 		}
-		else if(!strcmp("battProtectionOverride", parsedCommand[0])) {
+		else if(!strcmp("batt-protection-override", parsedCommand[0])) {
 			pmu_overrideProtection();
 		}
-		else if(!strcmp("battProtectionReset", parsedCommand[0])) {
+		else if(!strcmp("batt-protection-reset", parsedCommand[0])) {
 			pmu_resetProtection();
 		}
-		else if(!strcmp("powerOn", parsedCommand[0])) {
+		else if(!strcmp("power-on", parsedCommand[0])) {
 			pmu_overrideProtection();
 			pmu_forceEnablePower();
 		}
-		else if(!strcmp("powerOff", parsedCommand[0])) {
+		else if(!strcmp("power-off", parsedCommand[0])) {
 			pmu_overrideProtection();
 			pmu_disablePower();
 		}
