@@ -42,11 +42,11 @@ typedef struct {
 } Wheel_t;
 
 //
-#define MOTOR_BREAK 0.0
+#define MOTOR_BRAKE 0.0
 
 
 float wheel_setCommand(Wheel_t* wheel, const float vx, const float vy, const float vt);
-void wheel_break(const Wheel_t *wheel);
+void wheel_brake(const Wheel_t *wheel);
 void wheel_setPWM(const Wheel_t *wheel, float speed);
 
 #endif /* WHEELS_H */

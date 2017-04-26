@@ -79,7 +79,7 @@ void ctrl_taskEntryPoint(void) {
 				if (speedCommandOpenTimeout) {
 					if (c == 0 || speedCommandOpenTimeout != lastSpeedCommandOpenTimeout)
 						LOG_ERROR("Timeout on open loop command\r\n");
-					ctrl_emergencyBreak();
+					ctrl_emergencyBrake();
 					continue;
 				}
 
@@ -100,8 +100,13 @@ void ctrl_taskEntryPoint(void) {
 				speedCommandTimeout = hasSpeedCommandTimeout();
 				if (speedCommandTimeout) {
 					if (c == 0 || speedCommandTimeout != lastSpeedCommandTimeout)
+<<<<<<< HEAD
 						if(!robot_isDebug()) LOG_ERROR("Timeout on command\r\n");
 					ctrl_emergencyBreak();
+=======
+						LOG_ERROR("Timeout on command\r\n");
+					ctrl_emergencyBrake();
+>>>>>>> mnrc_implementation
 					continue;
 				}
 
@@ -122,7 +127,8 @@ void ctrl_taskEntryPoint(void) {
 				MNRC_update(&mnrc);
 
 				if(vx == 0.f && vy == 0.f && vt == 0.f) {
-					ctrl_emergencyBreak();
+					ctrl_emergencyBrake();
+					MNRC_reset(&mnrc);
 				} else {
 					for (int i = 0; i < wheelsLen; ++i) {
 						Wheel_t* pWheel = &g_wheels[i];
@@ -147,9 +153,9 @@ void ctrl_taskEntryPoint(void) {
 	  }
 }
 
-void ctrl_emergencyBreak(void) {
+void ctrl_emergencyBrake(void) {
 	for(size_t i = 0; i < wheelsLen; ++i) {
-		wheel_break(&g_wheels[i]);
+		wheel_brake(&g_wheels[i]);
 	}
 }
 

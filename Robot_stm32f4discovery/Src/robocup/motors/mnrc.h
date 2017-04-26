@@ -34,5 +34,6 @@ typedef struct {
 
 MNRC_t MNRC_init(float Kp, float Ki, float gamma);
 void MNRC_update(MNRC_t *mnrc);
+void MNRC_reset(MNRC_t *mnrc);
 
 #endif /* MNRC_H_ */

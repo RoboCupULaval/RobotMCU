@@ -130,7 +130,7 @@ int main(void)
   	log_init(comBluetooth);
   	if(robot_isDebug()) console_init(comBluetooth);
 
-	ctrl_emergencyBreak();
+	ctrl_emergencyBrake();
 
   /* USER CODE END 2 */
 

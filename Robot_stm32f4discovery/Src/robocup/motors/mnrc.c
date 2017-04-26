@@ -71,3 +71,11 @@ void MNRC_update(MNRC_t *mnrc){
 	}	
 
 }
+
+void MNRC_reset(MNRC_t *mnrc) {
+	int i = 0;
+	for (i = 0; i < 4; i++) {
+		mnrc->eI[i] = 0;
+		mnrc->w_m[i] = 0;
+	}
+}

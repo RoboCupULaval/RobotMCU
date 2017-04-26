@@ -39,7 +39,7 @@ extern Wheel_t wheels[];
 extern const size_t wheelsLen;
 
 void ctrl_taskEntryPoint(void);
-void ctrl_emergencyBreak(void);
+void ctrl_emergencyBrake(void);
 void initPwmAndQuad(void);
 void readQuadsSpeed(float *wheelSpeed);
 bool hasSpeedCommandTimeout(void);
