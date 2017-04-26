@@ -26,7 +26,7 @@ int hermes_validate_payload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t
 		return -1;
 	}
 
-	if(g_packetsTable[id].len != payloadLen){
+	if(g_packetsTable[id].len != payloadLen-sizeof(packetHeaderStruct_t)){
 		LOG_ERROR("Too small payload\r\n");
 		return -1;
 	}
