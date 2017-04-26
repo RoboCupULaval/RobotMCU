@@ -14,7 +14,7 @@ setup(
     author='Frédéric St-Pierre, Philippe Babin',
     author_email='frederic.st-pierre.7@ulaval.ca, philippe.babin.1@ulaval.ca',
     url='https://github.com/RobocupUlavalEmbedded/RobotMCU/',
-    install_requires=['cobs'],
+    install_requires=['cobs', 'pyserial'],
     packages=['pyhermes'],
     package_dir={
         'pyhermes': './pyhermes',
