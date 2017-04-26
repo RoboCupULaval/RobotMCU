@@ -5,7 +5,7 @@ import struct
 from .McuCommunicatorBarebones import McuCommunicatorBarebones
 from .packet_definitions import PacketID, PACKET_INFO
 
-CONTROL_ADDR = 0x00  # The computer's address
+CONTROL_ADDR = 0xFE  # The computer's address
 
 DRIBBLER_REGISTER = 0x03
 KICK_REGISTER = 0x01
