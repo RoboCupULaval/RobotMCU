@@ -1,6 +1,6 @@
 #include "hermes.h"
 #include "commands.h"
-
+#include "../robocup_define.h"
 // This is the file containing everything about the packaging/unpackaging of command
 
 // Private functions
