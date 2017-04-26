@@ -23,6 +23,7 @@ void command_movementCommand(uint8_t origin_id, uint8_t* msg){
     g_speedCommand.vx = movementMsg->vx;
     g_speedCommand.vy = movementMsg->vy;
     g_speedCommand.vtheta = movementMsg->vtheta;
+
     g_speedCommand.tickSinceLastUpdate = xTaskGetTickCount();
 }
 

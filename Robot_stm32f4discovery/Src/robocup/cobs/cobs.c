@@ -52,33 +52,19 @@ int decobifyData(uint8_t *msg, uint8_t *dstOut, size_t *dst_len) {
 	uint8_t code; // the length code
 
 	// fetch the first length code and skip its location
-	code = *ptr;
-	ptr++;
 
 	while (ptr < end) {
-
-		// reached end of message, break out of while loop
-		if (code == 0) {
-			break;
-		}
-
-		// we copy the next bytes
-		for (int i = 0; i < code-1; i++) {
-			// If we get to the end too soon, the packet is malformed.
-			if (ptr >= end) {
+		int i, code = *ptr++;
+		for (i = 1; i < code; i++) {
+			// If we get to the end too soon, the pack is invalid
+			if (ptr >= end)
 				return -1;
-			}
-			// we copy the byte, then continue on to the next location
-			*dst = *ptr;
-			ptr++;
-			dst++;
-		}
+			*dst++ = *ptr++;
 
-		// we fetch the next length code and put a zero in its place
-		code = (*ptr);
-		ptr++;
-		dst = 0;
-		dst++;
+		}
+		// code mark the number of byte until a zero, so a zero is added at is position
+		if (code < 0xFF)
+			*dst++ = 0;
 	}
 
 	// we set the length of the decobificated packet,

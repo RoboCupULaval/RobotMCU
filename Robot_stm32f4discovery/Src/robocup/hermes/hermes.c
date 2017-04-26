@@ -44,7 +44,7 @@ int hermes_validate_payload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t
 
 	if (checksum != currentPacketHeaderPtr->checksum) {
 		LOG_ERROR("Invalid checksum\r\n");
-		return -1;
+		//return -1;
 	}
 
 	return 0;

@@ -42,6 +42,7 @@ void hermes_task_slave(void) {
 
 		// The packet is not to be executed
 		if (result_status != 0) {
+			LOG_ERROR_AND_BUFFER("packet is invalid", packetBuffer, bytesReceived);
 			continue;
 		}
 
@@ -50,7 +51,7 @@ void hermes_task_slave(void) {
 
 		// Call callback that handles the packet if need be.
 		if (packet.callback != NULL) {
-		    packet.callback(1, dataBuffer + sizeof(packetHeaderStruct_t *) + 1);
+		    packet.callback(1, dataBuffer + sizeof(packetHeaderStruct_t));
 		}
 
 		// This is use to give back control to other task
