@@ -100,13 +100,8 @@ void ctrl_taskEntryPoint(void) {
 				speedCommandTimeout = hasSpeedCommandTimeout();
 				if (speedCommandTimeout) {
 					if (c == 0 || speedCommandTimeout != lastSpeedCommandTimeout)
-<<<<<<< HEAD
-						if(!robot_isDebug()) LOG_ERROR("Timeout on command\r\n");
-					ctrl_emergencyBreak();
-=======
 						LOG_ERROR("Timeout on command\r\n");
 					ctrl_emergencyBrake();
->>>>>>> mnrc_implementation
 					continue;
 				}
 

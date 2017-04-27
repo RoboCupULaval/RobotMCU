@@ -59,6 +59,7 @@
 #include "robocup/com_interfaces/nrf.h"
 #include "robocup/hermes/hermes_task.h"
 #include "robocup/motors/ctrl_task.h"
+#include "robocup/console/console.h"
 
 /* USER CODE END Includes */
 
