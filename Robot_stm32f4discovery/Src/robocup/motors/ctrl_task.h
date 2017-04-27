@@ -29,6 +29,9 @@ typedef struct {
 	TickType_t tickSinceLastUpdate;
 } SpeedCommandOpen_t;
 
+#define SPEED_COMMAND_DEADZONE_VX	0.05f
+#define SPEED_COMMAND_DEADZONE_VY	0.05f
+#define SPEED_COMMAND_DEADZONE_VT	0.1f
 
 extern volatile CtrlLoop_t g_ctrlLoopState;
 extern volatile SpeedCommand_t g_speedCommand;
