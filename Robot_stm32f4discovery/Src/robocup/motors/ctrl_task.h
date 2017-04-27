@@ -31,7 +31,7 @@ typedef struct {
 
 #define SPEED_COMMAND_DEADZONE_VX	0.05f
 #define SPEED_COMMAND_DEADZONE_VY	0.05f
-#define SPEED_COMMAND_DEADZONE_VT	0.1f
+#define SPEED_COMMAND_DEADZONE_VT	0.25f
 
 extern volatile CtrlLoop_t g_ctrlLoopState;
 extern volatile SpeedCommand_t g_speedCommand;

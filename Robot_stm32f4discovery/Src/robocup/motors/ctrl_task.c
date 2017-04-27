@@ -121,8 +121,8 @@ void ctrl_taskEntryPoint(void) {
 
 				MNRC_update(&mnrc);
 
-				if(vx <= SPEED_COMMAND_DEADZONE_VX && vy <= SPEED_COMMAND_DEADZONE_VY
-						&& vt <= SPEED_COMMAND_DEADZONE_VT) {
+				if(fabs(vx) <= SPEED_COMMAND_DEADZONE_VX && fabs(vy) <= SPEED_COMMAND_DEADZONE_VY
+						&& fabs(vt) <= SPEED_COMMAND_DEADZONE_VT) {
 					ctrl_emergencyBrake();
 					MNRC_reset(&mnrc);
 				} else {
