@@ -11,6 +11,9 @@
 #include "stm32f4xx.h"
 #include <stdbool.h>
 
+#define NRF_DEFAULT_RF_CH	100
+#define NRF_REG_RF_CH		0x05
+
 void nrfInit(const size_t packetSize);
 void nrfSend(uint8_t * dataOut);
 void nrfReceive(uint8_t * dataIn);

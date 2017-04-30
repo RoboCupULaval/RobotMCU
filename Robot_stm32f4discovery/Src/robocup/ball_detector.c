@@ -26,7 +26,7 @@ uint32_t ball_getSensorsMeanValue(void) {
 BallState ball_getState(void) {
 	uint32_t adcValue1 = ball_getSensorValue(1);
 	uint32_t adcValue2 = ball_getSensorValue(2);
-	uint32_t adcMean = (adcValue1 + adcValue2) / 2;
+	uint32_t adcMean = ball_getSensorsMeanValue();
 
 	BallState ballState = BALL_NOBALL;
 

@@ -39,7 +39,6 @@ volatile SpeedCommandOpen_t g_speedCommandOpen = {
 
 // This tasks deals with the movements of the robot
 void ctrl_taskEntryPoint(void) {
-	//test_startUp();
 	if (robot_isDebug() && robot_isBtnPressed()) {
 		while(!test_startUp());
 	}
@@ -162,7 +161,6 @@ void initPwmAndQuad(void) {
 
 		for(size_t i = 0; i < wheelsLen; ++i) {
 		  	HAL_TIM_PWM_Start(g_wheels[i].pTimer, g_wheels[i].timerChannel);
-			//g_wheels[i].pid = pid_init(PID_P, PID_I, PID_D, 1.0, 0.0);
 		}
 
 		for(int i = 0; i < encodersLen; ++i) {
