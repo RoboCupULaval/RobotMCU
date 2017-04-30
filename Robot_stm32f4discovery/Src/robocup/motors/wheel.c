@@ -11,30 +11,14 @@ const float MAX_LIN_ACC	= 1.0f / CONTROL_LOOP_FREQ; //1m/s^2 * control_loop_peri
 // Calculate speed for that motor base on velocity command
 float wheel_setCommand(Wheel_t* wheel, const float vx, const float vy, const float vt) {
 
-	float limitVx = vx;
-	float limitVy = vy;
-
-	const float magnitude = sqrtf(vx*vx + vy*vy);
-
-	if((magnitude - wheel->lastMagnitude) > MAX_LIN_ACC) {
-		wheel->lastMagnitude = wheel->lastMagnitude + MAX_LIN_ACC;
-		const float magnitudeFactor = wheel->lastMagnitude / magnitude;
-		limitVx *= magnitudeFactor;
-		limitVy *= magnitudeFactor;
-	} else {
-		wheel->lastMagnitude = magnitude;
-	}
-
-	float omega = (limitVx * wheel->cosTheta + limitVy * wheel->sinTheta + vt * wheel->centerDistance);
+	float omega = (vx * wheel->cosTheta + vy * wheel->sinTheta + vt * wheel->centerDistance);
 	omega = (omega / wheel->radius);
 
-	float result = (omega * wheel->nbTickTurn) / (2.0f * (float)M_PI) / CONTROL_LOOP_FREQ; //Conversion from rad/s to ticks/
-
-	return result;
+	return omega;
 }
 
-void wheel_break(const Wheel_t *wheel) {
-	wheel_setPWM(wheel, MOTOR_BREAK);
+void wheel_brake(const Wheel_t *wheel) {
+	wheel_setPWM(wheel, MOTOR_BRAKE);
 }
 
 void wheel_setPWM(const Wheel_t *wheel, float speed) {
@@ -46,8 +30,8 @@ void wheel_setPWM(const Wheel_t *wheel, float speed) {
 	float invertedSpeed = 1.0f - compensatedSpeed;
 	int pwm = (int) ((float)invertedSpeed * 6500.0f);
 
-	// Less than BREAKING_DEADZONE of power we break
-	if((float)fabs(speed) < BREAKING_THRESHOLD){
+	// Less than BRAKING_DEADZONE of power we break
+	if(speed == MOTOR_BRAKE) {
 		pwm = 6500;
 	}
 

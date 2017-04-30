@@ -11,13 +11,26 @@
 #ifndef ROBOCUP_PMU_H_
 #define ROBOCUP_PMU_H_
 
+#include <stdbool.h>
+
 #include "robocup_define.h"
 #include "gpio.h"
 #include "i2c.h"
 
-#define PMU_CURRENT_CALIBRATION		164 // Look at INA219 datasheet
-#define PMU_CURRENT_LSB				0.5 //mA
-#define PMU_VOLTAGE_LSB				0.004 //V
+
+#define SHUNT_RESISTANCE 0.06
+#define PMU_VOLTAGE_LSB				0.004 // V
+// The following comment are true, but we don't use it for fetching the current
+// we use the shunt voltage instead
+// See p.12 of the datasheet of INA219
+// Max experted current = 10A (fuse limit)
+// Rshunt = 0.06 ohm
+// cal = 0.04096*2^(15) / (Maximum experted current x Rshunt)   <-- equation 1
+#define PMU_CURRENT_CALIBRATION		2236
+// CURRENT_LSB = max expected / (2^15)                          <-- equation 2
+// We multiply it by 100 to have mA. Why 100 and not 1000?
+// For an unknown reason, the register divide by 10 internally
+#define PMU_CURRENT_LSB				0.030517 // mA/bit
 
 //
 #define PMU_ADDRESS				0b10000000
@@ -41,5 +54,8 @@ uint8_t pmu_isPowerEnabled(void);
 
 powerState pmu_checkBattVoltage(void);
 powerState pmu_handleBattProtection(void);//Call this as frequently as possible!
+
+void pmu_overrideProtection(void);
+void pmu_resetProtection(void);
 
 #endif /* ROBOCUP_PMU_H_ */

@@ -55,6 +55,7 @@ osThreadId defaultTaskHandle;
 osThreadId wheelsTaskHandle;
 osThreadId hermesTaskHandle;
 osThreadId slowTaskHandle;
+osThreadId consoleTaskHandle;
 
 /* USER CODE BEGIN Variables */
 /* USER CODE END Variables */
@@ -64,6 +65,7 @@ void StartDefaultTask(void const * argument);
 void wheelsTaskLoopFunction(void const * argument);
 void hermesTaskLoopFunction(void const * argument);
 void slowTaskFunction(void const * argument);
+void consoleTaskLoopFunction(void const * argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -109,6 +111,10 @@ void MX_FREERTOS_Init(void) {
   /* definition and creation of slowTask */
   osThreadDef(slowTask, slowTaskFunction, osPriorityBelowNormal, 0, 128);
   slowTaskHandle = osThreadCreate(osThread(slowTask), NULL);
+
+  /* definition and creation of consoleTask */
+  osThreadDef(consoleTask, consoleTaskLoopFunction, osPriorityNormal, 0, 1048);
+  consoleTaskHandle = osThreadCreate(osThread(consoleTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
 	/* add threads, ... */
@@ -170,6 +176,19 @@ void slowTaskFunction(void const * argument)
 	  osDelay(1000);
   }
   /* USER CODE END slowTaskFunction */
+}
+
+/* consoleTaskLoopFunction function */
+void consoleTaskLoopFunction(void const * argument)
+{
+  /* USER CODE BEGIN consoleTaskLoopFunction */
+  /* Infinite loop */
+  for(;;)
+  {
+	  console_taskEntryPoint();
+	  osDelay(100);
+  }
+  /* USER CODE END consoleTaskLoopFunction */
 }
 
 /* USER CODE BEGIN Application */

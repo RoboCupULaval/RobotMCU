@@ -54,7 +54,7 @@ void hermes_sendError(char * pStr){
 packetHeaderStruct_t hermes_createHeader(uint8_t packetType){
 	packetHeaderStruct_t header;
 	header.protocolVersion = PROTOCOL_VERSION;
-	header.srcAddress = robot_getID();
+	header.srcAddress = robot_getPlayerID();
 	header.destAddress = ADDR_BASE_STATION;
 	header.packetType = packetType;
 	header.checksum = 0;

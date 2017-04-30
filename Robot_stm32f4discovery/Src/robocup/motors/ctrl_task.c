@@ -2,7 +2,7 @@
 
 #include "wheels_UT.h"
 #include "wheels_config.h"
-
+#include "mnrc.h"
 
 
 typedef struct EncoderTimerAssociation_t{
@@ -39,14 +39,14 @@ volatile SpeedCommandOpen_t g_speedCommandOpen = {
 
 // This tasks deals with the movements of the robot
 void ctrl_taskEntryPoint(void) {
-	//test_startUp();
-	if (robot_isDebug()) {
+	if (robot_isDebug() && robot_isBtnPressed()) {
 		while(!test_startUp());
 	}
   	LOG_INFO("Starting!!!\r\n");
 	initPwmAndQuad();
+	MNRC_t mnrc = MNRC_init(MNRC_KP, MNRC_KI, MNRC_GAMMA);
 
-	int32_t wheelSpeed[4];
+	float wheelSpeed[4];
   	TickType_t lastWakeTime = xTaskGetTickCount();
   	bool speedCommandTimeout = true;
   	bool speedCommandOpenTimeout = true;
@@ -61,7 +61,7 @@ void ctrl_taskEntryPoint(void) {
 				//LOG_INFO("ctrl\r\n");
 		}
 
-		readQuadsSpeed(&wheelSpeed);
+		readQuadsSpeed(wheelSpeed);
 
 		float vx, vy, vt;
 		float output[4];
@@ -78,7 +78,7 @@ void ctrl_taskEntryPoint(void) {
 				if (speedCommandOpenTimeout) {
 					if (c == 0 || speedCommandOpenTimeout != lastSpeedCommandOpenTimeout)
 						LOG_ERROR("Timeout on open loop command\r\n");
-					ctrl_emergencyBreak();
+					ctrl_emergencyBrake();
 					continue;
 				}
 
@@ -100,7 +100,7 @@ void ctrl_taskEntryPoint(void) {
 				if (speedCommandTimeout) {
 					if (c == 0 || speedCommandTimeout != lastSpeedCommandTimeout)
 						LOG_ERROR("Timeout on command\r\n");
-					ctrl_emergencyBreak();
+					ctrl_emergencyBrake();
 					continue;
 				}
 
@@ -108,27 +108,29 @@ void ctrl_taskEntryPoint(void) {
 					motorDataLog_addReceivedSpeed(vx, vy, vt);
 				}
 
+
 				for (int i = 0; i < wheelsLen; ++i) {
 					Wheel_t* pWheel = &g_wheels[i];
-					float output = 0.0;
 					float reference = wheel_setCommand(pWheel, vx, vy, vt);
-					float feedback = (float)wheelSpeed[pWheel->quad];
+					float measure = wheelSpeed[pWheel->quad];
 
-					// The speed reference and feedback must be absolute, since the pid ignore the wheel direction.
-					// This is done since the passage from one direction to another one cause an instability
-					pWheel->pid.r = (float)fabs(reference);
-					pWheel->pid.fbk = (float)fabs(feedback);
-					pid_update(&pWheel->pid);
-
-					output = pWheel->pid.output;
-
-					// Pid uses absolute speed and does not know about wheel direction
-					// If the speed command is negative we change the pid output to be negative
-					// and thus the motor will spin in the correct direction
-					output *= (reference >= 0.0 ? 1.0f : -1.0f);
-
-					wheel_setPWM(pWheel, output);
+					mnrc.w[i] = measure;
+					mnrc.w_ref[i] = reference;
 				}
+
+				MNRC_update(&mnrc);
+
+				if(fabs(vx) <= SPEED_COMMAND_DEADZONE_VX && fabs(vy) <= SPEED_COMMAND_DEADZONE_VY
+						&& fabs(vt) <= SPEED_COMMAND_DEADZONE_VT) {
+					ctrl_emergencyBrake();
+					MNRC_reset(&mnrc);
+				} else {
+					for (int i = 0; i < wheelsLen; ++i) {
+						Wheel_t* pWheel = &g_wheels[i];
+						wheel_setPWM(pWheel, mnrc.command[i]);
+					}
+				}
+
 				break;
 			default:
 				LOG_ERROR("Unimplemented control loop state.\r\n");
@@ -146,9 +148,9 @@ void ctrl_taskEntryPoint(void) {
 	  }
 }
 
-void ctrl_emergencyBreak(void) {
+void ctrl_emergencyBrake(void) {
 	for(size_t i = 0; i < wheelsLen; ++i) {
-		wheel_break(&g_wheels[i]);
+		wheel_brake(&g_wheels[i]);
 	}
 }
 
@@ -159,7 +161,6 @@ void initPwmAndQuad(void) {
 
 		for(size_t i = 0; i < wheelsLen; ++i) {
 		  	HAL_TIM_PWM_Start(g_wheels[i].pTimer, g_wheels[i].timerChannel);
-			g_wheels[i].pid = pid_init(PID_P, PID_I, PID_D, 1.0, 0.0);
 		}
 
 		for(int i = 0; i < encodersLen; ++i) {
@@ -168,11 +169,12 @@ void initPwmAndQuad(void) {
 	}
 }
 
-void readQuadsSpeed(int32_t *wheelSpeed) {
+void readQuadsSpeed(float *wheelSpeed) {
 	for(int i = 0; i < encodersLen; ++i) {
 		EncoderTimerAssociation_t* encoderTimerAsso = &s_encoders[i];
 		encoder_readCounters(&(encoderTimerAsso->encoder));
-		wheelSpeed[encoderTimerAsso->identifier] = encoderTimerAsso->encoder.deltaCount;
+		float speed = encoderTimerAsso->encoder.deltaCount * (2.0f * (float)M_PI) * CONTROL_LOOP_FREQ / g_wheels[i].nbTickTurn; //Conversion from tick/loop to rad/s
+		wheelSpeed[encoderTimerAsso->identifier] = speed;
 	}
 }
 

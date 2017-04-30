@@ -59,6 +59,7 @@
 #include "robocup/com_interfaces/nrf.h"
 #include "robocup/hermes/hermes_task.h"
 #include "robocup/motors/ctrl_task.h"
+#include "robocup/console/console.h"
 
 /* USER CODE END Includes */
 
@@ -123,14 +124,14 @@ int main(void)
 
 
   	// Init communication
-
-  	comHandle_t comBluetooth = bluetooth_init();
-
-
   	comHandle_t comNrf = nrf_init();
   	hermes_init(comNrf);
+
+  	comHandle_t comBluetooth = bluetooth_init(robot_isDebug());
   	log_init(comBluetooth);
-	ctrl_emergencyBreak();
+  	if(robot_isDebug()) console_init(comBluetooth);
+
+	ctrl_emergencyBrake();
 
   /* USER CODE END 2 */
 

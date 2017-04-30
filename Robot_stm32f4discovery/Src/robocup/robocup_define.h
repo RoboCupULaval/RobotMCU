@@ -21,13 +21,14 @@ typedef struct {
 } hermesHandle_t;
 extern hermesHandle_t g_hermesHandle;
 extern comHandle_t g_logHandle;
-
+extern comHandle_t g_consoleHandle;
 
 //PMU
 typedef enum {
 	POWER_OK, //Possible to enable power
 	POWER_WARNING, //Power stays enable if already enabled, but can't enable it otherwise
 	POWER_CRITICAL, //Disabled automatically
+	POWER_OVERRIDE //Bypass protection
 } powerState;
 
 
@@ -37,15 +38,15 @@ typedef enum {
  */
 
 
-#define PID_P 0.0003f//0.004217f
-#define PID_I 0.002f/CONTROL_LOOP_FREQ//(0.00000134f/CONTROL_LOOP_FREQ)
-#define PID_D 0.0f
+#define MNRC_KP					7.0f
+#define MNRC_KI					25.0f
+#define MNRC_GAMMA				-5.0f
 
 #define CONTROL_LOOP_PERIOD_MS 	50
+#define CONTROL_LOOP_DELTA_T	0.05f
 #define CONTROL_LOOP_FREQ		20.0f
 
-#define MOTOR_DEADZONE 			0.25f //Min PWM duty-cycle to compensate deadzone
-#define BREAKING_THRESHOLD		0.05f //Threshold to set the 0% duty-cycle
+#define MOTOR_DEADZONE 			0.21f //Min PWM duty-cycle to compensate deadzone
 
 
 //PMU
