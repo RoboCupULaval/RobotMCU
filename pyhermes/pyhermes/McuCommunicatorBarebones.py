@@ -55,12 +55,22 @@ class McuCommunicatorBarebones(object):
                 serial.tools.list_ports.grep(''))
             available_ports.sort()
             print(available_ports)
-            try:
-                device_path = available_ports[0].device
-            except AttributeError:
-                device_path = available_ports[0][0]
-            self.serial_port = serial.Serial(device_path,
-                                             timeout=0.2)
+            if os.path.exists("/dev/ttyBaseStation"):
+                device_path = "/dev/ttyBaseStation"
+            else:
+                try:
+                    device_path = available_ports[0].device
+                except AttributeError:
+                    device_path = available_ports[0][0]
+            print("We choose serial port{}".format(device_path))
+            while True:
+                try:
+                    self.serial_port = serial.Serial(device_path, timeout=0.2)
+                except serial.serialutil.SerialException:
+                    print("Fail to open port, device busy")
+                    sleep(1)
+                    continue
+                break
         self.serial_lock = threading.RLock()
         if self.serial_port is None:
             raise Exception("No stm32 serial port was detected!")
