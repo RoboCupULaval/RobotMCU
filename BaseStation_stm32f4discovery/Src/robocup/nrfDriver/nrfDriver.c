@@ -36,14 +36,14 @@ void nrfInit() {
 	uint8_t return_value = TM_NRF24L01_ReadRegister(0x00);
 	if (return_value != 0x0B) {
 		while (1) {
-		HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
-		vTaskDelay(50);
-		HAL_GPIO_TogglePin(LD4_GPIO_Port, LD4_Pin);
-		vTaskDelay(50);
-		HAL_GPIO_TogglePin(LD5_GPIO_Port, LD5_Pin);
-		vTaskDelay(50);
-		HAL_GPIO_TogglePin(LD6_GPIO_Port, LD6_Pin);
-		vTaskDelay(50);
+			HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
+			vTaskDelay(50);
+			HAL_GPIO_TogglePin(LD4_GPIO_Port, LD4_Pin);
+			vTaskDelay(50);
+			HAL_GPIO_TogglePin(LD5_GPIO_Port, LD5_Pin);
+			vTaskDelay(50);
+			HAL_GPIO_TogglePin(LD6_GPIO_Port, LD6_Pin);
+			vTaskDelay(50);
 		}
 	}
 

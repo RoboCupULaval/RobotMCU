@@ -136,7 +136,7 @@ IRQ			Not used	Interrupt pin. Goes low when active. Pin functionality is active,
 /* Chip enable for transmitting */
 #ifndef NRF24L01_CE_PIN
 #define NRF24L01_CE_PORT			GPIOC
-#define NRF24L01_CE_PIN				GPIO_PIN_1
+#define NRF24L01_CE_PIN				GPIO_PIN_6
 #endif
 
 /* Pins configuration */
