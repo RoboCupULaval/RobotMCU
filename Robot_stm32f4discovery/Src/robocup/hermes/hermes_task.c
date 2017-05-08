@@ -16,22 +16,22 @@ void hermes_task_slave(void) {
 		size_t bytesReceived = hermes_read(packetBuffer, COBS_MAX_PACKET_LEN);
 
 		// Check if we actually have received a packet
-		if(bytesReceived == 0){
+		if (bytesReceived == 0) {
 			// It's more efficient to wait a few ticks before trying again
 			// TODO: REMOVE the wait! Maybe taskYIELD?
-			osDelay(1);
+			taskYIELD();
 			continue;
 		}
 
 		// Check if we actually have received a possibly valid packet, which needs a complete header
-		if(bytesReceived < sizeof(packetHeaderStruct_t)+sizeof(uint8_t)){
+		if (bytesReceived < sizeof(packetHeaderStruct_t)+sizeof(uint8_t)) {
 			LOG_ERROR_AND_BUFFER("The received packet is too small", packetBuffer, bytesReceived);
 			continue;
 	    }
 
 		// The packet is decoded
 		result_status = decobifyData(packetBuffer, dataBuffer, &payloadLen);
-		if (result_status != 0){
+		if (result_status != 0) {
 			LOG_ERROR_AND_BUFFER("Failed decoding", packetBuffer, bytesReceived);
 			continue;
 		}
@@ -56,6 +56,6 @@ void hermes_task_slave(void) {
 
 		// This is use to give back control to other task
 		// TODO: REMOVE the wait! Maybe taskYIELD?
-		osDelay(1);
+		taskYIELD();
 	}
 }

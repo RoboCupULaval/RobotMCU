@@ -5,6 +5,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "FreeRTOS.h"
+#include "task.h"
+
 #include "hermes.h"
 
 void hermes_task_slave(void);

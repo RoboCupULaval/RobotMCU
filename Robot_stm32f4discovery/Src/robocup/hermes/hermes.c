@@ -1,5 +1,7 @@
 #include "hermes.h"
 #include "commands.h"
+#include "../log.h"
+#include "../cobs/cobs.h"
 #include "../robocup_define.h"
 // This is the file containing everything about the packaging/unpackaging of command
 
@@ -16,29 +18,34 @@ int hermes_validate_payload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t
 	// TODO: add destination checking (is it the correct robot?), reorder the checking: checksum first, valid protocol version, valid id, valid length
 
 	uint8_t id = currentPacketHeaderPtr->packetType;
-	if(currentPacketHeaderPtr->protocolVersion != PROTOCOL_VERSION){
+	if (currentPacketHeaderPtr->protocolVersion != PROTOCOL_VERSION) {
 		LOG_ERROR("Invalid protocol version\r\n");
 		return -1;
 	}
 
-	if(id >= g_packetsTableLen){
+	if (id >= g_packetsTableLen) {
 		LOG_ERROR("Invalid command\r\n");
 		return -1;
 	}
 
-	if(g_packetsTable[id].len != payloadLen-sizeof(packetHeaderStruct_t)){
+	if (g_packetsTable[id].len != payloadLen-sizeof(packetHeaderStruct_t)){
 		LOG_ERROR("Too small payload\r\n");
+		return -1;
+	}
+
+	if (g_packetsTable[id].callback == NULL) {
+		LOG_INFO("This command does not have an implemented callback. Callback == NULL\r\n");
 		return -1;
 	}
 
 	// here the checksum is computed,
 	uint8_t checksum = 0;
-	uint8_t* rawByte = (uint8_t*)currentPacketHeaderPtr;
-	const size_t offsetOfChecksum = (uint8_t*)&(currentPacketHeaderPtr->checksum) - rawByte;
+	uint8_t* rawBytePtr = (uint8_t*)currentPacketHeaderPtr;
+	const size_t offsetOfChecksum = (uint8_t*)&(currentPacketHeaderPtr->checksum) - rawBytePtr;
 	// Add all the content of the packet except the checksum
-	for(size_t i = 0; i < payloadLen; ++i) {
+	for (size_t i = 0; i < payloadLen; ++i) {
 		if (i != offsetOfChecksum) {
-			checksum += rawByte[i];
+			checksum += rawBytePtr[i];
 		}
 	}
 
@@ -66,8 +73,8 @@ void hermes_send(uint8_t packetType, uint8_t* pData, size_t dataLen){
 	size_t packetLen =  sizeof(packetHeaderStruct_t) + dataLen;
 
 	// Initialize temporary buffer
-	uint8_t payload[255];
-	char packet[257];
+	uint8_t payload[COBS_MAX_PAYLOAD_LEN];
+	char packet[COBS_MAX_PACKET_LEN];
 
 	// Initialize the header
 	packetHeaderStruct_t* headerPtr = (packetHeaderStruct_t *)payload;
