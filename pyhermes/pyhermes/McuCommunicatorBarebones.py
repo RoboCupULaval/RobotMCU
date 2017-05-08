@@ -41,8 +41,9 @@ class McuCommunicatorBarebones(object):
         # Serial port detection handling for windows
         if os.name == 'nt':
             available_ports = list(
-                serial.tools.list_ports.grep('STM'))
+                serial.tools.list_ports.comports())
             available_ports.sort()
+            print(available_ports)
             for a_port in available_ports:
                 try:
                     serial.serial_port = serial.Serial(a_port[0], timeout=1)
@@ -51,10 +52,25 @@ class McuCommunicatorBarebones(object):
         # Serial port detection handling for Linux
         else:
             available_ports = list(
-                serial.tools.list_ports.grep('STM32 Virtual ComPort'))
+                serial.tools.list_ports.grep(''))
             available_ports.sort()
-            self.serial_port = serial.Serial(available_ports[0].device,
-                                             timeout=0.2)
+            print(available_ports)
+            if os.path.exists("/dev/ttyBaseStation"):
+                device_path = "/dev/ttyBaseStation"
+            else:
+                try:
+                    device_path = available_ports[0].device
+                except AttributeError:
+                    device_path = available_ports[0][0]
+            print("We choose serial port{}".format(device_path))
+            while True:
+                try:
+                    self.serial_port = serial.Serial(device_path, timeout=0.2)
+                except serial.serialutil.SerialException:
+                    print("Fail to open port, device busy")
+                    sleep(1)
+                    continue
+                break
         self.serial_lock = threading.RLock()
         if self.serial_port is None:
             raise Exception("No stm32 serial port was detected!")

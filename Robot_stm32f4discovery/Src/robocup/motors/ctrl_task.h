@@ -29,6 +29,9 @@ typedef struct {
 	TickType_t tickSinceLastUpdate;
 } SpeedCommandOpen_t;
 
+#define SPEED_COMMAND_DEADZONE_VX	0.05f
+#define SPEED_COMMAND_DEADZONE_VY	0.05f
+#define SPEED_COMMAND_DEADZONE_VT	0.25f
 
 extern volatile CtrlLoop_t g_ctrlLoopState;
 extern volatile SpeedCommand_t g_speedCommand;
@@ -39,9 +42,9 @@ extern Wheel_t wheels[];
 extern const size_t wheelsLen;
 
 void ctrl_taskEntryPoint(void);
-void ctrl_emergencyBreak(void);
+void ctrl_emergencyBrake(void);
 void initPwmAndQuad(void);
-void readQuadsSpeed(int32_t *wheelSpeed);
+void readQuadsSpeed(float *wheelSpeed);
 bool hasSpeedCommandTimeout(void);
 bool hasSpeedCommandOpenTimeout(void);
 

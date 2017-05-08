@@ -14,6 +14,8 @@
 
 void log_init(comHandle_t comInterface);
 void log_setBatteryVoltage(const double batteryVoltage);
+void log_setCurrent(const double current);
+void log_metadata(void);
 void LOG_INFO(const char * pMessage);
 void LOG_ERROR(const char * pMessage);
 void LOG_DEBUG(const char * pMessage);

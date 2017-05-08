@@ -9,6 +9,7 @@ void slow_taskEntryPoint(void) {
 	dribbler_init();
 	led_init();
 	kicker_init();
+	ball_init();
 
 	dribbler_setPWM(0.0f);
 
@@ -16,7 +17,7 @@ void slow_taskEntryPoint(void) {
 		led_swipingLedTest();
 	}
 
-	uint8_t id = robot_getID();
+	uint8_t id = robot_getPlayerID();
 	for(;;) {
 		//Debug modee
 		if(robot_isDebug()) {
@@ -24,13 +25,14 @@ void slow_taskEntryPoint(void) {
 
 			//ID selection
 			led_turnOff(id);
-			id = robot_getID();
+			id = robot_getPlayerID();
 			led_turnOn(id);
 		}
-
+		ball_updateADC();
 		kicker_update();
 
 		log_setBatteryVoltage(pmu_getBattVoltage());
+		log_setCurrent(pmu_getCurrent());
 
 		slow_handleBattProtection();
 

@@ -8,14 +8,16 @@
 #ifndef ROBOCUP_UTIL_H_
 #define ROBOCUP_UTIL_H_
 #include <stdint.h>
+#include <stdbool.h>
 
-#include "log.h"
+#include "console/log.h"
 #include "robocup_define.h"
 
 
-uint8_t robot_isDebug(void);
-uint8_t robot_getID(void);
-uint8_t robot_isBtnPressed(void);
+bool robot_isDebug(void);
+uint8_t robot_getPlayerID(void);
+uint8_t robot_getUniqueRobotID(void);
+bool robot_isBtnPressed(void);
 
 
 #endif /* ROBOCUP_UTIL_H_ */

@@ -27,9 +27,9 @@ uint8_t TxAddress[] = {
 };
 
 void nrfInit(const size_t packetSize) {
-	TM_NRF24L01_Init(100, packetSize);
+	TM_NRF24L01_Init((uint8_t)NRF_DEFAULT_RF_CH, (uint8_t)packetSize);
 	TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_1M, TM_NRF24L01_OutputPower_0dBm);
-	MyAddress[4] = robot_getID();
+	MyAddress[4] = robot_getPlayerID();
 	TM_NRF24L01_SetMyAddress(MyAddress);
 	TM_NRF24L01_SetTxAddress(TxAddress);
 	TM_NRF24L01_PowerUpRx();
@@ -64,4 +64,12 @@ uint8_t nrfRetransmitCount(void) {
 
 uint8_t nrfGetStatus(void) {
 	return TM_NRF24L01_GetStatus();
+}
+
+bool nrfVerifySPI(void) {
+	int val = TM_NRF24L01_ReadRegister(NRF_REG_RF_CH);
+	if(val == NRF_DEFAULT_RF_CH)
+		return true;
+	else
+		return false;
 }

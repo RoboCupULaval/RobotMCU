@@ -485,6 +485,16 @@ uint8_t TM_NRF24L01_GetRetransmissionsCount(void) {
 	return retransmit_cnt;
 }
 
+uint8_t TM_NRF24L01_ReadRegister(uint8_t register_address) {
+	/* Low 4 bits */
+	CS_low();
+	TM_NRF24L01_SPI_Send(NRF24L01_READ_REGISTER_MASK(register_address));
+	uint8_t register_value = TM_NRF24L01_SPI_Send(NRF24L01_NOP_MASK) & 0x0F;
+	CS_high();
+
+	return register_value;
+}
+
 void TM_NRF24L01_SetChannel(uint8_t channel) {
 	if (channel <= 125) {
 		TM_NRF24L01_WriteRegister(NRF24L01_REG_RF_CH, channel);

@@ -8,12 +8,19 @@
 
 
 
+static volatile char s_endChar = '\0';
 
-comHandle_t bluetooth_init(void){
+comHandle_t bluetooth_init(bool useAsConsole){
 	comHandle_t com;
 	com.read = bluetooth_read;
 	com.write = bluetooth_write;
 	com.readUntilZero = bluetooth_readUntilZero;
+
+	if (useAsConsole)
+		s_endChar = '\n';
+	else
+		s_endChar = '\0';
+
 	return com;
 }
 
@@ -68,7 +75,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 	char c = s_rxSerialBuffer[s_rxSerialBufferLen];
 	// As long as the zero character is not received, the callback is
 	// renable by calling HAL_UART_Receive_IT()
-	if (c == '\0') {
+	if (c == s_endChar) {
 		s_receivedPacket = true;
 	} else {
 		s_rxSerialBufferLen++;

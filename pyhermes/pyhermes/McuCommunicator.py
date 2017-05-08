@@ -5,7 +5,7 @@ import struct
 from .McuCommunicatorBarebones import McuCommunicatorBarebones
 from .packet_definitions import PacketID, PACKET_INFO
 
-CONTROL_ADDR = 0x00  # The computer's address
+CONTROL_ADDR = 0xFE  # The computer's address
 
 DRIBBLER_REGISTER = 0x03
 KICK_REGISTER = 0x01
@@ -101,5 +101,14 @@ class McuCommunicator(McuCommunicatorBarebones):
         payload = struct.pack(struct_string, CHARGE_REGISTER, 0)
         robot_addr = robot_id
 
+        super()._send_packet(CONTROL_ADDR, robot_addr,
+                             packet_id, payload)
+
+    def setRegister(self, robot_id, register_id, value):
+        """ to remove"""
+        packet_id = PacketID.SET_REGISTER
+        struct_string = PACKET_INFO[packet_id][0]
+        payload = struct.pack(struct_string, register_id, value)
+        robot_addr = robot_id
         super()._send_packet(CONTROL_ADDR, robot_addr,
                              packet_id, payload)

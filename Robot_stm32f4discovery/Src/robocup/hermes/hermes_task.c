@@ -6,6 +6,10 @@
 
 // This is the main task, it is intended to run indefinitely
 void hermes_task_slave(void) {
+	if (robot_isDebug()) {
+		vTaskSuspend(NULL); //No hermes in debug mode
+	}
+
 	// We have a small stack, this is why they are static
 	static uint8_t packetBuffer[ COBS_MAX_PAYLOAD_LEN ];
 	static uint8_t dataBuffer[ COBS_MAX_PACKET_LEN ];
@@ -24,10 +28,15 @@ void hermes_task_slave(void) {
 		}
 
 		// Check if we actually have received a possibly valid packet, which needs a complete header
-		if (bytesReceived < sizeof(packetHeaderStruct_t)+sizeof(uint8_t)) {
+		if (bytesReceived < sizeof(uint8_t) + sizeof(packetHeaderStruct_t)) {
 			LOG_ERROR_AND_BUFFER("The received packet is too small", packetBuffer, bytesReceived);
-			continue;
-	    }
+		}
+		// Check if our robot is recipient, before decoding
+		//encodedPacketHeaderStruct_t* encodedHeader = (encodedPacketHeaderStruct_t *) packetBuffer;
+		//if (encodedHeader->header.destAddress != robot_getPlayerID() && encodedHeader->header.destAddress != ADDR_BROADCAST) {
+		//	LOG_ERROR_AND_BUFFER("Wrong dest", packetBuffer, bytesReceived);
+		//	continue;
+	    //}
 
 		// The packet is decoded
 		result_status = decobifyData(packetBuffer, dataBuffer, &payloadLen);
