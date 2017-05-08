@@ -1,7 +1,7 @@
 #include <string.h>
 
 #include "nrf.h"
-#include "../nrfDriver/nrfDriver.h"
+#include "../../nrfDriver/nrfDriver.h"
 
 #define PACKET_SIZE 23
 comHandle_t nrf_init(void){

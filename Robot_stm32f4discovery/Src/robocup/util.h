@@ -10,7 +10,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "console/log.h"
+#include "log.h"
 #include "robocup_define.h"
 
 

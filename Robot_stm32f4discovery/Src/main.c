@@ -55,8 +55,8 @@
 /* USER CODE BEGIN Includes */
 // Local includes
 #include "robocup/robocup_define.h"
-#include "robocup/com_interfaces/bluetooth.h"
-#include "robocup/com_interfaces/nrf.h"
+#include "robocup/hermes/com_interfaces/bluetooth.h"
+#include "robocup/hermes/com_interfaces/nrf.h"
 #include "robocup/hermes/hermes_task.h"
 #include "robocup/motors/ctrl_task.h"
 #include "robocup/console/console.h"

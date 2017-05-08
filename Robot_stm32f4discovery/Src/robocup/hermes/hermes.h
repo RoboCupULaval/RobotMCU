@@ -11,40 +11,15 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../robocup_define.h"
-#include "../com_interfaces/com_interface.h"
-#include "../util.h"
-#include "packets_table.h"
+#include "com_interfaces/com_interface.h"
+#include "packets_definitions.h"
 
-#define COBS_MAX_PAYLOAD_LEN 255
-// Packet = Offset(1 byte) + Payload + \0(1 byte)
-#define COBS_MAX_PACKET_LEN 257
-
-static const uint8_t ADDR_BROADCAST    = 0xFF;
-static const uint8_t ADDR_BASE_STATION = 0xFE;
-
+static const uint8_t ADDR_BASE_STATION = 0x00;
 static const uint8_t PROTOCOL_VERSION  = 0x01;
 
-/*******************************************************************************
- * User Interface Function
- *******************************************************************************/
-
-
-typedef enum {
-	RESULT_FAILURE = 0,
-	RESULT_SUCCESS
-}Result_t;
-
-typedef struct packetHeaderStruct packetHeaderStruct;
-
-void                 hermes_init(comHandle_t com);
-Result_t             validatePayload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen);
-void                 hermes_sendError(char * pStr);
-packetHeaderStruct_t hermes_createHeader(uint8_t packetType);
-void                 hermes_sendAcknowledgment(void);
-void                 hermes_sendPayloadLessRespond(uint8_t packetType);
-void                 hermes_sendRespond(uint8_t packetType, char* pData, size_t dataLen);
-Result_t             cobifyData(const void *ptr, size_t msg_len,   char *dst);
-Result_t             decobifyData(const char *ptr, size_t len, void *dst, size_t *dst_len);
+void   hermes_init(comHandle_t com);
+int    hermes_validate_payload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen);
+size_t hermes_read(uint8_t* packetBuffer, int maxBytes);
+void   hermes_send(uint8_t packetType, uint8_t* pData, size_t dataLen);
 
 #endif // HERMES_H_

@@ -4,6 +4,7 @@ a robot. It is not very useful by itself since it only contains
 the functional primitives."""
 
 import os
+from time import sleep
 import threading
 import struct
 import serial

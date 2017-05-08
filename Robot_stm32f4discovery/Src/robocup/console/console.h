@@ -13,7 +13,7 @@
 #include <stdlib.h>
 
 #include "../robocup_define.h"
-#include "../com_interfaces/com_interface.h"
+#include "../hermes/com_interfaces/com_interface.h"
 #include "../util.h"
 
 #include "../pmu.h"

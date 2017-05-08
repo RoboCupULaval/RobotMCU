@@ -8,7 +8,7 @@
 #ifndef ROBOCUP_ROBOCUP_DEFINE_H_
 #define ROBOCUP_ROBOCUP_DEFINE_H_
 
-#include "com_interfaces/com_interface.h"
+#include "hermes/com_interfaces/com_interface.h"
 
 
 

@@ -159,7 +159,7 @@ void hermesTaskLoopFunction(void const * argument)
 {
   /* USER CODE BEGIN hermesTaskLoopFunction */
 	for (;;) {
-		hermes_taskEntryPoint();
+		hermes_task_slave();
 	    osDelay(100);
 	}
   /* USER CODE END hermesTaskLoopFunction */

@@ -11,14 +11,15 @@ import enum
 
 #TODO: autogenerate this file content from the C code
 
+
 class PacketID(enum.IntEnum):
     """ The packet IDs for each type of normal command.
     """
     PING_REQUEST = 0x00
-    PING_RESPOND = 0x01
+    PING_RESPONSE = 0x01
     SPEED_MOVE = 0x02
-    OPEN_LOOP_COMMAND = 0x2E
     SET_REGISTER = 0x03
+    OPEN_LOOP_COMMAND = 0x04
 
 # This data structure has the following information
 # packet_id :  (pack_string, return_packet_id)
@@ -28,9 +29,9 @@ class PacketID(enum.IntEnum):
 
 
 PACKET_INFO = {
-    PacketID.PING_REQUEST: (None, PacketID.PING_RESPOND),
-    PacketID.PING_RESPOND: (None, None),
+    PacketID.PING_REQUEST: (None, PacketID.PING_RESPONSE),
+    PacketID.PING_RESPONSE: (None, None),
     PacketID.SPEED_MOVE: ('fff', None),
-    PacketID.OPEN_LOOP_COMMAND: ('ffff', None),
-    PacketID.SET_REGISTER: ('BB', None)
+    PacketID.SET_REGISTER: ('BB', None),
+    PacketID.OPEN_LOOP_COMMAND: ('ffff', None)
     }

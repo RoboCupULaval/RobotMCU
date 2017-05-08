@@ -13,23 +13,21 @@
 #include "hermes_task.h"
 #include "../kicker.h"
 
-void nop(const void *msg){}
-
-
-void command_heartbeatRequest(const void *msg){
-	hermes_sendPayloadLessRespond(HeartbeatResponse);
+void command_heartbeatRequest(uint8_t origin_id, uint8_t* msg){
+	hermes_send(PING_RESPONSE, NULL, 0);
 }
 
 // Extracts the speed commands and puts it into the global speed command
-void command_movementCommand(const void *msg){
+void command_movementCommand(uint8_t origin_id, uint8_t* msg){
     msg_set_speed_t * movementMsg = (msg_set_speed_t *) msg;
     g_speedCommand.vx = movementMsg->vx;
     g_speedCommand.vy = movementMsg->vy;
     g_speedCommand.vtheta = movementMsg->vtheta;
+
     g_speedCommand.tickSinceLastUpdate = xTaskGetTickCount();
 }
 
-void command_movementCommandOpen(const void *msg){
+void command_movementCommandOpen(uint8_t origin_id, uint8_t* msg){
 	// TODO: should add timing information, so if connection lost, we break
     msg_set_speed_open_t * movementMsg = (msg_set_speed_open_t *) msg;
     g_speedCommandOpen.cmd1 = movementMsg->cmd1;
@@ -39,10 +37,10 @@ void command_movementCommandOpen(const void *msg){
     g_speedCommandOpen.tickSinceLastUpdate = xTaskGetTickCount();
 }
 
-void command_setRegister(const void *msg) {
+void command_setRegister(uint8_t origin_id, uint8_t* msg){
 
 	msg_set_register_t * registerMsg = (msg_set_register_t *) msg;
-	switch (registerMsg->registe) {
+	switch (registerMsg->registerNumber) {
 		case CHARGE_KICKER_COMMAND:
 			LOG_INFO("Charging!!\r\n");
 			kicker_charge();
@@ -105,7 +103,4 @@ void command_setRegister(const void *msg) {
 		default:
 			LOG_ERROR("Unknown register");
 	}
-
-	// TODO: Uncomment when bidirectional implemented
-	//hermes_sendAcknowledgment();
 }
