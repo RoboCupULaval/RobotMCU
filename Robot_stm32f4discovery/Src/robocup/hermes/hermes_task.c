@@ -1,7 +1,7 @@
 #include "hermes_task.h"
 #include "../nrfDriver/nrfDriver.h"
 #include "commands.h"
-#include "../log.h"
+#include "../util.h"
 #include "../cobs/cobs.h"
 
 // This is the main task, it is intended to run indefinitely
