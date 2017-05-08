@@ -22,7 +22,6 @@ void hermes_task_slave(void) {
 		// Check if we actually have received a packet
 		if (bytesReceived == 0) {
 			// It's more efficient to wait a few ticks before trying again
-			// TODO: REMOVE the wait! Maybe taskYIELD?
 			taskYIELD();
 			continue;
 		}
@@ -31,6 +30,8 @@ void hermes_task_slave(void) {
 		if (bytesReceived < sizeof(uint8_t) + sizeof(packetHeaderStruct_t)) {
 			LOG_ERROR_AND_BUFFER("The received packet is too small", packetBuffer, bytesReceived);
 		}
+
+		// TODO : maybe keep that optimisation?
 		// Check if our robot is recipient, before decoding
 		//encodedPacketHeaderStruct_t* encodedHeader = (encodedPacketHeaderStruct_t *) packetBuffer;
 		//if (encodedHeader->header.destAddress != robot_getPlayerID() && encodedHeader->header.destAddress != ADDR_BROADCAST) {
@@ -64,7 +65,6 @@ void hermes_task_slave(void) {
 		}
 
 		// This is use to give back control to other task
-		// TODO: REMOVE the wait! Maybe taskYIELD?
 		taskYIELD();
 	}
 }

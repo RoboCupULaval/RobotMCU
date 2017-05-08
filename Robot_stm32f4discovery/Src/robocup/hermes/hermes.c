@@ -1,6 +1,6 @@
 #include "hermes.h"
 #include "commands.h"
-#include "../log.h"
+#include "../util.h"
 #include "../cobs/cobs.h"
 #include "../robocup_define.h"
 // This is the file containing everything about the packaging/unpackaging of command
@@ -17,7 +17,7 @@ void hermes_init(comHandle_t com){
 int hermes_validate_payload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen) {
 	// TODO: add destination checking (is it the correct robot?), reorder the checking: checksum first, valid protocol version, valid id, valid length
 
-	uint8_t id = currentPacketHeaderPtr->packetType;
+	const uint8_t id = currentPacketHeaderPtr->packetType;
 	if (currentPacketHeaderPtr->protocolVersion != PROTOCOL_VERSION) {
 		LOG_ERROR("Invalid protocol version\r\n");
 		return -1;
@@ -35,6 +35,10 @@ int hermes_validate_payload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t
 
 	if (g_packetsTable[id].callback == NULL) {
 		LOG_INFO("This command does not have an implemented callback. Callback == NULL\r\n");
+		return -1;
+	}
+	if (currentPacketHeaderPtr->destAddress != robot_getPlayerID() && currentPacketHeaderPtr->destAddress != ADDR_BASE_STATION) {
+		LOG_ERROR("Wrong destination!\r\n");
 		return -1;
 	}
 
@@ -59,7 +63,7 @@ int hermes_validate_payload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t
 
 void hermes_create_header(uint8_t packetType, packetHeaderStruct_t* header){
 	header->protocolVersion = PROTOCOL_VERSION;
-	header->srcAddress = robot_getID();
+	header->srcAddress = robot_getPlayerID();
 	header->destAddress = ADDR_BASE_STATION;
 	header->packetType = packetType;
 	header->checksum = 0;
