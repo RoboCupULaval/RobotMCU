@@ -5,14 +5,14 @@ import time
 current_milli_time = lambda: int(round(time.time() * 1000))
 
 def rotate_test(robot_id):
-        print("Start rotate test")
-        port = getFirstSerialPort()
-        com = McuCom(port)
-        com.setRegister(robot_id, REG_CTRL_LOOP_STATE, 2)
-        while True:
-                print("Rotate command send")
-                com.sendSpeed(robot_id, 0 , 0, 1.0) # break
-                sleep(0.01)
+    print("Start rotate test")
+    port = getFirstSerialPort()
+    com = McuCom(port)
+    com.setRegister(robot_id, REG_CTRL_LOOP_STATE, 2)
+    while True:
+            print("Rotate command send")
+            com.sendSpeed(robot_id, 0 , 0, 1.0) # break
+            sleep(0.01)
 
 
 def open_loop_test(robot_id, commands):

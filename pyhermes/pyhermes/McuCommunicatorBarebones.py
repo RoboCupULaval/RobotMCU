@@ -4,7 +4,7 @@ a robot. It is not very useful by itself since it only contains
 the functional primitives."""
 
 import os
-from time import sleep
+import time
 import threading
 import struct
 import serial
@@ -14,7 +14,7 @@ try:
 except ModuleNotFoundError:
     from cobs.cobs import cobs
 
-from .packet_definitions import PACKET_INFO
+from .packet_definitions import PACKET_INFO, get_payload_size
 
 COBS_EXTRA_BYTES = 2
 HEADER_SIZE = 5
@@ -37,7 +37,8 @@ class WrongPacketException(Exception):
 
 class McuCommunicatorBarebones(object):
     """This modules communicates with the communication tower"""
-    def __init__(self):
+    def __init__(self, timeout = 1.0):
+        self.timeout = timeout
         self.serial_port = None
         # Serial port detection handling for windows
         if os.name == 'nt':
@@ -47,7 +48,7 @@ class McuCommunicatorBarebones(object):
             print(available_ports)
             for a_port in available_ports:
                 try:
-                    serial.serial_port = serial.Serial(a_port[0], timeout=1)
+                    serial.serial_port = serial.Serial(a_port[0], timeout=timeout)
                 except Exception:
                     pass
         # Serial port detection handling for Linux
@@ -66,10 +67,10 @@ class McuCommunicatorBarebones(object):
             print("We choose serial port{}".format(device_path))
             while True:
                 try:
-                    self.serial_port = serial.Serial(device_path, timeout=0.2)
+                    self.serial_port = serial.Serial(device_path, timeout=timeout)
                 except serial.serialutil.SerialException:
                     print("Fail to open port, device busy")
-                    sleep(1)
+                    time.sleep(1)
                     continue
                 break
         self.serial_lock = threading.RLock()
@@ -97,6 +98,24 @@ class McuCommunicatorBarebones(object):
         self.serial_port.write(my_packet)
         self.serial_lock.release()
 
+    def _receive_packet(self, expected_size):
+        start_time = time.time()
+
+        byte_left = expected_size
+        response = bytearray()
+        while byte_left > 0:
+            bytes_to_read = self.serial_port.inWaiting()
+            if bytes_to_read > 0:
+                byte_left -= bytes_to_read
+                bytes_receive = self.serial_port.read(bytes_to_read)
+                response += bytes_receive
+                if '\x00' in list(bytes_receive):
+                    return response
+            elif (time.time() - start_time) > self.timeout:
+                raise serial.SerialTimeoutException("Timeout on serial communication")
+        return response
+
+
     def _send_receive_packet(self, orig_addr, dest_addr,
                              packet_id, payload):
         # send the first packet
@@ -106,17 +125,27 @@ class McuCommunicatorBarebones(object):
         # receive the response packet
         packet_to_return = None
         my_packet = bytearray()
-
-        payload_size = struct.calcsize(PACKET_INFO[packet_id][0])
         wanted_id = PACKET_INFO[packet_id][1]
+        wanted_res_format = PACKET_INFO[wanted_id][0]
+        payload_size = struct.calcsize(wanted_res_format) if wanted_res_format != None else 0
 
-        wanted_byte_number = (payload_size +
-                              COBS_EXTRA_BYTES +
-                              HEADER_SIZE)
+        wanted_byte_number = (HEADER_SIZE +
+                              payload_size +
+                              COBS_EXTRA_BYTES )
+        
+        try:
+            received_bytes = self._receive_packet(wanted_byte_number)
+        except:
+            self.serial_lock.release()
+            raise
 
-        received_bytes = self.serial_port.read(wanted_byte_number)
+        if received_bytes.count(0) > 1:
+            print("Multiple packet response at the same time, only the first is kept")
+            received_bytes = received_bytes.split(0)[0]
         my_packet = bytearray(received_bytes)
         self.serial_lock.release()
+
+        print(received_bytes)
 
         # remove the COBS encoding
         my_packet.pop()  # Remove of the zero byte at the end
@@ -133,22 +162,25 @@ class McuCommunicatorBarebones(object):
 
     @classmethod
     def _check_packet(cls, packet_bytes, wanted_id):
-        payload_size = PACKET_INFO[wanted_id][0]
+        payload_size = get_payload_size(wanted_id)
         # check if there is at least enough bytes for the header
-        if len(packet_bytes) <= HEADER_SIZE:
-            raise Exception("Not enough bytes in packet")
+        if len(packet_bytes) < HEADER_SIZE:
+            raise Exception("Not enough bytes in packet {}<={}".format(len(packet_bytes), HEADER_SIZE))
         # check protocol version
         if packet_bytes[0] != VERSION:
             raise Exception("Wrong protocol version on the packet!")
         # check the ID
         if packet_bytes[3] != wanted_id:
+            print("Wrong id")
             raise WrongPacketException(packet_bytes)
         # check the payload length
         if len(packet_bytes) - HEADER_SIZE != payload_size:
+            print("Wrong size")
             raise WrongPacketException(packet_bytes)
         # check the checksum
         checksum = cls._compute_checksum(packet_bytes)
         if packet_bytes[4] != checksum:
+            print("Wrong checksum, expected {}, received {}".format(checksum, packet_bytes[4]))
             raise WrongPacketException(packet_bytes)
         # check the destination
         if packet_bytes[2] != CONTROL_ADDR:
@@ -158,4 +190,5 @@ class McuCommunicatorBarebones(object):
     def _compute_checksum(cls, packet):
         checksum_value = sum(int(a_byte)
                              for a_byte in packet) & BYTE_MASK
+        checksum_value -= packet[4] 
         return checksum_value

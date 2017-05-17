@@ -26,48 +26,54 @@ void communicationTask(void const * argument)
   /* Infinite loop */
   uint8_t packetBytesReceived[260] = {0};
   uint8_t decobifiedPacketBytes[260] = {0};
-  uint8_t packetBytesToSend[260] = {0};
+  uint8_t packetBytesToSend[260];// = {0};
   //int receivedLen;
 
   uint8_t lastDestAddress = 0xF0;
   //TickType_t lastWakeTime = xTaskGetTickCount();
-  for(;;)
-  {
+  for (;;) {
+	//Read a packet from usb
+	if (SerialRead(packetBytesReceived) >= 0) {
+		// Decobify
+		size_t decobifiedLen = 0;
+		int result = decobifyData(packetBytesReceived, decobifiedPacketBytes, &decobifiedLen);
 
+		// Check if decobification was successful
+		if (result == -1 || decobifiedLen < sizeof(packetHeaderStruct_t)) {
+			HAL_GPIO_TogglePin(GPIOD, LD3_Pin);
+			continue;
+		}
+		// Extract useful info
 
-	  //Read a packet from usb
-	  if (SerialRead(packetBytesReceived) >= 0) {
-		  // Decobify
-		  size_t decobifiedLen = 0;
-          int result = decobifyData(packetBytesReceived, decobifiedPacketBytes, &decobifiedLen);
+		// Recob it if necessary
+		cobifyData(decobifiedPacketBytes, packetBytesToSend, decobifiedLen);
 
-		  // Check if decobification was successful
-		  if (result == -1) {
-		      HAL_GPIO_TogglePin(GPIOD, LD3_Pin);
-			  continue;
-		  }
-		  // Extract useful info
+		// Send to Destination through NRF if necessary
+		packetHeaderStruct_t* packet = (packetHeaderStruct_t*)decobifiedPacketBytes;
 
-		  // Recob it if necessary
-		  cobifyData(decobifiedPacketBytes, packetBytesToSend, decobifiedLen);
+		if (lastDestAddress != packet->destAddress) {
+			lastDestAddress = packet->destAddress;
+			nrfSetRobotTX(packet->destAddress);
+		}
+		nrfSend(packetBytesReceived);
 
-		  // Send to Destination through NRF if necessary
-		  packetHeaderStruct_t* packet = (packetHeaderStruct_t*)decobifiedPacketBytes;
+		// TODO: Remove this from here
+		enum packetTypes_t {
+			PING_REQUEST = 0,
+			PING_RESPONSE,
+			SPEED_MOVE,
+			SET_REGISTER,
+			OPEN_LOOP_COMMAND
+		};
+		//if (nrfReceiveReady()) {
+		if (packet->packetType == PING_REQUEST) {
+			//Read a packet from nrf
+			nrfSetRobotTX(2);
+			nrfReceive(packetBytesToSend);
 
-		  if (lastDestAddress != packet->destAddress) {
-			  lastDestAddress = packet->destAddress;
-			  nrfSetRobotTX(packet->destAddress);
-		  }
-		  nrfSend(packetBytesReceived);
-	  }
-
-	  /* if (nrfReceiveReady()) {
-		  //Read a packet from nrf
-		  nrfReceive(packetBytesToSend);
-
-		  // Send to Destination through USB if necessary
-		  SerialWrite(packetBytesToSend, strlen(packetBytesToSend));
-	  }*/
-
+			// Send to response through USB, including the zero byte
+			SerialWrite(packetBytesToSend, strlen(packetBytesToSend)+1);
+		}
+	}
   }
 }

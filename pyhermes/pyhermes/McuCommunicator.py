@@ -4,6 +4,7 @@
 import struct
 from .McuCommunicatorBarebones import McuCommunicatorBarebones
 from .packet_definitions import PacketID, PACKET_INFO
+import serial
 
 CONTROL_ADDR = 0xFE  # The computer's address
 
@@ -23,8 +24,12 @@ class McuCommunicator(McuCommunicatorBarebones):
         """
         payload = None
         robot_addr = robot_id
-        super()._send_receive_packet(CONTROL_ADDR, robot_addr,
-                                     PacketID.PING_REQUEST, payload)
+
+        try:
+            super()._send_receive_packet(CONTROL_ADDR, robot_addr,
+                                         PacketID.PING_REQUEST, payload)
+        except serial.SerialTimeoutException:
+            return False
         return True
 
     def sendSpeed(self, robot_id, speed_x, speed_y, speed_rotation):

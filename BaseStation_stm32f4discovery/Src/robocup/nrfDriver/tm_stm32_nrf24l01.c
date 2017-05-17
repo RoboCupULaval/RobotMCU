@@ -418,7 +418,7 @@ void TM_NRF24L01_GetData(uint8_t* data) {
 	uint32_t count = PayloadSize;
 	while (count--) {
 		uint8_t data2 = 0;
-		HAL_SPI_TransmitReceive(&hspi2, data, &data2, 1, 0);
+		HAL_SPI_TransmitReceive(&hspi2, &data2, data, 1, 0);
 		data++;
 	}
 

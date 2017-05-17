@@ -30,7 +30,6 @@ void nrfInit(const size_t packetSize, const uint8_t robot_id) {
 	TM_NRF24L01_Init((uint8_t)NRF_DEFAULT_RF_CH, (uint8_t)packetSize);
 	TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_1M, TM_NRF24L01_OutputPower_0dBm);
 
-	// We set the address to match the robot ID
 	MyAddress[4] = robot_id;
 
 	TM_NRF24L01_SetMyAddress(MyAddress);
@@ -40,15 +39,24 @@ void nrfInit(const size_t packetSize, const uint8_t robot_id) {
 
 void nrfSend(uint8_t * dataOut) {
 	TM_NRF24L01_Transmit_Status_t transmissionStatus;
-
-	TM_NRF24L01_Transmit(dataOut);
+	int retry = 100;
 	do {
-		/* Get transmission status */
-		transmissionStatus = TM_NRF24L01_GetTransmissionStatus();
-	} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Sending);
+		TM_NRF24L01_Transmit(dataOut);
+		do {
+			/* Get transmission status */
+			transmissionStatus = TM_NRF24L01_GetTransmissionStatus();
+			taskYIELD();
+			retry--;
+		} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Sending && retry > 0);
+		//Get back into RX mode
+		TM_NRF24L01_PowerUpRx();
 
-	//Get back into RX mode
-	TM_NRF24L01_PowerUpRx();
+		retry--;
+	} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Lost && retry > 0);
+
+	if (retry == 0) {
+		LOG_ERROR("Transmission lost, after too many retries");
+	}
 }
 
 void nrfReceive(uint8_t * dataIn) {

@@ -10,6 +10,14 @@ void hermes_task_slave(void) {
 		vTaskSuspend(NULL); //No hermes in debug mode
 	}
 
+
+	// TODO: Test code remove before merging in something useful
+//	for(;;) {
+//		hermes_send(PING_RESPONSE, NULL, 0);
+//		taskYIELD();
+//		//HAL_Delay(20);
+//	}
+
 	// We have a small stack, this is why they are static
 	static uint8_t packetBuffer[ COBS_MAX_PAYLOAD_LEN ];
 	static uint8_t dataBuffer[ COBS_MAX_PACKET_LEN ];

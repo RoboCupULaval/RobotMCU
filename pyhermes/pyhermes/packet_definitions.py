@@ -35,3 +35,8 @@ PACKET_INFO = {
     PacketID.SET_REGISTER: ('BB', None),
     PacketID.OPEN_LOOP_COMMAND: ('ffff', None)
     }
+    
+def get_payload_size(wanted_id):
+    wanted_res_format = PACKET_INFO[wanted_id][0]
+    payload_size = struct.calcsize(wanted_res_format) if wanted_res_format != None else 0
+    return payload_size

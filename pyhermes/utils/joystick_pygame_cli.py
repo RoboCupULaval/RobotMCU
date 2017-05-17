@@ -68,6 +68,7 @@ def joystick_pygame_cli(robot_id):
 		robotJoystick.append((RobotJoystick(joystick), robot_id + i))
 
 	com = McuCommunicator()
+	# TODO fix that
 	com.setRegister(robot_id, 0x00, 1)
 
 	while True:

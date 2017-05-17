@@ -11,6 +11,10 @@
 #include "task.h"
 #include "stdbool.h"
 
+
+#define NRF_DEFAULT_RF_CH	100
+#define NRF_REG_RF_CH		0x05
+
 uint8_t MyAddress[] = {
 	0xE7,
 	0xE7,
@@ -28,7 +32,7 @@ uint8_t TxAddress[] = {
 };
 
 void nrfInit() {
-	TM_NRF24L01_Init(100, 23);
+	TM_NRF24L01_Init(NRF_DEFAULT_RF_CH, 23);
 	TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_1M, TM_NRF24L01_OutputPower_0dBm);
 	TM_NRF24L01_SetMyAddress(MyAddress);
 	TM_NRF24L01_SetTxAddress(TxAddress);
@@ -79,7 +83,9 @@ void nrfSend(uint8_t * dataOut) {//, bool forceRetryBool) {
 }
 
 void nrfReceive(uint8_t * dataIn) {
-	while (!TM_NRF24L01_DataReady());
+	while (!TM_NRF24L01_DataReady()) {
+		//osDelay(1);// Prevent active wait
+	}
 	TM_NRF24L01_GetData(dataIn);
 }
 
