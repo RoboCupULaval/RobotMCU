@@ -2,9 +2,13 @@
 """This module contains an interface to communicate with the robots."""
 
 import struct
-from .McuCommunicatorBarebones import McuCommunicatorBarebones
+from .McuCommunicatorBarebones import McuCommunicatorBarebones, WrongPacketException
 from .packet_definitions import PacketID, PACKET_INFO
 import serial
+try:
+    from cobs import cobs
+except ModuleNotFoundError:
+    from cobs.cobs import cobs
 
 CONTROL_ADDR = 0xFE  # The computer's address
 
@@ -23,14 +27,33 @@ class McuCommunicator(McuCommunicatorBarebones):
             Returns True if ping succeeded.
         """
         payload = None
-        robot_addr = robot_id
 
         try:
-            super()._send_receive_packet(CONTROL_ADDR, robot_addr,
+            super()._send_receive_packet(CONTROL_ADDR, robot_id,
                                          PacketID.PING_REQUEST, payload)
-        except serial.SerialTimeoutException:
+        except (serial.SerialTimeoutException, cobs.DecodeError, WrongPacketException) as err:
+            print("ERROR:", err)
             return False
         return True
+
+    def getBatterie(self, robot_id):
+        payload = None
+        try:
+            packet_response = super()._send_receive_packet(CONTROL_ADDR, robot_id,
+                                                           PacketID.GET_BATTERIE, payload)
+        except (serial.SerialTimeoutException, cobs.DecodeError, WrongPacketException):
+            return False
+        batterie_lvl = packet_response[5] / 10.0
+        return batterie_lvl
+
+
+    def getNumRequest(self, robot_id):
+        payload = None
+        packet_response = super()._send_receive_packet(CONTROL_ADDR, robot_id,
+                                                       PacketID.GET_NUM_REQUEST, payload)
+        num_request = struct.unpack('I', packet_response[5:9])
+        return num_request[0]
+
 
     def sendSpeed(self, robot_id, speed_x, speed_y, speed_rotation):
         """Sets the desired speed for the robot.

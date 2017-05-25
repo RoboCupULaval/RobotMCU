@@ -39,29 +39,37 @@ void nrfInit(const size_t packetSize, const uint8_t robot_id) {
 
 void nrfSend(uint8_t * dataOut) {
 	TM_NRF24L01_Transmit_Status_t transmissionStatus;
+	const TickType_t startTime = xTaskGetTickCount();
 	int retry = 100;
 	do {
 		TM_NRF24L01_Transmit(dataOut);
 		do {
 			/* Get transmission status */
 			transmissionStatus = TM_NRF24L01_GetTransmissionStatus();
-			taskYIELD();
-			retry--;
-		} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Sending && retry > 0);
+			//retry--;
+		} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Sending && xTaskGetTickCount()-startTime < 1);
 		//Get back into RX mode
 		TM_NRF24L01_PowerUpRx();
 
 		retry--;
 	} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Lost && retry > 0);
 
-	if (retry == 0) {
-		LOG_ERROR("Transmission lost, after too many retries");
+	if (retry == 0 || xTaskGetTickCount()-startTime >= 1) {
+		LOG_ERROR("Transmission lost, fail to send\r\n");
 	}
+	if (retry > 0 && retry < 99 && xTaskGetTickCount()-startTime == 0) {
+		LOG_ERROR("Transmission save by a retry\r\n");
+	}
+	taskYIELD();
+	//static char str_tmp[100] = {0};
+	//sprintf(str_tmp, "Transmission tooks %u\r\n", xTaskGetTickCount()-startTime);
+	//LOG_INFO(str_tmp);
 }
 
 void nrfReceive(uint8_t * dataIn) {
 	while (!TM_NRF24L01_DataReady()) {
 		osDelay(1);// Prevent active wait
+		//taskYIELD();
 	}
 	TM_NRF24L01_GetData(dataIn);
 }

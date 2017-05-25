@@ -29,9 +29,9 @@ class WrongPacketException(Exception):
     Inputs:
         bytes_list: a list of bytes
     """
-    def __init__(self, bytes_list):
+    def __init__(self, error_name, bytes_list):
         byte_str = ":".join("{:02x}".format(c) for c in bytes_list)
-        message = "Wrong packet received! The bytes: {}".format(byte_str)
+        message = error_name + " The bytes: {}".format(byte_str)
         super(WrongPacketException, self).__init__(message)
 
 
@@ -141,15 +141,19 @@ class McuCommunicatorBarebones(object):
 
         if received_bytes.count(0) > 1:
             print("Multiple packet response at the same time, only the first is kept")
-            received_bytes = received_bytes.split(0)[0]
+            received_bytes = received_bytes.split('\x00')[0] + b'\x00'
         my_packet = bytearray(received_bytes)
         self.serial_lock.release()
 
-        print(received_bytes)
+        #print(received_bytes)
 
         # remove the COBS encoding
         my_packet.pop()  # Remove of the zero byte at the end
-        packet_to_return = cobs.decode(my_packet)
+        try:
+            packet_to_return = cobs.decode(my_packet)
+        except cobs.DecodeError as my_exception:
+            print(my_exception)
+            raise
 
         try:
             self._check_packet(packet_to_return, wanted_id)
@@ -158,6 +162,7 @@ class McuCommunicatorBarebones(object):
             print("Restarting serial port...")
             self.serial_port.close()
             self.__init__()
+            raise
         return packet_to_return
 
     @classmethod
@@ -172,23 +177,23 @@ class McuCommunicatorBarebones(object):
         # check the ID
         if packet_bytes[3] != wanted_id:
             print("Wrong id")
-            raise WrongPacketException(packet_bytes)
+            raise WrongPacketException("Wrong id", packet_bytes)
         # check the payload length
         if len(packet_bytes) - HEADER_SIZE != payload_size:
             print("Wrong size")
-            raise WrongPacketException(packet_bytes)
+            raise WrongPacketException("Wrong size", packet_bytes)
         # check the checksum
         checksum = cls._compute_checksum(packet_bytes)
         if packet_bytes[4] != checksum:
             print("Wrong checksum, expected {}, received {}".format(checksum, packet_bytes[4]))
-            raise WrongPacketException(packet_bytes)
+            raise WrongPacketException("Wrong checksum, expected {}, received {}".format(packet_bytes[4], checksum), packet_bytes)
         # check the destination
         if packet_bytes[2] != CONTROL_ADDR:
-            raise Exception("Wrong destination!")
+            raise WrongPacketException("Wrong destination!", packet_bytes)
 
     @classmethod
     def _compute_checksum(cls, packet):
         checksum_value = sum(int(a_byte)
-                             for a_byte in packet) & BYTE_MASK
-        checksum_value -= packet[4] 
-        return checksum_value
+                             for a_byte in packet)
+        checksum_value -= packet[4] # remove checksum from total
+        return checksum_value & BYTE_MASK

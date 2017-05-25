@@ -6,6 +6,8 @@
  */
 
 #include "communicationTask.h"
+#include "hermes.h"
+
 #include "../../../Src/robocup/nrfDriver/nrfDriver.h"
 #include "usbd_cdc_if.h"
 
@@ -15,6 +17,9 @@
 #include "FreeRTOS.h"
 #include "stm32f4xx.h"
 #include "usb_device.h"
+
+const uint32_t NB_TICK_FOR_TIMEOUT = 5;
+const uint32_t NB_RETRY = 3;
 
 /* communicationTask function */
 void communicationTask(void const * argument)
@@ -26,7 +31,8 @@ void communicationTask(void const * argument)
   /* Infinite loop */
   uint8_t packetBytesReceived[260] = {0};
   uint8_t decobifiedPacketBytes[260] = {0};
-  uint8_t packetBytesToSend[260];// = {0};
+  uint8_t packetBytesToSend[260] = {0};
+  uint8_t packetBytesRobotsResponse[260] = {0};
   //int receivedLen;
 
   uint8_t lastDestAddress = 0xF0;
@@ -46,7 +52,7 @@ void communicationTask(void const * argument)
 		// Extract useful info
 
 		// Recob it if necessary
-		cobifyData(decobifiedPacketBytes, packetBytesToSend, decobifiedLen);
+		//cobifyData(decobifiedPacketBytes, packetBytesToSend, decobifiedLen);
 
 		// Send to Destination through NRF if necessary
 		packetHeaderStruct_t* packet = (packetHeaderStruct_t*)decobifiedPacketBytes;
@@ -56,23 +62,33 @@ void communicationTask(void const * argument)
 			nrfSetRobotTX(packet->destAddress);
 		}
 		nrfSend(packetBytesReceived);
-
 		// TODO: Remove this from here
-		enum packetTypes_t {
-			PING_REQUEST = 0,
-			PING_RESPONSE,
-			SPEED_MOVE,
-			SET_REGISTER,
-			OPEN_LOOP_COMMAND
-		};
 		//if (nrfReceiveReady()) {
-		if (packet->packetType == PING_REQUEST) {
+		if (packet->packetType < g_packetsTableLen && g_packetsTable[packet->packetType].hasResponse) {
+			static int k = 0;
 			//Read a packet from nrf
-			nrfSetRobotTX(2);
-			nrfReceive(packetBytesToSend);
+			//nrfSetRobotTX(2);
 
-			// Send to response through USB, including the zero byte
-			SerialWrite(packetBytesToSend, strlen(packetBytesToSend)+1);
+			int retry = NB_RETRY;
+			while (retry > 0) {
+				const TickType_t startTime = xTaskGetTickCount();
+
+				while (!nrfReceiveReady() && xTaskGetTickCount()-startTime < NB_TICK_FOR_TIMEOUT);
+
+				if (nrfReceiveReady()) {
+					nrfReceive(packetBytesRobotsResponse);
+
+					// Send to response through USB
+					SerialWrite(packetBytesRobotsResponse, strlen(packetBytesRobotsResponse)+1); // including the zero byte
+					if(xTaskGetTickCount()-startTime >= NB_TICK_FOR_TIMEOUT-3) {
+						k++;
+					}
+					break;
+				}
+				// Timeout
+				nrfSend(packetBytesReceived); // Resending
+				retry--;
+			}
 		}
 	}
   }

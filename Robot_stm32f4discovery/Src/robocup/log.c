@@ -41,6 +41,10 @@ void log_setBatteryVoltage(const double batteryVoltage) {
 	s_batteryVoltage = batteryVoltage;
 }
 
+double log_getBatteryVoltage() {
+	return s_batteryVoltage;
+}
+
 void log_setCurrent(const double current) {
 	s_current = current;
 }

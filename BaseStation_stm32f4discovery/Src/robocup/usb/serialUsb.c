@@ -38,6 +38,6 @@ int SerialRead(uint8_t* dataBuffer) {
 }
 
 // This function writes a single (preferably) cobs-encoded packet and sends it through USB
-uint8_t SerialWrite(uint8_t* Buf, uint32_t Len) {
+uint8_t SerialWrite(uint8_t* Buf, size_t Len) {
 	return CDC_Transmit_FS(Buf, Len);
 }

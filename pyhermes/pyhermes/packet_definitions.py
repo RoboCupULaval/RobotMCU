@@ -3,6 +3,7 @@
 """
 
 import enum
+import struct
 
 # To create a new packet and command, please:
 # 1) insert its ID in the enum below
@@ -20,6 +21,10 @@ class PacketID(enum.IntEnum):
     SPEED_MOVE = 0x02
     SET_REGISTER = 0x03
     OPEN_LOOP_COMMAND = 0x04
+    GET_BATTERIE = 0x05,
+    BATTERIE_RESPONSE = 0x06,
+    GET_NUM_REQUEST = 0x07,
+    NUM_REQUEST_RESPONSE = 0x08
 
 # This data structure has the following information
 # packet_id :  (pack_string, return_packet_id)
@@ -33,7 +38,11 @@ PACKET_INFO = {
     PacketID.PING_RESPONSE: (None, None),
     PacketID.SPEED_MOVE: ('fff', None),
     PacketID.SET_REGISTER: ('BB', None),
-    PacketID.OPEN_LOOP_COMMAND: ('ffff', None)
+    PacketID.OPEN_LOOP_COMMAND: ('ffff', None),
+    PacketID.GET_BATTERIE: (None, PacketID.BATTERIE_RESPONSE),
+    PacketID.BATTERIE_RESPONSE: ('B', None),
+    PacketID.GET_NUM_REQUEST: (None, PacketID.NUM_REQUEST_RESPONSE),
+    PacketID.NUM_REQUEST_RESPONSE: ('I', None)
     }
     
 def get_payload_size(wanted_id):

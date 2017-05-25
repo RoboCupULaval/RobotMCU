@@ -56,9 +56,7 @@ void ctrl_taskEntryPoint(void) {
 
 		static int c = 0;
 		if(++c >= 100){
-			c = 0;
-			//if(g_ctrlLoopState == CLOSE_LOOP_WITHOUT_LOGGING)
-				//LOG_INFO("ctrl\r\n");
+			c = 0; // every seconds
 		}
 
 		readQuadsSpeed(wheelSpeed);
@@ -178,13 +176,10 @@ void readQuadsSpeed(float *wheelSpeed) {
 	}
 }
 
-
 bool hasSpeedCommandTimeout(void) {
-	const TickType_t SPEED_COMMAND_TIMEOUT_TICK = 500;
 	return xTaskGetTickCount() - g_speedCommand.tickSinceLastUpdate > SPEED_COMMAND_TIMEOUT_TICK / portTICK_PERIOD_MS;
 }
 
 bool hasSpeedCommandOpenTimeout(void) {
-	const TickType_t SPEED_COMMAND_TIMEOUT_TICK = 500;
 	return xTaskGetTickCount() - g_speedCommandOpen.tickSinceLastUpdate > SPEED_COMMAND_TIMEOUT_TICK / portTICK_PERIOD_MS;
 }

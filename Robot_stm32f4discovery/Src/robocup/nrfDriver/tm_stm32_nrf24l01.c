@@ -275,7 +275,7 @@ uint8_t TM_NRF24L01_Init(uint8_t channel, uint8_t payload_size) {
 	TM_NRF24L01_WriteRegister(NRF24L01_REG_EN_RXADDR, 0x3F);
 
 	/* Auto retransmit delay: 1000 (4x250) us and Up to 15 retransmit trials */
-	TM_NRF24L01_WriteRegister(NRF24L01_REG_SETUP_RETR, 0x4F);
+	TM_NRF24L01_WriteRegister(NRF24L01_REG_SETUP_RETR, 0x05);
 	
 	/* Dynamic length configurations: No dynamic length */
 	TM_NRF24L01_WriteRegister(NRF24L01_REG_DYNPD, (0 << NRF24L01_DPL_P0) | (0 << NRF24L01_DPL_P1) | (0 << NRF24L01_DPL_P2) | (0 << NRF24L01_DPL_P3) | (0 << NRF24L01_DPL_P4) | (0 << NRF24L01_DPL_P5));

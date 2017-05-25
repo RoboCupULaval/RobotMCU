@@ -4,6 +4,7 @@
 #include "../util.h"
 #include "../cobs/cobs.h"
 
+uint32_t g_numReceivedRequest = 0;
 // This is the main task, it is intended to run indefinitely
 void hermes_task_slave(void) {
 	if (robot_isDebug()) {
@@ -69,6 +70,7 @@ void hermes_task_slave(void) {
 
 		// Call callback that handles the packet if need be.
 		if (packet.callback != NULL) {
+			g_numReceivedRequest++;
 		    packet.callback(1, dataBuffer + sizeof(packetHeaderStruct_t));
 		}
 

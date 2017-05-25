@@ -26,6 +26,11 @@ if __name__ == '__main__':
     ping_parser = subparsers.add_parser('ping', help='Send ping to a robot')
     ping_parser.add_argument('robot_id', type=int, help='ID of the robot')
 
+    find_robot_parser = subparsers.add_parser('find_robots', help='Find robot and print there batterie level')
+
+    packet_lost_parser = subparsers.add_parser('test_packet_lost', help='Test number of packet lost in a unidirectional communication')
+    packet_lost_parser.add_argument('robot_id', type=int, help='ID of the robot')
+
     ping_parser=subparsers.add_parser('test_rotate',
                                         help='Send a rotation command to the robot')
     ping_parser.add_argument('robot_id', type=int, help='ID of the robot')
@@ -43,8 +48,11 @@ if __name__ == '__main__':
     args = main_parser.parse_args()
 
     if args.command == 'ping':
-        diagnostic(args.robot_id)
-
+        ping(args.robot_id)
+    elif args.command == 'find_robots':
+        find_robots()
+    elif args.command == 'test_packet_lost':
+        test_packet_lost(args.robot_id)
     elif args.command == 'joystick':
         if args.pygame:
             joystick_pygame_cli(args.robot_id)
