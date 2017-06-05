@@ -10,6 +10,9 @@
 #include "ball_detector.h"
 
 #define KICKER_WAIT_BALL_TIME_IN_TICK 5000
+#define KICKER_SAFETY_WAIT_IN_MS 4
+
+extern uint8_t g_kickMsTick;
 
 typedef enum  {
 	KICKER_FORCE_1 = 1, //time in tick
@@ -25,7 +28,7 @@ void kicker_update(void);
 
 void kicker_chargeOn(void);
 void kicker_chargeOff(void);
-void kicker_kickOn(void);
+void kicker_triggerKick(void);
 void kicker_kickOff(void);
 bool kicker_isBankFull(void);
 

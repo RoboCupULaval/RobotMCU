@@ -19,7 +19,11 @@ def do_joystick(com, joy, robot_id):
 
 	if joy.get_btn_value("X"):
 		print("kick")
-		com.kick(robot_id)
+		com.kick(robot_id, 3)
+		sleep(0.05)
+	if joy.get_btn_value("B"):
+		print("pass")
+		com.kick(robot_id, 1)
 		sleep(0.05)
 	if joy.get_btn_value("A"):
 		print("charge")

@@ -37,12 +37,13 @@
 #include "cmsis_os.h"
 
 /* USER CODE BEGIN 0 */
-
+#include "robocup/kicker.h"
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
 extern PCD_HandleTypeDef hpcd_USB_OTG_FS;
 extern SPI_HandleTypeDef hspi2;
+extern TIM_HandleTypeDef htim7;
 extern TIM_HandleTypeDef htim8;
 extern UART_HandleTypeDef huart5;
 
@@ -114,6 +115,38 @@ void UART5_IRQHandler(void)
   /* USER CODE BEGIN UART5_IRQn 1 */
 
   /* USER CODE END UART5_IRQn 1 */
+}
+
+/**
+* @brief This function handles TIM7 global interrupt.
+*/
+void TIM7_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM7_IRQn 0 */
+
+  /* USER CODE END TIM7_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim7);
+  /* USER CODE BEGIN TIM7_IRQn 1 */
+
+  // We want to wait KICKER_SAFETY_WAIT_IN_MS after the end of the pulse
+  // so charge is never set while kicking
+  if (g_kickMsTick - KICKER_SAFETY_WAIT_IN_MS > 0) {
+	  HAL_GPIO_WritePin(KICK_GPIO_Port, KICK_Pin, GPIO_PIN_SET);
+	  g_kickMsTick--;
+  }
+  else {
+	 HAL_GPIO_WritePin(KICK_GPIO_Port, KICK_Pin, GPIO_PIN_RESET);
+
+     if (g_kickMsTick == 0) {
+	  __HAL_TIM_DISABLE_IT(&htim7, TIM_IT_UPDATE); // Disable interrupt
+     }
+     g_kickMsTick--;
+  }
+
+  __HAL_TIM_CLEAR_IT(&htim7, TIM_IT_UPDATE);
+  //__HAL_TIM_ENABLE_IT(&htim7, TIM_IT_UPDATE);
+  //HAL_NVIC_EnableIRQ(TIM7_IRQn);
+  /* USER CODE END TIM7_IRQn 1 */
 }
 
 /**

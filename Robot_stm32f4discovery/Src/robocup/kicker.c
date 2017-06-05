@@ -1,4 +1,5 @@
 #include "kicker.h"
+#include "tim.h"
 
 typedef enum  {
 	KICKER_IDLE,
@@ -8,9 +9,11 @@ typedef enum  {
 	KICKER_WAIT_FOR_BALL
 } KickerState_t;
 
+
+uint8_t g_kickMsTick = 0;
+
 static KickerState_t s_kicker_state = KICKER_IDLE;
-static uint8_t s_kicker_time_in_tick = 0;
-static TickType_t s_tickWhenStartKicking = 0;
+static uint8_t s_kicker_time_in_ms = 0;
 static TickType_t s_tickWhenWaitingForBall = 0;
 
 void kicker_init(void) {
@@ -27,7 +30,7 @@ void kicker_charge(void) {
 
 void kicker_kick(KickerForce_t time) {
 	if (s_kicker_state == KICKER_READY_TO_KICK) {
-		s_kicker_time_in_tick = (uint8_t)time;
+		s_kicker_time_in_ms = (uint8_t)time;
 		s_tickWhenWaitingForBall = xTaskGetTickCount();
 		s_kicker_state = KICKER_WAIT_FOR_BALL;
 	}
@@ -38,26 +41,24 @@ void kicker_update(void) {
 		case KICKER_READY_TO_KICK:
 		case KICKER_IDLE:
 			kicker_chargeOff();
-			kicker_kickOff();
 			break;
 		case KICKER_CHARGING:
 			kicker_chargeOn();
-			kicker_kickOff();
 			if (kicker_isBankFull()) {
 				s_kicker_state = KICKER_READY_TO_KICK;
 			}
 			break;
 		case KICKER_KICKING:
 			kicker_chargeOff();
-			kicker_kickOn();
-			if (xTaskGetTickCount() - s_tickWhenStartKicking > s_kicker_time_in_tick) {
+			// Wait for the kick to end
+			if (g_kickMsTick == 0) {
 				s_kicker_state = KICKER_IDLE;
 			}
 			break;
 		case KICKER_WAIT_FOR_BALL:
-			if (ball_getState() == BALL_READY_TO_KICK) {
-				s_tickWhenStartKicking = xTaskGetTickCount();
+			if (ball_getState() == BALL_READY_TO_KICK || true) {
 				s_kicker_state = KICKER_KICKING;
+				kicker_triggerKick();
 			} else if (xTaskGetTickCount() - s_tickWhenWaitingForBall > KICKER_WAIT_BALL_TIME_IN_TICK) {
 				s_kicker_state = KICKER_IDLE;
 			}
@@ -72,10 +73,10 @@ void kicker_chargeOff(void) {
 	HAL_GPIO_WritePin(CHARGE_BANK_GPIO_Port, CHARGE_BANK_Pin, GPIO_PIN_RESET);
 }
 
-void kicker_kickOn(void) {
-	HAL_GPIO_WritePin(KICK_GPIO_Port, KICK_Pin, GPIO_PIN_SET);
+void kicker_triggerKick(void) {
+	g_kickMsTick = s_kicker_time_in_ms + KICKER_SAFETY_WAIT_IN_MS;
+	__HAL_TIM_ENABLE_IT(&htim7, TIM_IT_UPDATE);
 }
-
 void kicker_kickOff(void) {
 	HAL_GPIO_WritePin(KICK_GPIO_Port, KICK_Pin, GPIO_PIN_RESET);
 }

@@ -82,12 +82,12 @@ class McuCommunicator(McuCommunicatorBarebones):
         super()._send_packet(CONTROL_ADDR, robot_addr,
                              packet_id, payload)
 
-    def kick(self, robot_id):
+    def kick(self, robot_id, force):
         """ Make the robot kick.
         """
         packet_id = PacketID.SET_REGISTER
         struct_string = PACKET_INFO[packet_id][0]
-        payload = struct.pack(struct_string, KICK_REGISTER, 4)
+        payload = struct.pack(struct_string, KICK_REGISTER, force)
         robot_addr = robot_id
 
         super()._send_packet(CONTROL_ADDR, robot_addr,

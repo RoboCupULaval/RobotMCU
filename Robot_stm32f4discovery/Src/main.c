@@ -111,25 +111,30 @@ int main(void)
   MX_TIM8_Init();
   MX_TIM12_Init();
   MX_ADC1_Init();
+  MX_TIM7_Init();
 
   /* USER CODE BEGIN 2 */
 
-    HAL_TIM_Base_Start(&htim1);
-    HAL_TIM_Base_Start(&htim2);
-  	HAL_TIM_Base_Start(&htim3);
-  	HAL_TIM_Base_Start(&htim4);
-  	HAL_TIM_Base_Start(&htim5);
-  	HAL_TIM_Base_Start(&htim8);
-  	HAL_TIM_Base_Start(&htim12);
+    HAL_TIM_Base_Start(&htim1); // For Encoder
+    HAL_TIM_Base_Start(&htim2); // For Encoder
+  	HAL_TIM_Base_Start(&htim3); // For Encoder
+  	HAL_TIM_Base_Start(&htim4); // For Encoder
+  	HAL_TIM_Base_Start(&htim5); // PWM for motors (1,3,4)
+  	HAL_TIM_Base_Start(&htim7); // For kick interrupt
+  	HAL_TIM_Base_Start(&htim8); // PWM for motor 2
+  	HAL_TIM_Base_Start(&htim12);// PWM for dribbler
 
+  	//__HAL_TIM_ENABLE_IT(&htim7, TIM_IT_UPDATE);
 
   	// Init communication
   	comHandle_t comNrf = nrf_init();
   	hermes_init(comNrf);
 
   	comHandle_t comBluetooth = bluetooth_init(robot_isDebug());
+
   	log_init(comBluetooth);
-  	if(robot_isDebug()) console_init(comBluetooth);
+  	if(robot_isDebug())
+  		console_init(comBluetooth);
 
 	ctrl_emergencyBrake();
 
