@@ -34,20 +34,24 @@ enum packetTypes_t {
 };
 
 typedef struct {
-	uint8_t packet_id;
+	uint8_t packetId;
 	bool    hasResponse;
+	uint8_t nbRetry
 } packet_t;
 
+#define DEFAULT_NB_RETRY 3
+#define NO_RETRY 1
+
 static const packet_t g_packetsTable[] = {
-		{PING_REQUEST,         true},
-		{PING_RESPONSE,        false},
-		{SPEED_MOVE,           false},
-		{SET_REGISTER,         false},
-		{OPEN_LOOP_COMMAND,    false},
-		{GET_BATTERIE,         true},
-		{BATTERIE_RESPONSE,    false},
-		{GET_NUM_REQUEST,      true},
-		{NUM_REQUEST_RESPONSE, false}
+		{PING_REQUEST,         true,  DEFAULT_NB_RETRY},
+		{PING_RESPONSE,        false, DEFAULT_NB_RETRY},
+		{SPEED_MOVE,           false, DEFAULT_NB_RETRY},
+		{SET_REGISTER,         false, DEFAULT_NB_RETRY},
+		{OPEN_LOOP_COMMAND,    false, DEFAULT_NB_RETRY},
+		{GET_BATTERIE,         true,  DEFAULT_NB_RETRY},
+		{BATTERIE_RESPONSE,    false, DEFAULT_NB_RETRY},
+		{GET_NUM_REQUEST,      true,  NO_RETRY},
+		{NUM_REQUEST_RESPONSE, false, DEFAULT_NB_RETRY}
 };
 
 static const size_t g_packetsTableLen = sizeof(g_packetsTable) / sizeof(packet_t);

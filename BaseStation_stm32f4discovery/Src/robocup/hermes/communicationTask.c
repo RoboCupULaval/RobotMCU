@@ -19,7 +19,6 @@
 #include "usb_device.h"
 
 const uint32_t NB_TICK_FOR_TIMEOUT = 5;
-const uint32_t NB_RETRY = 3;
 
 /* communicationTask function */
 void communicationTask(void const * argument)
@@ -66,10 +65,8 @@ void communicationTask(void const * argument)
 		//if (nrfReceiveReady()) {
 		if (packet->packetType < g_packetsTableLen && g_packetsTable[packet->packetType].hasResponse) {
 			static int k = 0;
-			//Read a packet from nrf
-			//nrfSetRobotTX(2);
 
-			int retry = NB_RETRY;
+			int retry = g_packetsTable[packet->packetType].nbRetry;
 			while (retry > 0) {
 				const TickType_t startTime = xTaskGetTickCount();
 
@@ -80,9 +77,9 @@ void communicationTask(void const * argument)
 
 					// Send to response through USB
 					SerialWrite(packetBytesRobotsResponse, strlen(packetBytesRobotsResponse)+1); // including the zero byte
-					if(xTaskGetTickCount()-startTime >= NB_TICK_FOR_TIMEOUT-3) {
-						k++;
-					}
+//					if(xTaskGetTickCount()-startTime >= NB_TICK_FOR_TIMEOUT-3) {
+//						k++;
+//					}
 					break;
 				}
 				// Timeout
