@@ -12,6 +12,13 @@ import struct
 
 #TODO: autogenerate this file content from the C code
 
+class RegisterID(enum.IntEnum):
+    """ The ID of the SET_REGISTER command
+    """
+    CONTROL_LOOP_STATE = 0x00
+    KICK_COMMAND = 0x01
+    CHARGE_KICKER_COMMAND = 0x02
+    SET_DRIBBLER_SPEED_COMMAND = 0x03
 
 class PacketID(enum.IntEnum):
     """ The packet IDs for each type of normal command.
@@ -21,9 +28,9 @@ class PacketID(enum.IntEnum):
     SPEED_MOVE = 0x02
     SET_REGISTER = 0x03
     OPEN_LOOP_COMMAND = 0x04
-    GET_BATTERIE = 0x05,
-    BATTERIE_RESPONSE = 0x06,
-    GET_NUM_REQUEST = 0x07,
+    GET_BATTERIE = 0x05
+    BATTERIE_RESPONSE = 0x06
+    GET_NUM_REQUEST = 0x07
     NUM_REQUEST_RESPONSE = 0x08
 
 # This data structure has the following information

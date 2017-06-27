@@ -70,7 +70,8 @@ void hermes_task_slave(void) {
 
 		// Call callback that handles the packet if need be.
 		if (packet.callback != NULL) {
-			g_numReceivedRequest++;
+			if (currentPacketHeaderPtr->packetType != GET_NUM_REQUEST)
+				g_numReceivedRequest++;
 		    packet.callback(1, dataBuffer + sizeof(packetHeaderStruct_t));
 		}
 

@@ -1,13 +1,15 @@
 from pyhermes.McuCommunicator import McuCommunicator
+from pyhermes.packet_definitions import RegisterID
 from time import sleep
 import time
+from numpy import arange 
+from math import sqrt
 
 current_milli_time = lambda: int(round(time.time() * 1000))
 
 def rotate_test(robot_id):
     print("Start rotate test")
-    port = getFirstSerialPort()
-    com = McuCom(port)
+    com = McuCommunicator()
     com.setRegister(robot_id, REG_CTRL_LOOP_STATE, 2)
     while True:
             print("Rotate command send")
@@ -25,7 +27,6 @@ def open_loop_test(robot_id, commands):
     #     commands.append((200, 0, -cmd/100, 0, cmd/100))
     #
     # commands.append((1000, 0, -0.4, 0, 0.4))
-
     do_test(1, 0, commands, robot_id)
 
 # 0.03 max 2 wheels speed
@@ -34,12 +35,21 @@ def close_loop_test(robot_id, commands):
     # commands = [
     # (10000, 0.3535, 0.3535, 0)
     # ]
-    do_test(1, 1, commands, robot_id)
+
+    a = 1.6 # m/s^2
+
+    max_dist = 3.5 # meters
+    sampling_period = 0.05 # secondes
+    test_duration = sqrt(2 * max_dist / a)
+
+    sampling_time = arange(0, test_duration, sampling_period)
+    speed = a * sampling_time
+    commands = [(50, i, i, 0) for i in speed]
+    do_test(1, 2, commands, robot_id)
 
 
 def do_test(ctrl_loop_state_initially, ctrl_loop_state_for_test, commands, robot_id) :
-    port = getFirstSerialPort()
-    com = McuCom(port)
+    com = McuCommunicator()
 
     # wait to contact robot
     #while not com.testHeartBeat():
@@ -49,7 +59,7 @@ def do_test(ctrl_loop_state_initially, ctrl_loop_state_for_test, commands, robot
     com.sendOpenLoopSpeed(robot_id,0,0,0,0) # break
     sleep(1)
 
-    com.setRegister(robot_id, REG_CTRL_LOOP_STATE, ctrl_loop_state_for_test)
+    com.setRegister(robot_id, RegisterID.CONTROL_LOOP_STATE, ctrl_loop_state_for_test)
 
 
     if ctrl_loop_state_for_test == 0:
@@ -79,6 +89,4 @@ def do_test(ctrl_loop_state_initially, ctrl_loop_state_for_test, commands, robot
             sleep(0.1)
 
 
-    com.setRegister(robot_id, REG_CTRL_LOOP_STATE, ctrl_loop_state_initially) # set close loop
-
-    com.ser.close()
+    com.setRegister(robot_id, RegisterID.CONTROL_LOOP_STATE, ctrl_loop_state_initially) # set close loop

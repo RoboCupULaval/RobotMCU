@@ -1,5 +1,7 @@
+from serial.serialutil import SerialTimeoutException
+
 from pyhermes.McuCommunicator import McuCommunicator
-import time
+import sched, time
 
 
 def ping(robot_id):
@@ -50,32 +52,49 @@ def find_robots():
 
 		time.sleep(1.0)
 
-def test_packet_lost(robot_id):
-	com = McuCommunicator()
 
-	NUMBER_PACKET = 100
-	REQUEST_FREQUENCY = 50
+
+def get_num_request(com, robot_id):
+	flag = True
+	while flag:
+		try:
+			num_request = com.getNumRequest(robot_id)
+		except SerialTimeoutException:
+			print("Timeout on serial com, retrying")
+			continue
+		flag = False
+	return num_request
+
+
+
+def test_packet_lost(robot_id):
+	com = McuCommunicator(timeout = 0.5)
+
+	NUMBER_PACKET = 500
+	REQUEST_FREQUENCY = 20
 	REQUEST_PERIOD = 1.0/REQUEST_FREQUENCY
 
 	print("Sending {} packet at {}hz@{}ms".format(NUMBER_PACKET, REQUEST_FREQUENCY, REQUEST_PERIOD*1000.0))
 
-	start_num_request = com.getNumRequest(robot_id)
-	start_num_request += 1 # Take into account the getNumRequest packet in the count  
-	start_time = time.time()
-	for i in range(0, NUMBER_PACKET):
-		com.sendSpeed(robot_id, 0, 0, 0) # Any command could be use here to benchmark
-		elapse_time = time.time() - start_time
-		#if REQUEST_PERIOD < elapse_time:
-		if i % (NUMBER_PACKET/10) == 0:
-			print("{:5.0f}%".format(float(i)/NUMBER_PACKET * 100.0))
-		should = REQUEST_PERIOD * (i+1)
-		print("Should be {:5.2f}s  is {:5.2f}s, error={:5.2f}".format(should, elapse_time, elapse_time-should))
-		print("This request tooks {:5.2f}ms!!!".format(elapse_time*1000.0))
-		time.sleep(REQUEST_PERIOD)
-	end_num_request = com.getNumRequest(robot_id)
+	sc = sched.scheduler(time.time, time.sleep)
+
+	start_num_request = get_num_request(com, robot_id)
+	#start_num_request += 1 # Take into account the getNumRequest packet in the count
+	start = time.time()
+	def loop_send_packet(sc, nb_left):
+		if nb_left > 0:
+			sc.enter(REQUEST_PERIOD, 1, loop_send_packet, (sc, nb_left-1,))
+		com.sendSpeed(robot_id, 0, 0, -1.0)  # Any unidirectionnal command could be use here to benchmark
+
+	sc.enter(REQUEST_PERIOD, 1, loop_send_packet, (sc, NUMBER_PACKET-1,))
+	sc.run()
+	timelapse = time.time() - start
+	#print("It tooks {:5.2f}s expects {:5.2f}".format(timelapse, NUMBER_PACKET*REQUEST_PERIOD))
+
+	end_num_request = get_num_request(com, robot_id)
 	num_request = end_num_request - start_num_request
 	num_request &= 0xFFFFFFFF  # 32 bit mask
 
-	print("{} request send, {} received, {:5.2f}% received.".format(NUMBER_PACKET, num_request, float(num_request)/NUMBER_PACKET * 100.0))
+	print("{} request send, {} received, {:5.2f}% received in {:5.2f}s.".format(NUMBER_PACKET, num_request, float(num_request)/NUMBER_PACKET * 100.0, timelapse))
 	if num_request > NUMBER_PACKET:
-		print("Too much packet? start={}, end={}".format(start_num_request, end_num_request))
+		print("Too much packet? start={}, end={} num_request={}".format(start_num_request, end_num_request, num_request))

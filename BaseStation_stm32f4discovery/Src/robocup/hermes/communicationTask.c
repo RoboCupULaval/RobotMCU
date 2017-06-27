@@ -61,10 +61,8 @@ void communicationTask(void const * argument)
 			nrfSetRobotTX(packet->destAddress);
 		}
 		nrfSend(packetBytesReceived);
-		// TODO: Remove this from here
-		//if (nrfReceiveReady()) {
+
 		if (packet->packetType < g_packetsTableLen && g_packetsTable[packet->packetType].hasResponse) {
-			static int k = 0;
 
 			int retry = g_packetsTable[packet->packetType].nbRetry;
 			while (retry > 0) {
@@ -77,9 +75,6 @@ void communicationTask(void const * argument)
 
 					// Send to response through USB
 					SerialWrite(packetBytesRobotsResponse, strlen(packetBytesRobotsResponse)+1); // including the zero byte
-//					if(xTaskGetTickCount()-startTime >= NB_TICK_FOR_TIMEOUT-3) {
-//						k++;
-//					}
 					break;
 				}
 				// Timeout

@@ -127,7 +127,7 @@ class McuCommunicatorBarebones(object):
         my_packet = bytearray()
         wanted_id = PACKET_INFO[packet_id][1]
         wanted_res_format = PACKET_INFO[wanted_id][0]
-        payload_size = struct.calcsize(wanted_res_format) if wanted_res_format != None else 0
+        payload_size = struct.calcsize(wanted_res_format) if wanted_res_format is not None else 0
 
         wanted_byte_number = (HEADER_SIZE +
                               payload_size +

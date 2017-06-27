@@ -11,7 +11,7 @@ const float MAX_LIN_ACC	= 1.0f / CONTROL_LOOP_FREQ; //1m/s^2 * control_loop_peri
 // Calculate speed for that motor base on velocity command
 float wheel_setCommand(Wheel_t* wheel, const float vx, const float vy, const float vt) {
 
-	float omega = (vx * wheel->cosTheta + vy * wheel->sinTheta + vt * wheel->centerDistance);
+	float omega = vx * wheel->cosTheta + vy * wheel->sinTheta + vt * wheel->centerDistance;
 	omega = (omega / wheel->radius);
 
 	return omega;
