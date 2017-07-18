@@ -29,7 +29,7 @@ if __name__ == '__main__':
     find_robot_parser = subparsers.add_parser('find_robots', help='Find robot and print there batterie level')
 
     packet_lost_parser = subparsers.add_parser('test_packet_lost', help='Test number of packet lost in a unidirectional communication')
-    packet_lost_parser.add_argument('robot_id', type=int, help='ID of the robot')
+    packet_lost_parser.add_argument('robot_id', metavar='N', type=int, nargs='+', help='ID of the robot')
 
     ping_parser=subparsers.add_parser('test_rotate',
                                         help='Send a rotation command to the robot')

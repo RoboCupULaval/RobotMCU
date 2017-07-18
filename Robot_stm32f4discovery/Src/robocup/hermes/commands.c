@@ -98,7 +98,7 @@ void command_setRegister(uint8_t origin_id, uint8_t* msg){
 				default:
 					newSpeed = 0.0f;
 			}
-			dribbler_startDribbler(newSpeed);
+			dribbler_setSpeed(newSpeed);
 			break;
 		default:
 			LOG_ERROR("Unknown register");

@@ -9,7 +9,8 @@
 
 #include "ball_detector.h"
 
-#define KICKER_WAIT_BALL_TIME_IN_TICK 5000
+#define KICKER_WAIT_BALL_TIME_IN_TICK 15000    // 15 secondes
+#define TIMEOUT_ON_CHARGE_IN_TICK (60 * 1000) // 1 minute
 
 typedef enum  {
 	KICKER_FORCE_1 = 1, //time in tick
@@ -27,6 +28,7 @@ void kicker_chargeOn(void);
 void kicker_chargeOff(void);
 void kicker_kickOn(void);
 void kicker_kickOff(void);
+bool kicker_hasChargeTimeout(void);
 bool kicker_isBankFull(void);
 
 #endif /* ROBOCUP_KICKER_H_ */

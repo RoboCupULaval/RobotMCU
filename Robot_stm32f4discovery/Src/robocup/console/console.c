@@ -91,7 +91,7 @@ void console_testNRF(consoleArgs_t args) {
 
 void console_dribble(consoleArgs_t args) {
 	LOG_INFO("Setting dribbler speed.\r\n");
-	dribbler_startDribbler((float)atof(args[1]));
+	dribbler_setSpeed((float)atof(args[1]));
 }
 
 void console_chargeKicker(consoleArgs_t args) {

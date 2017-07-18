@@ -55,46 +55,55 @@ def find_robots():
 
 
 def get_num_request(com, robot_id):
-	flag = True
-	while flag:
+	while True:
 		try:
 			num_request = com.getNumRequest(robot_id)
 		except SerialTimeoutException:
-			print("Timeout on serial com, retrying")
+			print("[ROBOT {}] Timeout on serial com, retrying".format(robot_id))
 			continue
-		flag = False
-	return num_request
+		return num_request
 
 
 
-def test_packet_lost(robot_id):
+def test_packet_lost(robots_id):
 	com = McuCommunicator(timeout = 0.5)
 
-	NUMBER_PACKET = 500
+	NUMBER_PACKET = 100
 	REQUEST_FREQUENCY = 20
 	REQUEST_PERIOD = 1.0/REQUEST_FREQUENCY
 
+	TIME_WAIT_BETWEEN_PACKET = 0.002
+
 	print("Sending {} packet at {}hz@{}ms".format(NUMBER_PACKET, REQUEST_FREQUENCY, REQUEST_PERIOD*1000.0))
 
-	sc = sched.scheduler(time.time, time.sleep)
 
-	start_num_request = get_num_request(com, robot_id)
+	start_num_request = [get_num_request(com, id) for id in robots_id]
 	#start_num_request += 1 # Take into account the getNumRequest packet in the count
+	print("Starting test...")
 	start = time.time()
 	def loop_send_packet(sc, nb_left):
 		if nb_left > 0:
 			sc.enter(REQUEST_PERIOD, 1, loop_send_packet, (sc, nb_left-1,))
-		com.sendSpeed(robot_id, 0, 0, -1.0)  # Any unidirectionnal command could be use here to benchmark
 
+		for id in robots_id:
+			com.sendSpeed(id, 0, 0, -1.0)  # Any unidirectionnal command could be use here to benchmark
+			time.sleep(TIME_WAIT_BETWEEN_PACKET)
+
+	sc = sched.scheduler(time.time, time.sleep)
 	sc.enter(REQUEST_PERIOD, 1, loop_send_packet, (sc, NUMBER_PACKET-1,))
 	sc.run()
 	timelapse = time.time() - start
-	#print("It tooks {:5.2f}s expects {:5.2f}".format(timelapse, NUMBER_PACKET*REQUEST_PERIOD))
+	print("It tooks {:5.2f}s expects {:5.2f}".format(timelapse, NUMBER_PACKET*REQUEST_PERIOD))
 
-	end_num_request = get_num_request(com, robot_id)
-	num_request = end_num_request - start_num_request
-	num_request &= 0xFFFFFFFF  # 32 bit mask
+	total_failure_rate = 0
+	for index, id in enumerate(robots_id):
+		end_num_request = get_num_request(com, id)
+		num_request = end_num_request - start_num_request[index]
+		num_request &= 0xFFFFFFFF  # 32 bit mask for handling integer overflow
 
-	print("{} request send, {} received, {:5.2f}% received in {:5.2f}s.".format(NUMBER_PACKET, num_request, float(num_request)/NUMBER_PACKET * 100.0, timelapse))
-	if num_request > NUMBER_PACKET:
-		print("Too much packet? start={}, end={} num_request={}".format(start_num_request, end_num_request, num_request))
+		failure_ratio = 1.0 - float(num_request) / NUMBER_PACKET
+		total_failure_rate += failure_ratio / len(robots_id)
+		print("[ROBOT {}] {} request send, {:3} received, {:5.2f}% lost in {:5.2f}s.".format(id, NUMBER_PACKET, num_request, failure_ratio * 100.0, timelapse))
+		if num_request > NUMBER_PACKET:
+			print("Too much packet? start={}, end={} num_request={}".format(start_num_request[index], end_num_request, num_request))
+	print("Total failure rate={:5.2f}%".format(total_failure_rate * 100.0))

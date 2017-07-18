@@ -12,7 +12,6 @@
 
 void dribbler_init(void);
 void dribbler_handleDribbler(void);
-void dribbler_startDribbler(const float speed);
 void dribbler_setPWM(float speed);
 
 
