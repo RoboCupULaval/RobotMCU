@@ -26,9 +26,12 @@ def do_joystick(com, joy, robot_id):
 		com.charge(robot_id)
 		sleep(0.05)
 	if joy.get_btn_value("B"):
-		new_speed = 2
-		print("Dribbleur set to ", new_speed)
-		com.setRegister(robot_id, DRIBBLER_REGISTER, new_speed)
+		print("Dribbleur on")
+		com.turnOnDribbler(robot_id)
+		sleep(0.05)
+		#new_speed = 2
+		#print("Dribbleur set to ", new_speed)
+		#com.setRegister(robot_id, DRIBBLER_REGISTER, new_speed)
 	# 	current_dribbler_speed = new_speed
 	# 	sleep(0.05)
 	if joy.get_btn_value("Y"):
