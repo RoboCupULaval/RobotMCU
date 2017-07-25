@@ -12,9 +12,9 @@ except ModuleNotFoundError:
 
 CONTROL_ADDR = 0xFE  # The computer's address
 
-DRIBBLER_REGISTER = 0x03
 KICK_REGISTER = 0x01
 CHARGE_REGISTER = 0x02
+DRIBBLER_REGISTER = 0x03
 
 
 class McuCommunicator(McuCommunicatorBarebones):
@@ -133,7 +133,7 @@ class McuCommunicator(McuCommunicatorBarebones):
                              packet_id, payload)
 
     def setRegister(self, robot_id, register_id, value):
-        """ to remove"""
+        """ to keep"""
         packet_id = PacketID.SET_REGISTER
         struct_string = PACKET_INFO[packet_id][0]
         payload = struct.pack(struct_string, register_id, value)

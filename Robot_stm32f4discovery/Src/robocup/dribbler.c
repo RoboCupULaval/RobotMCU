@@ -10,7 +10,7 @@ static volatile TickType_t s_timeSinceLastDribbler = 0;
 void dribbler_init(void) {
   	HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1);
   	__HAL_TIM_SetCompare(&htim12, TIM_CHANNEL_1, 0);
-  	s_speed = 0.5f;
+  	s_speed = 0.35f;
   	s_timeSinceLastDribbler = 0;
 }
 

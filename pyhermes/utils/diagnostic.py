@@ -41,7 +41,7 @@ def find_robots():
 
 	while True:
 		batteries = {}
-		for id in range(1, 7):
+		for id in range(1, 6):
 			batterie_lvl = com.getBatterie(id)
 			if batterie_lvl:
 				batteries[id] = batterie_lvl
@@ -50,7 +50,7 @@ def find_robots():
 		else:
 			print(batteries)
 
-		time.sleep(1.0)
+		time.sleep(0.5)
 
 
 
@@ -72,9 +72,10 @@ def test_packet_lost(robots_id):
 	REQUEST_FREQUENCY = 20
 	REQUEST_PERIOD = 1.0/REQUEST_FREQUENCY
 
-	TIME_WAIT_BETWEEN_PACKET = 0.002
+	TIME_WAIT_BETWEEN_PACKET = 0.005
 
 	print("Sending {} packet at {}hz@{}ms".format(NUMBER_PACKET, REQUEST_FREQUENCY, REQUEST_PERIOD*1000.0))
+
 
 
 	start_num_request = [get_num_request(com, id) for id in robots_id]
@@ -86,7 +87,7 @@ def test_packet_lost(robots_id):
 			sc.enter(REQUEST_PERIOD, 1, loop_send_packet, (sc, nb_left-1,))
 
 		for id in robots_id:
-			com.sendSpeed(id, 0, 0, -1.0)  # Any unidirectionnal command could be use here to benchmark
+			com.sendSpeed(id, 0, 0, 0.5)  # Any unidirectionnal command could be use here to benchmark
 			time.sleep(TIME_WAIT_BETWEEN_PACKET)
 
 	sc = sched.scheduler(time.time, time.sleep)
