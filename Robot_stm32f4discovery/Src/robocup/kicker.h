@@ -16,9 +16,10 @@ extern uint8_t g_kickMsTick;
 
 typedef enum  {
 	KICKER_FORCE_1 = 1, //time in tick
-	KICKER_FORCE_2 = 5,
-	KICKER_FORCE_3 = 10,
-	KICKER_FORCE_4 = 15
+	KICKER_FORCE_2 = 2,
+	KICKER_FORCE_3 = 3,
+	KICKER_FORCE_4 = 5,
+	KICKER_FORCE_5 = 10
 } KickerForce_t;
 
 void kicker_init(void);

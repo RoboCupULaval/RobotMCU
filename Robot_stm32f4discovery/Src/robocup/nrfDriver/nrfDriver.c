@@ -26,10 +26,13 @@ uint8_t TxAddress[] = {
 	0xEA
 };
 
-void nrfInit(const size_t packetSize) {
+void nrfInit(const size_t packetSize, const uint8_t robot_id) {
 	TM_NRF24L01_Init((uint8_t)NRF_DEFAULT_RF_CH, (uint8_t)packetSize);
 	TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_1M, TM_NRF24L01_OutputPower_0dBm);
-	MyAddress[4] = robot_getPlayerID();
+
+	// We set the address to match the robot ID
+	MyAddress[4] = robot_id;
+
 	TM_NRF24L01_SetMyAddress(MyAddress);
 	TM_NRF24L01_SetTxAddress(TxAddress);
 	TM_NRF24L01_PowerUpRx();
@@ -37,17 +40,14 @@ void nrfInit(const size_t packetSize) {
 
 void nrfSend(uint8_t * dataOut) {
 	TM_NRF24L01_Transmit_Status_t transmissionStatus;
-	uint8_t myStatus;
 
 	TM_NRF24L01_Transmit(dataOut);
-	vTaskDelay(10); // Don't delete this, it's like embedded jesus for us desperate programmers!
-
 	do {
-		// Get transmission status
+		/* Get transmission status */
 		transmissionStatus = TM_NRF24L01_GetTransmissionStatus();
-		myStatus = TM_NRF24L01_GetStatus();
 	} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Sending);
-    //Get back into RX mode
+
+	//Get back into RX mode
 	TM_NRF24L01_PowerUpRx();
 }
 

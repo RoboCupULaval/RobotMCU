@@ -125,8 +125,8 @@
 #define LD5_GPIO3_GPIO_Port GPIOD
 #define LD6_GPIO2_Pin GPIO_PIN_15
 #define LD6_GPIO2_GPIO_Port GPIOD
-#define AUX1_Pin GPIO_PIN_6
-#define AUX1_GPIO_Port GPIOC
+#define NRF_CEC6_Pin GPIO_PIN_6
+#define NRF_CEC6_GPIO_Port GPIOC
 #define EN_POWER_Pin GPIO_PIN_7
 #define EN_POWER_GPIO_Port GPIOC
 #define MOTOR2_PWM_Pin GPIO_PIN_8
