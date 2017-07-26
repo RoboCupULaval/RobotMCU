@@ -15,6 +15,7 @@
 #define NRF_REG_RF_CH		0x05
 
 void nrfInit(const size_t packetSize, const uint8_t);
+void nrfSetRobotTX(uint8_t robotNumber);
 void nrfSend(uint8_t * dataOut);
 void nrfReceive(uint8_t * dataIn);
 uint8_t nrfRetransmitCount(void);

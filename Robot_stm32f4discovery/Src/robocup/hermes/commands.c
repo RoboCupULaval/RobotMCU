@@ -89,7 +89,7 @@ void command_setRegister(uint8_t origin_id, uint8_t* msg){
 			break;
 		case SET_DRIBBLER_SPEED_COMMAND:
 			LOG_INFO("New dribbleur speed\r\n");
-			float newSpeed = 0.0;
+			float newSpeed = 0.0f;
 			switch (registerMsg->value) {
 				case 1:
 					newSpeed = 0.3f;
@@ -103,9 +103,22 @@ void command_setRegister(uint8_t origin_id, uint8_t* msg){
 				default:
 					newSpeed = 0.0f;
 			}
-			dribbler_startDribbler(newSpeed);
+			dribbler_setSpeed(newSpeed);
+			dibbler_tmp_force_activation();
 			break;
 		default:
 			LOG_ERROR("Unknown register");
 	}
 }
+
+void command_getBatterie(uint8_t origin_id, uint8_t* msg) {
+	uint8_t batterieLvl = (uint8_t)(log_getBatteryVoltage()*10.0);
+	hermes_send(BATTERIE_RESPONSE, &batterieLvl, sizeof(uint8_t));
+}
+
+void command_getNumRequest(uint8_t origin_id, uint8_t* msg) {
+	uint32_t numRequest = g_numReceivedRequest;
+	hermes_send(NUM_REQUEST_RESPONSE, (uint8_t*)&numRequest, sizeof(uint32_t));
+
+}
+

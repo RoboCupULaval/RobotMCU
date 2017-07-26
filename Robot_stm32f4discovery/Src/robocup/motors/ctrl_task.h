@@ -33,6 +33,8 @@ typedef struct {
 #define SPEED_COMMAND_DEADZONE_VY	0.05f
 #define SPEED_COMMAND_DEADZONE_VT	0.25f
 
+#define SPEED_COMMAND_TIMEOUT_TICK  500
+
 extern volatile CtrlLoop_t g_ctrlLoopState;
 extern volatile SpeedCommand_t g_speedCommand;
 extern volatile SpeedCommandOpen_t g_speedCommandOpen;

@@ -53,7 +53,9 @@ typedef struct __attribute__((__packed__)) {
 	uint8_t value;
 } msg_uint8_t;
 
-
+typedef struct __attribute__((__packed__)) {
+	uint32_t value;
+} msg_uint32_t;
 
 // This defines the ID number for each packet.
 enum packetTypes_t {
@@ -61,7 +63,11 @@ enum packetTypes_t {
 	PING_RESPONSE,
 	SPEED_MOVE,
 	SET_REGISTER,
-	OPEN_LOOP_COMMAND
+	OPEN_LOOP_COMMAND,
+	GET_BATTERIE,
+	BATTERIE_RESPONSE,
+	GET_NUM_REQUEST,
+	NUM_REQUEST_RESPONSE
 };
 
 #endif /* ROBOCUP_PACKETS_TABLE_H_ */

@@ -4,11 +4,20 @@
 #include "../util.h"
 #include "../cobs/cobs.h"
 
+uint32_t g_numReceivedRequest = 0;
 // This is the main task, it is intended to run indefinitely
 void hermes_task_slave(void) {
 	if (robot_isDebug()) {
 		vTaskSuspend(NULL); //No hermes in debug mode
 	}
+
+
+	// TODO: Test code remove before merging in something useful
+//	for(;;) {
+//		hermes_send(PING_RESPONSE, NULL, 0);
+//		taskYIELD();
+//		//HAL_Delay(20);
+//	}
 
 	// We have a small stack, this is why they are static
 	static uint8_t packetBuffer[ COBS_MAX_PAYLOAD_LEN ];
@@ -61,6 +70,8 @@ void hermes_task_slave(void) {
 
 		// Call callback that handles the packet if need be.
 		if (packet.callback != NULL) {
+			if (currentPacketHeaderPtr->packetType != GET_NUM_REQUEST)
+				g_numReceivedRequest++;
 		    packet.callback(1, dataBuffer + sizeof(packetHeaderStruct_t));
 		}
 

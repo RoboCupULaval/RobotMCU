@@ -6,6 +6,8 @@
  */
 
 #include "communicationTask.h"
+#include "hermes.h"
+
 #include "../../../Src/robocup/nrfDriver/nrfDriver.h"
 #include "usbd_cdc_if.h"
 
@@ -15,6 +17,8 @@
 #include "FreeRTOS.h"
 #include "stm32f4xx.h"
 #include "usb_device.h"
+
+const uint32_t NB_TICK_FOR_TIMEOUT = 5;
 
 /* communicationTask function */
 void communicationTask(void const * argument)
@@ -27,47 +31,57 @@ void communicationTask(void const * argument)
   uint8_t packetBytesReceived[260] = {0};
   uint8_t decobifiedPacketBytes[260] = {0};
   uint8_t packetBytesToSend[260] = {0};
+  uint8_t packetBytesRobotsResponse[260] = {0};
   //int receivedLen;
 
   uint8_t lastDestAddress = 0xF0;
   //TickType_t lastWakeTime = xTaskGetTickCount();
-  for(;;)
-  {
+  for (;;) {
+	//Read a packet from usb
+	if (SerialRead(packetBytesReceived) >= 0) {
+		// Decobify
+		size_t decobifiedLen = 0;
+		int result = decobifyData(packetBytesReceived, decobifiedPacketBytes, &decobifiedLen);
 
+		// Check if decobification was successful
+		if (result == -1 || decobifiedLen < sizeof(packetHeaderStruct_t)) {
+			HAL_GPIO_TogglePin(GPIOD, LD3_Pin);
+			continue;
+		}
+		// Extract useful info
 
-	  //Read a packet from usb
-	  if (SerialRead(packetBytesReceived) >= 0) {
-		  // Decobify
-		  size_t decobifiedLen = 0;
-          int result = decobifyData(packetBytesReceived, decobifiedPacketBytes, &decobifiedLen);
+		// Recob it if necessary
+		//cobifyData(decobifiedPacketBytes, packetBytesToSend, decobifiedLen);
 
-		  // Check if decobification was successful
-		  if (result == -1) {
-		      HAL_GPIO_TogglePin(GPIOD, LD3_Pin);
-			  continue;
-		  }
-		  // Extract useful info
+		// Send to Destination through NRF if necessary
+		packetHeaderStruct_t* packet = (packetHeaderStruct_t*)decobifiedPacketBytes;
 
-		  // Recob it if necessary
-		  cobifyData(decobifiedPacketBytes, packetBytesToSend, decobifiedLen);
+		if (lastDestAddress != packet->destAddress) {
+			lastDestAddress = packet->destAddress;
+			nrfSetRobotTX(packet->destAddress);
+		}
+		nrfSend(packetBytesReceived);
 
-		  // Send to Destination through NRF if necessary
-		  packetHeaderStruct_t* packet = (packetHeaderStruct_t*)decobifiedPacketBytes;
+		if (packet->packetType < g_packetsTableLen && g_packetsTable[packet->packetType].hasResponse) {
 
-		  if (lastDestAddress != packet->destAddress) {
-			  lastDestAddress = packet->destAddress;
-			  nrfSetRobotTX(packet->destAddress);
-		  }
-		  nrfSend(packetBytesReceived);
-	  }
+			int retry = g_packetsTable[packet->packetType].nbRetry;
+			while (retry > 0) {
+				const TickType_t startTime = xTaskGetTickCount();
 
-	  /* if (nrfReceiveReady()) {
-		  //Read a packet from nrf
-		  nrfReceive(packetBytesToSend);
+				while (!nrfReceiveReady() && xTaskGetTickCount()-startTime < NB_TICK_FOR_TIMEOUT);
 
-		  // Send to Destination through USB if necessary
-		  SerialWrite(packetBytesToSend, strlen(packetBytesToSend));
-	  }*/
+				if (nrfReceiveReady()) {
+					nrfReceive(packetBytesRobotsResponse);
 
+					// Send to response through USB
+					SerialWrite(packetBytesRobotsResponse, strlen(packetBytesRobotsResponse)+1); // including the zero byte
+					break;
+				}
+				// Timeout
+				nrfSend(packetBytesReceived); // Resending
+				retry--;
+			}
+		}
+	}
   }
 }

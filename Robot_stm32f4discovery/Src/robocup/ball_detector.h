@@ -11,7 +11,7 @@
 #include "adc.h"
 
 #define BALL_DRIBBLING_THRESHOLD	1000
-#define BALL_KICKING_THRESHOLD		1200 //mean value
+#define BALL_KICKING_THRESHOLD		(1000u * 1000u) // Circle Radius
 
 
 typedef enum {

@@ -41,7 +41,7 @@ int decobifyData(uint8_t *msg, uint8_t *dstOut, size_t *dst_len) {
 
 	// we check if the message is properly zero-terminated with a correct length.
 	int len = strnlen((char *) msg, COBS_MAX_PAYLOAD_LEN+2); // does not include the zero-terminator in the length
-	if (len >= COBS_MAX_PAYLOAD_LEN) {
+	if (len >= COBS_MAX_PAYLOAD_LEN || len == 0) {
 		return -1;
 	}
 

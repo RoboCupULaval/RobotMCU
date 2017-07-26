@@ -81,7 +81,6 @@ void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, OTG_FS_PowerSwitchOn_Pin|NRF_CE_Pin|NRF_CEC6_Pin|EN_POWER_Pin, GPIO_PIN_RESET);
 
-
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, MOTOR3_DIR_Pin|NRF_CS_Pin|MOTOR4_DIR_Pin, GPIO_PIN_RESET);
 

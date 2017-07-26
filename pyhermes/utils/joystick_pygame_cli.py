@@ -1,4 +1,4 @@
-from pyhermes.McuCommunicator import McuCommunicator
+from pyhermes.McuCommunicator import McuCommunicator, DRIBBLER_REGISTER
 from time import sleep
 import time
 from .joystick_pygame.joystick import RobotJoystick
@@ -19,7 +19,7 @@ def do_joystick(com, joy, robot_id):
 
 	if joy.get_btn_value("X"):
 		print("kick")
-		com.kick(robot_id, 3)
+		com.kick(robot_id, 4)
 		sleep(0.05)
 	if joy.get_btn_value("B"):
 		print("pass")
@@ -29,12 +29,13 @@ def do_joystick(com, joy, robot_id):
 		print("charge")
 		com.charge(robot_id)
 		sleep(0.05)
-	# if joy.get_btn_value("B"):
-	# 	new_speed = current_dribbler_speed + 1
-	# 	if new_speed > 3:
-	# 		new_speed = 1
-	# 	print("Dribbleur set to ", new_speed)
-	# 	com.setDribblerSpeed(robot_id, new_speed)
+	if joy.get_btn_value("select"):
+		print("Dribbleur on")
+		com.turnOnDribbler(robot_id)
+		sleep(0.05)
+		#new_speed = 2
+		#print("Dribbleur set to ", new_speed)
+		#com.setRegister(robot_id, DRIBBLER_REGISTER, new_speed)
 	# 	current_dribbler_speed = new_speed
 	# 	sleep(0.05)
 	if joy.get_btn_value("Y"):
@@ -72,6 +73,7 @@ def joystick_pygame_cli(robot_id):
 		robotJoystick.append((RobotJoystick(joystick), robot_id + i))
 
 	com = McuCommunicator()
+	# TODO fix that
 	com.setRegister(robot_id, 0x00, 1)
 
 	while True:

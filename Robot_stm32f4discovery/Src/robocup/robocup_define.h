@@ -43,9 +43,9 @@ typedef enum {
 #define MNRC_KI					25.0f
 #define MNRC_GAMMA				-5.0f
 
-#define CONTROL_LOOP_PERIOD_MS 	50
-#define CONTROL_LOOP_DELTA_T	0.05f
-#define CONTROL_LOOP_FREQ		20.0f
+#define CONTROL_LOOP_PERIOD_MS 	16
+#define CONTROL_LOOP_DELTA_T	0.016f
+#define CONTROL_LOOP_FREQ		62.5f
 
 #define MOTOR_DEADZONE 			0.21f //Min PWM duty-cycle to compensate deadzone
 

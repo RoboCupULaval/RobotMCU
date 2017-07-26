@@ -24,7 +24,7 @@ size_t nrf_read(__attribute__ ((unused)) void *pBuffer,
 }
 
 size_t nrf_write(const void *pBuffer, size_t length){
-	//nrfSend(pBuffer);
+	nrfSend(pBuffer);
 	return length;
 }
 

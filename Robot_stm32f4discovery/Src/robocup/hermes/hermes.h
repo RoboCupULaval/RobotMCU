@@ -17,6 +17,8 @@
 static const uint8_t ADDR_BASE_STATION = 0x00;
 static const uint8_t PROTOCOL_VERSION  = 0x01;
 
+extern uint32_t g_numReceivedRequest;
+
 void   hermes_init(comHandle_t com);
 int    hermes_validate_payload(packetHeaderStruct_t *currentPacketHeaderPtr, size_t payloadLen);
 size_t hermes_read(uint8_t* packetBuffer, int maxBytes);

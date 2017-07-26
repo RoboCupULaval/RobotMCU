@@ -8,12 +8,15 @@
 #ifndef ROBOCUP_DRIBBLER_H_
 #define ROBOCUP_DRIBBLER_H_
 
+#include <stdbool.h>
+
 #include "ball_detector.h"
 
 void dribbler_init(void);
 void dribbler_handleDribbler(void);
-void dribbler_startDribbler(const float speed);
 void dribbler_setPWM(float speed);
+void dibbler_tmp_force_activation(void);
+bool dribbler_hasChargeTimeout(void);
 
 
 #endif /* ROBOCUP_DRIBBLER_H_ */
