@@ -10,7 +10,7 @@
 #include "ball_detector.h"
 
 #define KICKER_WAIT_BALL_TIME_IN_TICK 5000
-#define KICKER_SAFETY_WAIT_IN_MS 4
+#define KICKER_SAFETY_WAIT_IN_MS 1
 
 extern uint8_t g_kickMsTick;
 

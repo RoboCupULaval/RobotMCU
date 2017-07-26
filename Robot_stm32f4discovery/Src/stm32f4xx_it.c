@@ -130,17 +130,14 @@ void TIM7_IRQHandler(void)
 
   // We want to wait KICKER_SAFETY_WAIT_IN_MS after the end of the pulse
   // so charge is never set while kicking
-  if (g_kickMsTick - KICKER_SAFETY_WAIT_IN_MS > 0) {
+  if (g_kickMsTick > 0) {
 	  HAL_GPIO_WritePin(KICK_GPIO_Port, KICK_Pin, GPIO_PIN_SET);
+
 	  g_kickMsTick--;
-  }
-  else {
+  } else {
 	 HAL_GPIO_WritePin(KICK_GPIO_Port, KICK_Pin, GPIO_PIN_RESET);
 
-     if (g_kickMsTick == 0) {
-	  __HAL_TIM_DISABLE_IT(&htim7, TIM_IT_UPDATE); // Disable interrupt
-     }
-     g_kickMsTick--;
+	 __HAL_TIM_DISABLE_IT(&htim7, TIM_IT_UPDATE); // Disable interrupt
   }
 
   __HAL_TIM_CLEAR_IT(&htim7, TIM_IT_UPDATE);

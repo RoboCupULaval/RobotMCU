@@ -40,6 +40,7 @@ void kicker_update(void) {
 	switch(s_kicker_state) {
 		case KICKER_READY_TO_KICK:
 		case KICKER_IDLE:
+			kicker_kickOff();
 			kicker_chargeOff();
 			break;
 		case KICKER_CHARGING:
@@ -74,7 +75,7 @@ void kicker_chargeOff(void) {
 }
 
 void kicker_triggerKick(void) {
-	g_kickMsTick = s_kicker_time_in_ms + KICKER_SAFETY_WAIT_IN_MS;
+	g_kickMsTick = s_kicker_time_in_ms;
 	__HAL_TIM_ENABLE_IT(&htim7, TIM_IT_UPDATE);
 }
 void kicker_kickOff(void) {
