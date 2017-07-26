@@ -10,21 +10,20 @@
 #include "ball_detector.h"
 
 
-extern uint8_t g_kickMsTick;
+extern volatile uint8_t g_kickMsTick;
 
 #define KICKER_WAIT_BALL_TIME_IN_TICK 15000    // 15 secondes
 #define TIMEOUT_ON_CHARGE_IN_TICK (60 * 1000) // 1 minute
 
-typedef enum  {
-	KICKER_FORCE_1 = 1, //time in tick
-	KICKER_FORCE_2 = 2,
-	KICKER_FORCE_3 = 3,
-	KICKER_FORCE_4 = 5,
-	KICKER_FORCE_5 = 10
-} KickerForce_t;
+
+#define	KICKER_FORCE_1   1 //time in tick
+#define	KICKER_FORCE_2   2
+#define	KICKER_FORCE_3   3
+#define	KICKER_FORCE_4   5
+#define	KICKER_FORCE_5  10
 
 void kicker_init(void);
-void kicker_kick(KickerForce_t time);
+void kicker_kick(uint8_t time);
 void kicker_charge(void);
 void kicker_update(void);
 

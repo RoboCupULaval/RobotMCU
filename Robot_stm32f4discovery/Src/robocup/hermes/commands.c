@@ -48,31 +48,6 @@ void command_setRegister(uint8_t origin_id, uint8_t* msg){
 		case KICK_COMMAND:
 			LOG_INFO("Kicking!!\r\n");
 			kicker_kick(registerMsg->value);
-			switch (registerMsg->value) {
-				case 1:
-					LOG_INFO("KICKER_FORCE_1\r\n");
-					kicker_kick(KICKER_FORCE_1);
-					break;
-				case 2:
-					LOG_INFO("KICKER_FORCE_2\r\n");
-					kicker_kick(KICKER_FORCE_2);
-					break;
-				case 3:
-					LOG_INFO("KICKER_FORCE_3\r\n");
-					kicker_kick(KICKER_FORCE_3);
-					break;
-				case 4:
-					LOG_INFO("KICKER_FORCE_4\r\n");
-					kicker_kick(KICKER_FORCE_4);
-					break;
-				case 5:
-					LOG_INFO("KICKER_FORCE_5\r\n");
-					kicker_kick(KICKER_FORCE_5);
-					break;
-				default:
-					LOG_ERROR("Kicker error\r\n");
-					break;
-			}
 			break;
 		case CONTROL_LOOP_STATE:
 			switch (registerMsg->value) {

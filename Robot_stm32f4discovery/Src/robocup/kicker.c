@@ -10,7 +10,7 @@ typedef enum  {
 } KickerState_t;
 
 
-uint8_t g_kickMsTick = 0;
+volatile uint8_t g_kickMsTick = 0;
 
 static KickerState_t s_kicker_state = KICKER_IDLE;
 static uint8_t s_kicker_time_in_ms = 0;
@@ -30,7 +30,7 @@ void kicker_charge(void) {
 	s_tickWhenReceivedCharge = xTaskGetTickCount();
 }
 
-void kicker_kick(KickerForce_t time) {
+void kicker_kick(uint8_t time) {
 	kicker_charge();
 
 	if (s_kicker_state == KICKER_WAIT_FOR_BALL) {

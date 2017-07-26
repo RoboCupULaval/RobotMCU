@@ -128,8 +128,6 @@ void TIM7_IRQHandler(void)
   HAL_TIM_IRQHandler(&htim7);
   /* USER CODE BEGIN TIM7_IRQn 1 */
 
-  // We want to wait KICKER_SAFETY_WAIT_IN_MS after the end of the pulse
-  // so charge is never set while kicking
   if (g_kickMsTick > 0) {
 	  HAL_GPIO_WritePin(KICK_GPIO_Port, KICK_Pin, GPIO_PIN_SET);
 
