@@ -41,7 +41,7 @@ def find_robots():
 
 	while True:
 		batteries = {}
-		for id in range(1, 6):
+		for id in range(1, 7):
 			batterie_lvl = com.getBatterie(id)
 			if batterie_lvl:
 				batteries[id] = batterie_lvl

@@ -73,7 +73,7 @@ void kicker_update(void) {
 			}
 			break;
 		case KICKER_WAIT_FOR_BALL:
-			if (ball_getState() == BALL_READY_TO_KICK || true) {
+			if (ball_getState() == BALL_READY_TO_KICK) {
 				s_kicker_state = KICKER_KICKING;
 				kicker_triggerKick();
 				// If the ball is not detected after a while, we give up

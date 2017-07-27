@@ -25,11 +25,15 @@ uint32_t ball_getSensorsMeanValue(void) {
 }
 
 
-static char buf[50];
 
 BallState ball_getState(void) {
 	uint32_t adcValue1 = ball_getSensorValue(1);
 	uint32_t adcValue2 = ball_getSensorValue(2);
+
+	// FIXME: JAPAN temporary fix for bad sensors
+	if (robot_getPlayerID() == 2) {
+		adcValue2 *= 2;
+	}
 	//uint32_t adcMean = ball_getSensorsMeanValue();
 
 	BallState ballState = BALL_NOBALL;
