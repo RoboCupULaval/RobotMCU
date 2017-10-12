@@ -15,7 +15,6 @@ def do_joystick(com, joy, robot_id):
 	y = y * MAX_SPEED
 	t = t * 6
 
-	com.sendSpeed(robot_id, x, y, t)
 
 	if joy.get_btn_value("X"):
 		print("kick")
@@ -48,9 +47,12 @@ def do_joystick(com, joy, robot_id):
 	if joy.get_btn_value("R1"):
 		print("fast mode")
 		MAX_SPEED = 1
+
+	com.sendSpeed(robot_id, x, y, t)
+
 	print("id:{: 3.3f} x:{: 3.3f} y:{: 3.3f} t:{: 3.3f} ".format(robot_id, x, y, t), end='')
 
-def joystick_pygame_cli(robot_id):
+def joystick_pygame_cli(robots_id):
 	global MAX_SPEED
 	MAX_SPEED = 0.2
 	global current_dribbler_speed
@@ -64,17 +66,23 @@ def joystick_pygame_cli(robot_id):
 
 	print('# of detected joystick : {}'.format(joystick_count))
 
-	robotJoystick = []
+	if isinstance(robots_id, int):
+		robots_id = [robots_id]   
 
-	# For each joystick:
-	for i in range(joystick_count):
+	if joystick_count < len(robots_id):
+		print("You have less robot id({}) than joystick ({})".format(len(robots_id), joystick))
+		return
+
+	robotJoystick = []
+    # For each joystick:
+	for i, robot_id in enumerate(robots_id):
 		joystick = pygame.joystick.Joystick(i)
 		joystick.init()
-		robotJoystick.append((RobotJoystick(joystick), robot_id + i))
+		robotJoystick.append((RobotJoystick(joystick), robot_id))
 
 	com = McuCommunicator()
 	# TODO fix that
-	com.setRegister(robot_id, 0x00, 1)
+	#com.setRegister(robot_id, 0x00, 1)
 
 	while True:
 		pygame.event.pump()

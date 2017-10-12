@@ -37,7 +37,7 @@ if __name__ == '__main__':
 
     joystick_parser = subparsers.add_parser('joystick', help='Control a robot using a joystick')
     joystick_parser.add_argument('--pygame', action='store_true', help='Use pygame cli over default linux one')
-    joystick_parser.add_argument('robot_id', type=int, help='ID of the robot')
+    joystick_parser.add_argument('robot_id', type=int, help='ID of the robot', nargs='+')
 
     ctrl_parser = subparsers.add_parser('ctrl_test', help='Test a robot control loop with custom commands')
     ctrl_parser.add_argument('ctrl_loop_type', choices={'open_loop', 'close_loop'}, help='Type of control loop')
