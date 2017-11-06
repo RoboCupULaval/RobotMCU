@@ -47,8 +47,10 @@ def do_joystick(com, joy, robot_id):
 	if joy.get_btn_value("R1"):
 		print("fast mode")
 		MAX_SPEED = 1
-
-	com.sendSpeed(robot_id, x, y, t)
+    
+    # Don't send anything if the robot is immobile
+	if abs(x) + abs(y) + abs(t) > 0.001 or True:
+		com.sendSpeed(robot_id, x, y, t)
 
 	print("id:{: 3.3f} x:{: 3.3f} y:{: 3.3f} t:{: 3.3f} ".format(robot_id, x, y, t), end='')
 
@@ -88,6 +90,6 @@ def joystick_pygame_cli(robots_id):
 		pygame.event.pump()
 		for (joy, robot_id) in robotJoystick:
 			do_joystick(com, joy, robot_id)
-		sleep(0.05)
+			sleep(0.05)
 		print() # cariage return
 
