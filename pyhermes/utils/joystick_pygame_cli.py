@@ -4,6 +4,7 @@ import time
 from .joystick_pygame.joystick import RobotJoystick
 from math import *
 
+SEND_FREQUENCY = 20
 
 def do_joystick(com, joy, robot_id):
 	global MAX_SPEED
@@ -51,6 +52,7 @@ def do_joystick(com, joy, robot_id):
     # Don't send anything if the robot is immobile
 	if abs(x) + abs(y) + abs(t) > 0.001 or True:
 		com.sendSpeed(robot_id, x, y, t)
+		sleep(0.05)
 
 	print("id:{: 3.3f} x:{: 3.3f} y:{: 3.3f} t:{: 3.3f} ".format(robot_id, x, y, t), end='')
 
@@ -88,8 +90,11 @@ def joystick_pygame_cli(robots_id):
 
 	while True:
 		pygame.event.pump()
-		for (joy, robot_id) in robotJoystick:
+		first_packet_no_wait = True
+		for joy, robot_id in robotJoystick:
+			if first_packet_no_wait:
+				first_packet_no_wait = False
 			do_joystick(com, joy, robot_id)
-			sleep(0.05)
+		sleep(1.0/SEND_FREQUENCY)
 		print() # cariage return
 

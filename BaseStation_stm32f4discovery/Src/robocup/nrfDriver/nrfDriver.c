@@ -60,10 +60,10 @@ void nrfSetRobotTX(uint8_t robotNumber) {
 
 }
 
-void nrfSend(uint8_t * dataOut) {//, bool forceRetryBool) {
+int nrfSend(uint8_t * dataOut) {//, bool forceRetryBool) {
 	TM_NRF24L01_Transmit_Status_t transmissionStatus;
 	//uint8_t myStatus;
-
+	int res = 0;
 	//do {
 	TM_NRF24L01_Transmit(dataOut);
 	do {
@@ -74,12 +74,15 @@ void nrfSend(uint8_t * dataOut) {//, bool forceRetryBool) {
 	//} while (forceRetryBool && transmissionStatus == TM_NRF24L01_Transmit_Status_Lost);
     if (transmissionStatus == TM_NRF24L01_Transmit_Status_Lost) {
     	HAL_GPIO_TogglePin(LD5_GPIO_Port, LD5_Pin);
+    	res = -1;
     }
-    if (transmissionStatus == TM_NRF24L01_Transmit_Status_Ok) {
+    else if (transmissionStatus == TM_NRF24L01_Transmit_Status_Ok) {
     	HAL_GPIO_TogglePin(LD6_GPIO_Port, LD6_Pin);
+    	res = 0;
     }
 	//Get back into RX mode
 	TM_NRF24L01_PowerUpRx();
+	return res;
 }
 
 void nrfReceive(uint8_t * dataIn) {

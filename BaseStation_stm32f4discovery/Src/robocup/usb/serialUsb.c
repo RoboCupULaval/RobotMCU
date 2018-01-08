@@ -13,7 +13,7 @@
 /* It's up to user to redefine and/or remove those define */
 
 
-simpleCB myCircularBuffer;
+volatile simpleCB myCircularBuffer;
 
 // This function reads a single cobs-encoded packet that was previously read through USB
 // It returns 0 if success. If no packet, then it returns -1
@@ -30,6 +30,11 @@ int SerialRead(uint8_t* dataBuffer) {
 
 		// copy the packet into the buffer, must be cobs-encoded!!!
 		strcpy((char *) dataBuffer, (char *) myCircularBuffer.dataTable[currReadIndex]);
+
+		if (strlen(myCircularBuffer.dataTable[currReadIndex]) + 1u  != myCircularBuffer.lenTable[currReadIndex]) {
+			volatile size_t foo;
+			foo++;
+		}
 
 		// check if we need to upgrade the read index
 		myCircularBuffer.readIndex = (myCircularBuffer.readIndex + 1) % CBPACKETNUMBER;

@@ -15,7 +15,7 @@ uint8_t MyAddress[] = {
 	0xE7,
 	0xE7,
 	0xE7,
-	0xE8
+	0x0
 };
 
 uint8_t TxAddress[] = {

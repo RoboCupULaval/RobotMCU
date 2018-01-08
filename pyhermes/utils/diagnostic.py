@@ -55,46 +55,90 @@ def find_robots():
 
 
 def get_num_request(com, robot_id):
+	first_timeout = True
 	while True:
 		try:
 			num_request = com.getNumRequest(robot_id)
 		except SerialTimeoutException:
-			print("[ROBOT {}] Timeout on serial com, retrying".format(robot_id))
+			if first_timeout:
+				print("[ROBOT {}] Timeout on serial com, retrying".format(robot_id), end="", flush=True)
+				first_timeout = False
+			else:
+				print(".", end="", flush=True)
 			continue
+		print()
 		return num_request
 
-
-
+"""
+Remarques:
+Peut importe la fréquence d'envoie, peut importe le temps entre les packets
+Un seul packet est envoyé par robot. Si un appel bi est faite, un seul autre packet peut être renvoyé
+== Liste des tests ==
+11223344 -> OK
+12       -> OK
+123      -> OK
+1234     -> X    -> Tous les packets sont envoyer par le nrf, MAIS le robot ne recoit qu'un packet
+12345    -> OK
+1122     -> OK
+1123     -> X    -> Le robot 1 OK, 2 et 3 recoit 1 seul packet
+2213     -> X    -> Le robot 2 OK, 1 et 3 recoit 1 seul packet -> Invariant des id
+1213     -> X    -> Le robot 1 OK, 2 et 3 recoit 1 seul packet -> Invariant de l'ordre
+112      -> OK  
+1112     -> X    -> Le robot 1 OK et le robot 2 recoit 1 seul packet -> 3x packet de 1 cause le 2 de brisé
+11112    -> OK    
+11122    -> X    -> Le robot 1 OK et le robot 2 recoit la moitié des packets + 1
+111223   -> X    -> Le robot 1 2/3 des packets +1, 2 et 3 ok
+"""
 def test_packet_lost(robots_id):
 	com = McuCommunicator(timeout = 0.5)
 
-	NUMBER_PACKET = 100
-	REQUEST_FREQUENCY = 20
+	DURATION_IN_S = 5
+	REQUEST_FREQUENCY = 1
+	NUMBER_PACKET = DURATION_IN_S * REQUEST_FREQUENCY
 	REQUEST_PERIOD = 1.0/REQUEST_FREQUENCY
 
-	TIME_WAIT_BETWEEN_PACKET = 0.005
-
+	TIME_WAIT_BETWEEN_PACKET = 0.05 # 0.005s seem to make a different with more than 3 robots
+	
 	print("Sending {} packet at {}hz@{}ms".format(NUMBER_PACKET, REQUEST_FREQUENCY, REQUEST_PERIOD*1000.0))
 
-
-
 	start_num_request = [get_num_request(com, id) for id in robots_id]
+	
+	# We wait for the fifo to clear...
+	input("Press enter after you check the fifo")
+
 	#start_num_request += 1 # Take into account the getNumRequest packet in the count
 	print("Starting test...")
-	start = time.time()
 	def loop_send_packet(sc, nb_left):
 		if nb_left > 0:
 			sc.enter(REQUEST_PERIOD, 1, loop_send_packet, (sc, nb_left-1,))
 
-		for id in robots_id:
+		#for idx, id in enumerate(robots_id):
+		for idx, id in enumerate([2,2,2,1]):
+			#if idx != 0:
+			#	time.sleep(TIME_WAIT_BETWEEN_PACKET)
+			print("Send to robot {}".format(id))
 			com.sendSpeed(id, 0, 0, 0.5)  # Any unidirectionnal command could be use here to benchmark
-			time.sleep(TIME_WAIT_BETWEEN_PACKET)
+			#com.turnOffDribbler(id)
+		
 
 	sc = sched.scheduler(time.time, time.sleep)
-	sc.enter(REQUEST_PERIOD, 1, loop_send_packet, (sc, NUMBER_PACKET-1,))
+	sc.enter(REQUEST_PERIOD, 1, loop_send_packet, (sc, (NUMBER_PACKET)-1,))
+	start = time.time()
 	sc.run()
 	timelapse = time.time() - start
 	print("It tooks {:5.2f}s expects {:5.2f}".format(timelapse, NUMBER_PACKET*REQUEST_PERIOD))
+
+	# Send to one robot a bidirectionnal packet
+	# end_num_request = get_num_request(com, robots_id[0])
+
+	# sc = sched.scheduler(time.time, time.sleep)
+	# sc.enter(REQUEST_PERIOD, 1, loop_send_packet, (sc, (NUMBER_PACKET/2)-1,))
+	# start = time.time()
+	# sc.run()
+	# timelapse = time.time() - start
+	# print("It tooks {:5.2f}s expects {:5.2f}".format(timelapse, NUMBER_PACKET*REQUEST_PERIOD))
+
+	input("Press enter to check results")
 
 	total_failure_rate = 0
 	for index, id in enumerate(robots_id):

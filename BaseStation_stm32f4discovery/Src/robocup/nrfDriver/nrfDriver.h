@@ -23,7 +23,7 @@ void nrfSetRobotTX(uint8_t robotNumber);
 // Inputs:
 //   dataOut -- A pointer to the data to be sent.
 // Note: This function is blocking.
-void nrfSend(uint8_t * dataOut);
+int nrfSend(uint8_t * dataOut);
 
 // Receives data from the nrf peripheral.
 // Inputs:

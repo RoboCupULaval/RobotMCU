@@ -36,6 +36,9 @@ void communicationTask(void const * argument)
 
   uint8_t lastDestAddress = 0xF0;
   //TickType_t lastWakeTime = xTaskGetTickCount();
+
+  uint32_t packetCounterPerRobot[12] = {0};
+  uint32_t packetFailCounterPerRobot[12] = {0};
   for (;;) {
 	//Read a packet from usb
 	if (SerialRead(packetBytesReceived) >= 0) {
@@ -60,12 +63,20 @@ void communicationTask(void const * argument)
 			lastDestAddress = packet->destAddress;
 			nrfSetRobotTX(packet->destAddress);
 		}
-		nrfSend(packetBytesReceived);
+		int res = nrfSend(packetBytesReceived);
+
+		// Debug stuff check for not bidirectional packet
+		if (packet->destAddress <= 6 && !g_packetsTable[packet->packetType].hasResponse) {
+			volatile int foo = 0;
+			packetCounterPerRobot[packet->destAddress]++;
+			packetFailCounterPerRobot[packet->destAddress] += res < 0 ? 1 : 0;
+			foo ++;
+		}
 
 		if (packet->packetType < g_packetsTableLen && g_packetsTable[packet->packetType].hasResponse) {
 
 			int retry = g_packetsTable[packet->packetType].nbRetry;
-			while (retry > 0) {
+			while (retry-- > 0) {
 				const TickType_t startTime = xTaskGetTickCount();
 
 				while (!nrfReceiveReady() && xTaskGetTickCount()-startTime < NB_TICK_FOR_TIMEOUT);
@@ -77,9 +88,9 @@ void communicationTask(void const * argument)
 					SerialWrite(packetBytesRobotsResponse, strlen(packetBytesRobotsResponse)+1); // including the zero byte
 					break;
 				}
-				// Timeout
-				nrfSend(packetBytesReceived); // Resending
-				retry--;
+				// Timeout, if there are retry left
+				if (retry > 0)
+					nrfSend(packetBytesReceived); // Resending
 			}
 		}
 	}
