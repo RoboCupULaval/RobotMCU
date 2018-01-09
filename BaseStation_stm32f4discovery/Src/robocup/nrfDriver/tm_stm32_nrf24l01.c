@@ -285,7 +285,7 @@ uint8_t TM_NRF24L01_Init(uint8_t channel, uint8_t payload_size) {
 	// If 23bytes at 1 Mps than it takes, 23 * 8 / 10^6 = 184us
 	const uint8_t ARD = 3u; // 0=> 250us, 1=> 500us, 2=> 750us, ...
 	/* Auto retransmit delay: 1500us (3x500us) us and Up to 5 retransmit trials */
-	const uint8_t nb_retry = 2;
+	const uint8_t nb_retry = 0;
 	TM_NRF24L01_WriteRegister(NRF24L01_REG_SETUP_RETR, (ARD << 4) + nb_retry);
 	
 	/* Dynamic length configurations: No dynamic length */

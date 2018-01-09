@@ -70,7 +70,7 @@ void communicationTask(void const * argument)
 			volatile int foo = 0;
 			packetCounterPerRobot[packet->destAddress]++;
 			packetFailCounterPerRobot[packet->destAddress] += res < 0 ? 1 : 0;
-			foo ++;
+			foo++;
 		}
 
 		if (packet->packetType < g_packetsTableLen && g_packetsTable[packet->packetType].hasResponse) {

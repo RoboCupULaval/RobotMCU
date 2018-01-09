@@ -75,6 +75,10 @@ void hermes_task_slave(void) {
 			if (currentPacketHeaderPtr->packetType != GET_NUM_REQUEST) {
 				g_numReceivedRequest++;
 				LOG_INFO("I RECEIVED SOMETHING!!!");
+
+				// Debug stuff to fix packet lost
+				//uint32_t numRequest = g_numReceivedRequest;
+				//hermes_send(NUM_REQUEST_RESPONSE, (uint8_t*)&numRequest, sizeof(uint32_t));
 			}
 		    packet.callback(1, dataBuffer + sizeof(packetHeaderStruct_t));
 		}

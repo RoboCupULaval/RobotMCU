@@ -70,14 +70,16 @@ def get_num_request(com, robot_id):
 		return num_request
 
 """
+====Issue #18====
 Remarques:
 Peut importe la fréquence d'envoie, peut importe le temps entre les packets
+Tous les packets perdus ont été ack
 Un seul packet est envoyé par robot. Si un appel bi est faite, un seul autre packet peut être renvoyé
 == Liste des tests ==
 11223344 -> OK
 12       -> OK
 123      -> OK
-1234     -> X    -> Tous les packets sont envoyer par le nrf, MAIS le robot ne recoit qu'un packet
+1234     -> X    -> Tous les packets sont envoyé par le nrf, MAIS chaque robot ne recoit qu'un packet
 12345    -> OK
 1122     -> OK
 1123     -> X    -> Le robot 1 OK, 2 et 3 recoit 1 seul packet
@@ -87,17 +89,43 @@ Un seul packet est envoyé par robot. Si un appel bi est faite, un seul autre pa
 1112     -> X    -> Le robot 1 OK et le robot 2 recoit 1 seul packet -> 3x packet de 1 cause le 2 de brisé
 11112    -> OK    
 11122    -> X    -> Le robot 1 OK et le robot 2 recoit la moitié des packets + 1
-111223   -> X    -> Le robot 1 2/3 des packets +1, 2 et 3 ok
+11212    -> OK
+12112    -> OK
+111223   -> X    -> Le robot 1 2/3 des packets +1, 2 et 3 ok  -> le 1 à un de ses packets qui trigger le bug
+111222   -> X    -> Le robot 1 et 2 recoient 2/3 des packets +1
+
+==================
+1234|1234
+     ^^^^----- Recoit AUCUN packet
+1112|1112
+        ^----- Recoit AUCUN packet
+1123|1123
+	   ^^----- Recoit AUCUN packet 
+1213|1213
+	  ^-^----- Recoit AUCUN packet 
+11122|11122
+         ^---- Recoit AUCUN packet
+111223|111223
+       ^------ Recoit AUCUN packet
+111222|111222
+       ^--^--- Recoit AUCUN packet
+
+1222112211|1222112211
+    ^-------^--^- Recoit AUCUN packet
+
+
+S'il y a trois call vers un autre robot entre deux transmitions, la deuxième transmition est perdu
+
 """
 def test_packet_lost(robots_id):
 	com = McuCommunicator(timeout = 0.5)
 
-	DURATION_IN_S = 5
-	REQUEST_FREQUENCY = 1
+	DURATION_IN_S = 2
+	REQUEST_FREQUENCY = 4
 	NUMBER_PACKET = DURATION_IN_S * REQUEST_FREQUENCY
 	REQUEST_PERIOD = 1.0/REQUEST_FREQUENCY
 
-	TIME_WAIT_BETWEEN_PACKET = 0.05 # 0.005s seem to make a different with more than 3 robots
+	TIME_WAIT_BETWEEN_PACKET = 0.0  # 0.005s seem to make a different with more than 3 robots [fixed]
 	
 	print("Sending {} packet at {}hz@{}ms".format(NUMBER_PACKET, REQUEST_FREQUENCY, REQUEST_PERIOD*1000.0))
 
@@ -112,13 +140,13 @@ def test_packet_lost(robots_id):
 		if nb_left > 0:
 			sc.enter(REQUEST_PERIOD, 1, loop_send_packet, (sc, nb_left-1,))
 
-		#for idx, id in enumerate(robots_id):
-		for idx, id in enumerate([2,2,2,1]):
-			#if idx != 0:
-			#	time.sleep(TIME_WAIT_BETWEEN_PACKET)
+		for idx, id in enumerate(robots_id):
+		#for idx, id in enumerate([6,2,2,2,6]):
+			if idx != 0 and TIME_WAIT_BETWEEN_PACKET != 0.0:
+				time.sleep(TIME_WAIT_BETWEEN_PACKET)
 			print("Send to robot {}".format(id))
+			#input("continue?")
 			com.sendSpeed(id, 0, 0, 0.5)  # Any unidirectionnal command could be use here to benchmark
-			#com.turnOffDribbler(id)
 		
 
 	sc = sched.scheduler(time.time, time.sleep)
@@ -127,16 +155,6 @@ def test_packet_lost(robots_id):
 	sc.run()
 	timelapse = time.time() - start
 	print("It tooks {:5.2f}s expects {:5.2f}".format(timelapse, NUMBER_PACKET*REQUEST_PERIOD))
-
-	# Send to one robot a bidirectionnal packet
-	# end_num_request = get_num_request(com, robots_id[0])
-
-	# sc = sched.scheduler(time.time, time.sleep)
-	# sc.enter(REQUEST_PERIOD, 1, loop_send_packet, (sc, (NUMBER_PACKET/2)-1,))
-	# start = time.time()
-	# sc.run()
-	# timelapse = time.time() - start
-	# print("It tooks {:5.2f}s expects {:5.2f}".format(timelapse, NUMBER_PACKET*REQUEST_PERIOD))
 
 	input("Press enter to check results")
 
