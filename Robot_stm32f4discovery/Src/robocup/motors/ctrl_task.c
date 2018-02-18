@@ -4,6 +4,9 @@
 #include "wheels_config.h"
 #include "mnrc.h"
 
+#define MAX_ACCELERATION 1.0f // In meters per second squared
+#define MAX_ACCELERATION_ROTATION 1.0f // in ? per second squared
+
 
 typedef struct EncoderTimerAssociation_t{
 	QuadEncoder_t identifier;
@@ -36,7 +39,6 @@ volatile SpeedCommandOpen_t g_speedCommandOpen = {
 
 
 
-
 // This tasks deals with the movements of the robot
 void ctrl_taskEntryPoint(void) {
 	if (robot_isDebug() && robot_isBtnPressed()) {
@@ -50,6 +52,10 @@ void ctrl_taskEntryPoint(void) {
   	TickType_t lastWakeTime = xTaskGetTickCount();
   	bool speedCommandTimeout = true;
   	bool speedCommandOpenTimeout = true;
+
+  	float max_speed_difference = MAX_ACCELERATION * CONTROL_LOOP_PERIOD_MS / portTICK_PERIOD_MS;
+  	float max_rotation_speed_difference = MAX_ACCELERATION_ROTATION * CONTROL_LOOP_PERIOD_MS / portTICK_PERIOD_MS;
+
 	for(;;) {
 		// Delay the loop to a fix frequency
 		vTaskDelayUntil(&lastWakeTime, CONTROL_LOOP_PERIOD_MS / portTICK_PERIOD_MS);
@@ -62,8 +68,18 @@ void ctrl_taskEntryPoint(void) {
 		readQuadsSpeed(wheelSpeed);
 
 
-		float vx, vy, vt;
+		float vx = 0;
+		float vy = 0;
+		float vt = 0;
 		float output[4];
+
+		float desired_vx;
+		float desired_vy;
+		float desired_vt;
+		float difference_x;
+		float difference_y;
+		float difference_theta;
+		float diff_vector_length;
 
 		switch(g_ctrlLoopState) {
 			case OPEN_LOOP:
@@ -91,9 +107,35 @@ void ctrl_taskEntryPoint(void) {
 				break;
 			case CLOSE_LOOP_WITHOUT_LOGGING:
 			case CLOSE_LOOP_WITH_LOGGING:
-				vx = g_speedCommand.vx;
-				vy = g_speedCommand.vy;
-				vt = g_speedCommand.vtheta;
+
+				//vx = g_speedCommand.vx;
+				//vy = g_speedCommand.vy;
+				//vt = g_speedCommand.vtheta;
+				// The actual command is set as a linear pursuit of the desired command.
+				desired_vx = g_speedCommand.vx;
+				desired_vy = g_speedCommand.vy;
+				desired_vt = g_speedCommand.vtheta;
+				difference_x = desired_vx-vx;
+				difference_y = desired_vy-vy;
+				difference_theta = desired_vt-vt;
+				diff_vector_length = sqrt(difference_x*difference_x + difference_y*difference_y);
+				if (diff_vector_length <= max_speed_difference) {
+					vx = desired_vx;
+					vy = desired_vy;
+				} else {
+					// We add the components of max_speed_difference * each vector component.
+					vx += max_speed_difference * difference_x/diff_vector_length;
+					vy += max_speed_difference * difference_y/diff_vector_length;
+				}
+				if (abs(difference_theta) <= max_rotation_speed_difference) {
+					vt = desired_vt;
+				} else {
+					vt += max_rotation_speed_difference * difference_theta/abs(difference_theta);
+				}
+
+
+				// end of linear pursuit computation
+
 
 				const bool lastSpeedCommandTimeout = speedCommandTimeout;
 				speedCommandTimeout = hasSpeedCommandTimeout();
