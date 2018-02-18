@@ -4,7 +4,7 @@
 #include "wheels_config.h"
 #include "mnrc.h"
 
-#define MAX_ACCELERATION 1.0f // In meters per second squared
+#define MAX_ACCELERATION 2.0f // In meters per second squared
 #define MAX_ACCELERATION_ROTATION 1.0f // in ? per second squared
 
 
@@ -53,8 +53,8 @@ void ctrl_taskEntryPoint(void) {
   	bool speedCommandTimeout = true;
   	bool speedCommandOpenTimeout = true;
 
-  	float max_speed_difference = MAX_ACCELERATION * CONTROL_LOOP_PERIOD_MS / portTICK_PERIOD_MS;
-  	float max_rotation_speed_difference = MAX_ACCELERATION_ROTATION * CONTROL_LOOP_PERIOD_MS / portTICK_PERIOD_MS;
+  	float max_speed_difference = MAX_ACCELERATION * CONTROL_LOOP_PERIOD_MS / 1000;
+  	float max_rotation_speed_difference = MAX_ACCELERATION_ROTATION * CONTROL_LOOP_PERIOD_MS / 1000;
 
 	for(;;) {
 		// Delay the loop to a fix frequency
