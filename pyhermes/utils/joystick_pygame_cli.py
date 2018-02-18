@@ -4,7 +4,7 @@ import time
 from .joystick_pygame.joystick import RobotJoystick
 from math import *
 
-SEND_FREQUENCY = 20
+SEND_FREQUENCY = 100	
 
 def do_joystick(com, joy, robot_id):
 	global MAX_SPEED
@@ -20,19 +20,15 @@ def do_joystick(com, joy, robot_id):
 	if joy.get_btn_value("X"):
 		print("kick")
 		com.kick(robot_id, 5)
-		sleep(0.05)
 	if joy.get_btn_value("B"):
 		print("pass")
 		com.kick(robot_id, 2)
-		sleep(0.05)
 	if joy.get_btn_value("A"):
 		print("charge")
 		com.charge(robot_id)
-		sleep(0.05)
 	if joy.get_btn_value("select"):
 		print("Dribbleur on")
 		com.turnOnDribbler(robot_id)
-		sleep(0.05)
 		#new_speed = 2
 		#print("Dribbleur set to ", new_speed)
 		#com.setRegister(robot_id, DRIBBLER_REGISTER, new_speed)
@@ -41,7 +37,6 @@ def do_joystick(com, joy, robot_id):
 	if joy.get_btn_value("Y"):
 		print("Dribbleur off")
 		com.turnOffDribbler(robot_id)
-		sleep(0.05)
 	if joy.get_btn_value("L1"):
 		print("slow mode")
 		MAX_SPEED = 0.2
@@ -52,7 +47,6 @@ def do_joystick(com, joy, robot_id):
     # Don't send anything if the robot is immobile
 	if abs(x) + abs(y) + abs(t) > 0.001 or True:
 		com.sendSpeed(robot_id, x, y, t)
-		sleep(0.05)
 
 	print("id:{: 3.3f} x:{: 3.3f} y:{: 3.3f} t:{: 3.3f} ".format(robot_id, x, y, t), end='')
 

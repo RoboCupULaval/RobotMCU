@@ -9,7 +9,10 @@
 #define MNRC_H_
 
 #include <stdio.h>
+#include <stdbool.h>
 #include "../robocup_define.h"
+
+#define ANTI_WINDUP_CIRCULAR_BUFFER_SIZE 100
 
 typedef struct {
 
@@ -21,12 +24,16 @@ typedef struct {
 	float K1;
 	float K2;
 
+	bool has_anti_windup; // activate anti-windup
+
 	// the MNRC variables
 	float w[4];      // Wheel speed measurements [rad/s]
 	float w_m[4];    // Desired dynamic estimation [rad/s]
 	float w_ref[4];  // Wheel reference [rad/s]
 	float e[4];      // Error between desired dynamic and measured wheel speed
 	float eI[4];     // Integration of e
+	float anti_windup[4][ANTI_WINDUP_CIRCULAR_BUFFER_SIZE]; // Previous e value in a circular buffer
+	size_t head_anti_windup[4]; // current e value in circular buffer of anti windup
 
 	float command[4];
 

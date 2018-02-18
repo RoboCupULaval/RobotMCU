@@ -4,7 +4,7 @@
   * Description        : This file contains the common defines of the application
   ******************************************************************************
   *
-  * Copyright (c) 2017 STMicroelectronics International N.V. 
+  * Copyright (c) 2018 STMicroelectronics International N.V. 
   * All rights reserved.
   *
   * Redistribution and use in source and binary forms, with or without 
@@ -44,6 +44,7 @@
 #ifndef __MAIN_H
 #define __MAIN_H
   /* Includes ------------------------------------------------------------------*/
+#include "stm32f4xx_hal.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -69,6 +70,9 @@
 #define NRF_CE_GPIO_Port GPIOC
 #define NRF_MISO_Pin GPIO_PIN_2
 #define NRF_MISO_GPIO_Port GPIOC
+#define NRF_IRQ_Pin GPIO_PIN_3
+#define NRF_IRQ_GPIO_Port GPIOC
+#define NRF_IRQ_EXTI_IRQn EXTI3_IRQn
 #define MOTOR1_PWM_Pin GPIO_PIN_0
 #define MOTOR1_PWM_GPIO_Port GPIOA
 #define MOTOR2_ENCB_Pin GPIO_PIN_1

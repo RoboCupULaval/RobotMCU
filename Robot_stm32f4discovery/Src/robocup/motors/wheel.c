@@ -8,6 +8,19 @@
 //Acceleration limitation
 const float MAX_LIN_ACC	= 1.0f / CONTROL_LOOP_FREQ; //1m/s^2 * control_loop_period s
 
+#define MAX_ROTATION_RPM  100.0
+#define MAX_ROTATION_RAD_PER_S  (MAX_ROTATION_RPM * 2.0 * M_PI / 60.0)
+
+#define max(a,b) \
+   ({ __typeof__ (a) _a = (a); \
+       __typeof__ (b) _b = (b); \
+     _a > _b ? _a : _b; })
+
+#define min(a,b) \
+   ({ __typeof__ (a) _a = (a); \
+       __typeof__ (b) _b = (b); \
+     _a < _b ? _a : _b; })
+
 // Calculate speed for that motor base on velocity command
 float wheel_setCommand(Wheel_t* wheel, const float vx, const float vy, const float vt) {
 

@@ -140,12 +140,12 @@ def test_packet_lost(robots_id):
 		if nb_left > 0:
 			sc.enter(REQUEST_PERIOD, 1, loop_send_packet, (sc, nb_left-1,))
 
-		for idx, id in enumerate(robots_id):
-		#for idx, id in enumerate([6,2,2,2,6]):
+		#for idx, id in enumerate(robots_id):
+		for idx, id in enumerate([2,1,1,1,1,1,1,2]):
 			if idx != 0 and TIME_WAIT_BETWEEN_PACKET != 0.0:
 				time.sleep(TIME_WAIT_BETWEEN_PACKET)
 			print("Send to robot {}".format(id))
-			#input("continue?")
+			input("continue?")
 			com.sendSpeed(id, 0, 0, 0.5)  # Any unidirectionnal command could be use here to benchmark
 		
 

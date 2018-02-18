@@ -31,8 +31,9 @@ BallState ball_getState(void) {
 	uint32_t adcValue2 = ball_getSensorValue(2);
 
 	// FIXME: JAPAN temporary fix for bad sensors
-	if (robot_getPlayerID() == 2) {
-		adcValue2 *= 2;
+	if (robot_getPlayerID() == 4) {
+		adcValue2 *= 11;
+		adcValue2 /= 17;
 	}
 	//uint32_t adcMean = ball_getSensorsMeanValue();
 

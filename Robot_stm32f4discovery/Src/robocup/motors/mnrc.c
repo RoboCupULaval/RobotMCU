@@ -25,10 +25,16 @@ MNRC_t MNRC_init(float Kp, float Ki, float lambda){
 	mnrc.K1 = (1.0f + CONTROL_LOOP_DELTA_T * lambda);
 	mnrc.K2 = lambda * CONTROL_LOOP_DELTA_T;
 
-	int i = 0;
+	mnrc.has_anti_windup = true;
+
+	int i = 0, j = 0;
 	for (i = 0; i < 4; i++) {
 		mnrc.eI[i] = 0;
 		mnrc.w_m[i] = 0;
+		mnrc.head_anti_windup[i] = 0;
+		for (j = 0; j < ANTI_WINDUP_CIRCULAR_BUFFER_SIZE; j++) {
+			mnrc.anti_windup[i][j] = 0;
+		}
 	}
 
 	return mnrc;
@@ -49,7 +55,25 @@ void MNRC_update(MNRC_t *mnrc){
 
 		mnrc->w_m[i] = mnrc->K1 * mnrc->w_m[i] - mnrc->K2 * mnrc->w_ref[i];
 		mnrc->e[i] = mnrc->w_m[i] - mnrc->w[i];
-		mnrc->eI[i] = mnrc->eI[i] + mnrc->e[i] * CONTROL_LOOP_DELTA_T;
+
+		if (mnrc->has_anti_windup) {
+			mnrc->head_anti_windup[i]++;
+			mnrc->head_anti_windup[i] %= ANTI_WINDUP_CIRCULAR_BUFFER_SIZE;
+
+			// But current integrated error at the head of the circular buffer
+			mnrc->anti_windup[i][mnrc->head_anti_windup[i]] = mnrc->e[i] * CONTROL_LOOP_DELTA_T;
+
+			// Sum content of the circular buffer
+			mnrc->eI[i] = 0;
+			size_t j = 0;
+			for (j = 0; j < ANTI_WINDUP_CIRCULAR_BUFFER_SIZE; j++) {
+				mnrc->eI[i] += mnrc->anti_windup[i][j];
+			}
+
+		} else {
+			mnrc->eI[i] = mnrc->eI[i] + mnrc->e[i] * CONTROL_LOOP_DELTA_T;
+		}
+
 
 		PI_action[i] = mnrc->Kp * mnrc->e[i] + mnrc->Ki * mnrc->eI[i];
 

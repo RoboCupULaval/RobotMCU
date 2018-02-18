@@ -10,8 +10,15 @@
 
 #include "adc.h"
 
-#define BALL_DRIBBLING_THRESHOLD	1000
-#define BALL_KICKING_THRESHOLD		(1000u * 1000u) // Circle Radius
+#define BALL_DRIBBLING_THRESHOLD	800
+#define BALL_KICKING_THRESHOLD		(500 * 500) // Circle Radius
+// Note PB-2018-01-14:
+// G01 400
+// G02 1000-500=500, dibler 1000
+// G03 1000-500=500 dibbler 800
+// G04 *11/17 sur le sensor2, 1000-500=500 de limite
+
+// G06 1550-500= 1050 et 900 pour dribbleur
 
 
 typedef enum {

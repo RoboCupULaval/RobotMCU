@@ -129,6 +129,7 @@ void ctrl_taskEntryPoint(void) {
 					ctrl_emergencyBrake();
 					MNRC_reset(&mnrc);
 				} else {
+
 					for (int i = 0; i < wheelsLen; ++i) {
 						Wheel_t* pWheel = &g_wheels[i];
 						wheel_setPWM(pWheel, mnrc.command[i]);
