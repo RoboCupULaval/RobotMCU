@@ -4,6 +4,7 @@
 #include "../util.h"
 #include "../cobs/cobs.h"
 
+uint32_t g_numReceivedRequest = 0;
 // This is the main task, it is intended to run indefinitely
 void hermes_task_slave(void) {
 	if (robot_isDebug()) {
@@ -21,6 +22,7 @@ void hermes_task_slave(void) {
 
 		// Check if we actually have received a packet
 		if (bytesReceived == 0) {
+			LOG_INFO("I RECEIVED NOTHING!!!");
 			// It's more efficient to wait a few ticks before trying again
 			taskYIELD();
 			continue;
@@ -29,6 +31,7 @@ void hermes_task_slave(void) {
 		// Check if we actually have received a possibly valid packet, which needs a complete header
 		if (bytesReceived < sizeof(uint8_t) + sizeof(packetHeaderStruct_t)) {
 			LOG_ERROR_AND_BUFFER("The received packet is too small", packetBuffer, bytesReceived);
+			continue;
 		}
 
 		// TODO : maybe keep that optimisation?
@@ -61,6 +64,14 @@ void hermes_task_slave(void) {
 
 		// Call callback that handles the packet if need be.
 		if (packet.callback != NULL) {
+			if (currentPacketHeaderPtr->packetType != GET_NUM_REQUEST) {
+				g_numReceivedRequest++;
+				//LOG_INFO("I RECEIVED SOMETHING!!!");
+
+				// Debug stuff to fix packet lost
+				//uint32_t numRequest = g_numReceivedRequest;
+				//hermes_send(NUM_REQUEST_RESPONSE, (uint8_t*)&numRequest, sizeof(uint32_t));
+			}
 		    packet.callback(1, dataBuffer + sizeof(packetHeaderStruct_t));
 		}
 

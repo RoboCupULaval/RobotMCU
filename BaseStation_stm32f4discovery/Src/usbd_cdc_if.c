@@ -110,7 +110,7 @@ uint8_t UserTxBufferFS[APP_TX_DATA_SIZE];
   */ 
   extern USBD_HandleTypeDef hUsbDeviceFS;
 /* USER CODE BEGIN EXPORTED_VARIABLES */
-  extern simpleCB myCircularBuffer;
+  extern volatile simpleCB myCircularBuffer;
 /* USER CODE END EXPORTED_VARIABLES */
 
 /**
@@ -274,25 +274,30 @@ static int8_t CDC_Receive_FS (uint8_t* Buf, uint32_t *Len)
 	//packetTotal++;
 
 	// Sanity check: if the circular buffer is full,
-	// reject the packet and toggle a led
-    if (((myCircularBuffer.readIndex + 1) % CBPACKETNUMBER) == myCircularBuffer.writeIndex) {
+	// Delete the current write target and write the packet and toggle a led
+	int8_t result;
+    if (((myCircularBuffer.writeIndex + 1) % CBPACKETNUMBER) == myCircularBuffer.readIndex) {
     	// Send mini ack packet TODO
     	//static uint32_t packetLost = 0;
     	//packetLost++;
+    	memcpy(myCircularBuffer.dataTable[myCircularBuffer.writeIndex], Buf, *Len);
     	HAL_GPIO_TogglePin(GPIOD, LD4_Pin);
-    	USBD_CDC_SetRxBuffer(&hUsbDeviceFS, myCircularBuffer.dataTable[myCircularBuffer.writeIndex]);
-    	USBD_CDC_ReceivePacket(&hUsbDeviceFS);
-		return USBD_FAIL;
+    	result = USBD_FAIL;
     }
     else {
-		// copy the buffer, update the write index
-    	//strcpy(myCircularBuffer.dataTable[myCircularBuffer.writeIndex], Buf);
+    	myCircularBuffer.lenTable[myCircularBuffer.writeIndex] = *Len;
+
+    	memcpy(myCircularBuffer.dataTable[myCircularBuffer.writeIndex], Buf, *Len);
+
     	myCircularBuffer.writeIndex = (myCircularBuffer.writeIndex + 1) % CBPACKETNUMBER;
 
-    	USBD_CDC_SetRxBuffer(&hUsbDeviceFS, myCircularBuffer.dataTable[myCircularBuffer.writeIndex]);
-		USBD_CDC_ReceivePacket(&hUsbDeviceFS);
-    	return (USBD_OK);
+		result = (USBD_OK);
     }
+    // We set so the next interruption will write in the next buffer in the circular queue
+    //USBD_CDC_SetRxBuffer(&hUsbDeviceFS, myCircularBuffer.dataTable[myCircularBuffer.writeIndex]);
+	USBD_CDC_ReceivePacket(&hUsbDeviceFS);
+
+	return result;
   /* USER CODE END 6 */ 
 }
 

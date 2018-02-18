@@ -268,14 +268,17 @@ uint8_t TM_NRF24L01_Init(uint8_t channel, uint8_t payload_size) {
 	/* Config register */
 	TM_NRF24L01_WriteRegister(NRF24L01_REG_CONFIG, NRF24L01_CONFIG);
 	
-	/* Enable auto-acknowledgment for all pipes */
-	TM_NRF24L01_WriteRegister(NRF24L01_REG_EN_AA, 0x3F);
+	/* Enable auto-acknowledgment for pipe 0 and 1 */
+	TM_NRF24L01_WriteRegister(NRF24L01_REG_EN_AA, 0b0011);
 	
-	/* Enable RX addresses */
-	TM_NRF24L01_WriteRegister(NRF24L01_REG_EN_RXADDR, 0x3F);
+	/* Enable RX addresses pipe 0 and 1*/
+	TM_NRF24L01_WriteRegister(NRF24L01_REG_EN_RXADDR, 0b0011);
 
-	/* Auto retransmit delay: 1000 (4x250) us and Up to 15 retransmit trials */
-	TM_NRF24L01_WriteRegister(NRF24L01_REG_SETUP_RETR, 0x4F);
+	// If 23bytes at 1 Mps than it takes, 23 * 8 / 10^6 = 184us
+	const uint8_t ARD = 3u; // 0=> 250us, 1=> 500us, 2=> 750us, ...
+	/* Auto retransmit delay: 1500us (3x500us) us and Up to 5 retransmit trials */
+	const uint8_t nb_retry = 0;
+	TM_NRF24L01_WriteRegister(NRF24L01_REG_SETUP_RETR, (ARD << 4) + nb_retry);
 	
 	/* Dynamic length configurations: No dynamic length */
 	TM_NRF24L01_WriteRegister(NRF24L01_REG_DYNPD, (0 << NRF24L01_DPL_P0) | (0 << NRF24L01_DPL_P1) | (0 << NRF24L01_DPL_P2) | (0 << NRF24L01_DPL_P3) | (0 << NRF24L01_DPL_P4) | (0 << NRF24L01_DPL_P5));

@@ -35,16 +35,17 @@ typedef enum {
 
 /***
  * Global constants
+ *
  */
 
 
-#define MNRC_KP					7.0f
-#define MNRC_KI					25.0f
-#define MNRC_GAMMA				-5.0f
+#define MNRC_KP					14.0f
+#define MNRC_KI					12.5f
+#define MNRC_GAMMA				-10.0f
 
-#define CONTROL_LOOP_PERIOD_MS 	50
-#define CONTROL_LOOP_DELTA_T	0.05f
-#define CONTROL_LOOP_FREQ		20.0f
+#define CONTROL_LOOP_PERIOD_MS 	10
+#define CONTROL_LOOP_DELTA_T	0.010f
+#define CONTROL_LOOP_FREQ		100.0f
 
 #define MOTOR_DEADZONE 			0.21f //Min PWM duty-cycle to compensate deadzone
 

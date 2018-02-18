@@ -10,10 +10,11 @@
 
 #define APP_RX_DATA_SIZE  260
 #define APP_TX_DATA_SIZE  260
-#define CBPACKETNUMBER 16
+#define CBPACKETNUMBER 150
 
 typedef struct simpleCB {
 	uint8_t dataTable[CBPACKETNUMBER][APP_TX_DATA_SIZE];
+	uint32_t lenTable[CBPACKETNUMBER];
 	int readIndex; // index of next item to read
 	int writeIndex; // index of next item to write
 } simpleCB;

@@ -66,7 +66,7 @@ def decode(in_bytes):
 
     if len(in_bytes_mv) > 0:
         while True:
-            length = ord(in_bytes_mv[idx])
+            length = in_bytes_mv[idx]
             if length == 0:
                 raise DecodeError("zero byte found in input")
             idx += 1

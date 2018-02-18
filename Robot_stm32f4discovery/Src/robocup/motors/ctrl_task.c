@@ -56,12 +56,11 @@ void ctrl_taskEntryPoint(void) {
 
 		static int c = 0;
 		if(++c >= 100){
-			c = 0;
-			//if(g_ctrlLoopState == CLOSE_LOOP_WITHOUT_LOGGING)
-				//LOG_INFO("ctrl\r\n");
+			c = 0; // every seconds
 		}
 
 		readQuadsSpeed(wheelSpeed);
+
 
 		float vx, vy, vt;
 		float output[4];
@@ -72,6 +71,7 @@ void ctrl_taskEntryPoint(void) {
 				output[1] = g_speedCommandOpen.cmd2;
 				output[2] = g_speedCommandOpen.cmd3;
 				output[3] = g_speedCommandOpen.cmd4;
+
 
 				const bool lastSpeedCommandOpenTimeout = speedCommandOpenTimeout;
 				speedCommandOpenTimeout = hasSpeedCommandOpenTimeout();
@@ -104,10 +104,10 @@ void ctrl_taskEntryPoint(void) {
 					continue;
 				}
 
+
 				if(g_ctrlLoopState == CLOSE_LOOP_WITH_LOGGING) {
 					motorDataLog_addReceivedSpeed(vx, vy, vt);
 				}
-
 
 				for (int i = 0; i < wheelsLen; ++i) {
 					Wheel_t* pWheel = &g_wheels[i];
@@ -116,15 +116,20 @@ void ctrl_taskEntryPoint(void) {
 
 					mnrc.w[i] = measure;
 					mnrc.w_ref[i] = reference;
+					if (g_ctrlLoopState == CLOSE_LOOP_WITH_LOGGING) {
+						motorDataLog_addWheelData(reference, measure);
+					}
 				}
 
 				MNRC_update(&mnrc);
 
-				if(fabs(vx) <= SPEED_COMMAND_DEADZONE_VX && fabs(vy) <= SPEED_COMMAND_DEADZONE_VY
-						&& fabs(vt) <= SPEED_COMMAND_DEADZONE_VT) {
+				if(fabs(vx) <= SPEED_COMMAND_DEADZONE_VX &&
+				   fabs(vy) <= SPEED_COMMAND_DEADZONE_VY &&
+				   fabs(vt) <= SPEED_COMMAND_DEADZONE_VT) {
 					ctrl_emergencyBrake();
 					MNRC_reset(&mnrc);
 				} else {
+
 					for (int i = 0; i < wheelsLen; ++i) {
 						Wheel_t* pWheel = &g_wheels[i];
 						wheel_setPWM(pWheel, mnrc.command[i]);
@@ -137,11 +142,6 @@ void ctrl_taskEntryPoint(void) {
 		}
 		// Handle logging output for close/open loop test
 		if (g_ctrlLoopState == OPEN_LOOP || g_ctrlLoopState == CLOSE_LOOP_WITH_LOGGING) {
-			for (int i = 0; i < wheelsLen; ++i) {
-				if (g_ctrlLoopState == CLOSE_LOOP_WITH_LOGGING) {
-					motorDataLog_addCloseLoopData(&g_wheels[i].pid);
-				}
-			}
 			motorDataLog_flushDataLine();
 		}
 
@@ -178,13 +178,10 @@ void readQuadsSpeed(float *wheelSpeed) {
 	}
 }
 
-
 bool hasSpeedCommandTimeout(void) {
-	const TickType_t SPEED_COMMAND_TIMEOUT_TICK = 500;
 	return xTaskGetTickCount() - g_speedCommand.tickSinceLastUpdate > SPEED_COMMAND_TIMEOUT_TICK / portTICK_PERIOD_MS;
 }
 
 bool hasSpeedCommandOpenTimeout(void) {
-	const TickType_t SPEED_COMMAND_TIMEOUT_TICK = 500;
 	return xTaskGetTickCount() - g_speedCommandOpen.tickSinceLastUpdate > SPEED_COMMAND_TIMEOUT_TICK / portTICK_PERIOD_MS;
 }

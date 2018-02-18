@@ -1,12 +1,13 @@
 #include <string.h>
 
 #include "nrf.h"
+#include "../../util.h"
 #include "../../nrfDriver/nrfDriver.h"
 
 #define PACKET_SIZE 23
 comHandle_t nrf_init(void){
 
-	nrfInit(PACKET_SIZE);
+	nrfInit(PACKET_SIZE, robot_getPlayerID());
 
 	comHandle_t com;
 	com.read = nrf_read;
@@ -23,7 +24,7 @@ size_t nrf_read(__attribute__ ((unused)) void *pBuffer,
 }
 
 size_t nrf_write(const void *pBuffer, size_t length){
-	//nrfSend(pBuffer);
+	nrfSend(pBuffer);
 	return length;
 }
 

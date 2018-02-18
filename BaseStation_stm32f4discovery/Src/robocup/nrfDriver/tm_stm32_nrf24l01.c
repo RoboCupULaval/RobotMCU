@@ -268,7 +268,7 @@ uint8_t TM_NRF24L01_Init(uint8_t channel, uint8_t payload_size) {
 	TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P2, payload_size);
 	TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P3, payload_size);
 	TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P4, payload_size);
-	TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P5, payload_size);
+	TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P5, 0);
 	
 	/* Set RF settings (2mbps, output power) */
 	TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_2M, TM_NRF24L01_OutputPower_0dBm);
@@ -282,8 +282,11 @@ uint8_t TM_NRF24L01_Init(uint8_t channel, uint8_t payload_size) {
 	/* Enable RX addresses */
 	TM_NRF24L01_WriteRegister(NRF24L01_REG_EN_RXADDR, 0x3F);
 
-	/* Auto retransmit delay: 1250us (5x250us) us and Up to 5 retransmit trials */
-	TM_NRF24L01_WriteRegister(NRF24L01_REG_SETUP_RETR, 0x5);
+	// If 23bytes at 1 Mps than it takes, 23 * 8 / 10^6 = 184us
+	const uint8_t ARD = 3u; // 0=> 250us, 1=> 500us, 2=> 750us, ...
+	/* Auto retransmit delay: 1500us (3x500us) us and Up to 5 retransmit trials */
+	const uint8_t nb_retry = 0;
+	TM_NRF24L01_WriteRegister(NRF24L01_REG_SETUP_RETR, (ARD << 4) + nb_retry);
 	
 	/* Dynamic length configurations: No dynamic length */
 	TM_NRF24L01_WriteRegister(NRF24L01_REG_DYNPD, (0 << NRF24L01_DPL_P0) | (0 << NRF24L01_DPL_P1) | (0 << NRF24L01_DPL_P2) | (0 << NRF24L01_DPL_P3) | (0 << NRF24L01_DPL_P4) | (0 << NRF24L01_DPL_P5));
@@ -418,7 +421,7 @@ void TM_NRF24L01_GetData(uint8_t* data) {
 	uint32_t count = PayloadSize;
 	while (count--) {
 		uint8_t data2 = 0;
-		HAL_SPI_TransmitReceive(&hspi2, data, &data2, 1, 0);
+		HAL_SPI_TransmitReceive(&hspi2, &data2, data, 1, 0);
 		data++;
 	}
 
@@ -460,6 +463,8 @@ uint8_t TM_NRF24L01_GetStatus(void) {
 
 TM_NRF24L01_Transmit_Status_t TM_NRF24L01_GetTransmissionStatus(void) {
 	uint8_t status = TM_NRF24L01_GetStatus();
+
+	// In auto-awk mode, DS is high when the packet was awkledge
 	if ( status&(1<<NRF24L01_TX_DS) ) {
 		/* Successfully sent */
 		return TM_NRF24L01_Transmit_Status_Ok;

@@ -2,14 +2,19 @@
 """This module contains an interface to communicate with the robots."""
 
 import struct
-from .McuCommunicatorBarebones import McuCommunicatorBarebones
+from .McuCommunicatorBarebones import McuCommunicatorBarebones, WrongPacketException
 from .packet_definitions import PacketID, PACKET_INFO
+import serial
+try:
+    from cobs import cobs
+except ModuleNotFoundError:
+    from cobs.cobs import cobs
 
 CONTROL_ADDR = 0xFE  # The computer's address
 
-DRIBBLER_REGISTER = 0x03
 KICK_REGISTER = 0x01
 CHARGE_REGISTER = 0x02
+DRIBBLER_REGISTER = 0x03
 
 
 class McuCommunicator(McuCommunicatorBarebones):
@@ -22,10 +27,33 @@ class McuCommunicator(McuCommunicatorBarebones):
             Returns True if ping succeeded.
         """
         payload = None
-        robot_addr = robot_id
-        super()._send_receive_packet(CONTROL_ADDR, robot_addr,
-                                     PacketID.PING_REQUEST, payload)
+
+        try:
+            super()._send_receive_packet(CONTROL_ADDR, robot_id,
+                                         PacketID.PING_REQUEST, payload)
+        except (serial.SerialTimeoutException, cobs.DecodeError, WrongPacketException) as err:
+            print("ERROR:", err)
+            return False
         return True
+
+    def getBatterie(self, robot_id):
+        payload = None
+        try:
+            packet_response = super()._send_receive_packet(CONTROL_ADDR, robot_id,
+                                                           PacketID.GET_BATTERIE, payload)
+        except (serial.SerialTimeoutException, cobs.DecodeError, WrongPacketException):
+            return False
+        batterie_lvl = packet_response[5] / 10.0
+        return batterie_lvl
+
+
+    def getNumRequest(self, robot_id):
+        payload = None
+        packet_response = super()._send_receive_packet(CONTROL_ADDR, robot_id,
+                                                       PacketID.GET_NUM_REQUEST, payload)
+        num_request = struct.unpack('I', packet_response[5:9])
+        return num_request[0]
+
 
     def sendSpeed(self, robot_id, speed_x, speed_y, speed_rotation):
         """Sets the desired speed for the robot.
@@ -82,12 +110,12 @@ class McuCommunicator(McuCommunicatorBarebones):
         super()._send_packet(CONTROL_ADDR, robot_addr,
                              packet_id, payload)
 
-    def kick(self, robot_id):
+    def kick(self, robot_id, force):
         """ Make the robot kick.
         """
         packet_id = PacketID.SET_REGISTER
         struct_string = PACKET_INFO[packet_id][0]
-        payload = struct.pack(struct_string, KICK_REGISTER, 4)
+        payload = struct.pack(struct_string, KICK_REGISTER, force)
         robot_addr = robot_id
 
         super()._send_packet(CONTROL_ADDR, robot_addr,
@@ -105,7 +133,7 @@ class McuCommunicator(McuCommunicatorBarebones):
                              packet_id, payload)
 
     def setRegister(self, robot_id, register_id, value):
-        """ to remove"""
+        """ to keep"""
         packet_id = PacketID.SET_REGISTER
         struct_string = PACKET_INFO[packet_id][0]
         payload = struct.pack(struct_string, register_id, value)

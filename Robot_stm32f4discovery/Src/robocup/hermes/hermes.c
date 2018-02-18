@@ -69,6 +69,14 @@ void hermes_create_header(uint8_t packetType, packetHeaderStruct_t* header){
 	header->checksum = 0;
 }
 
+uint8_t hermes_compute_checksum(uint8_t* payloadBuffer, size_t payloadSize) {
+	uint8_t checksum = 0;
+	for (size_t i = 0; i < payloadSize; ++i) {
+		checksum += payloadBuffer[i];
+	}
+	return checksum;
+}
+
 size_t hermes_read(uint8_t* packetBuffer, int maxBytes){
 	return g_hermesHandle.com.readUntilZero(packetBuffer, maxBytes);
 }
@@ -82,14 +90,16 @@ void hermes_send(uint8_t packetType, uint8_t* pData, size_t dataLen){
 
 	// Initialize the header
 	packetHeaderStruct_t* headerPtr = (packetHeaderStruct_t *)payload;
-	hermes_create_header(packetType, payload);
+	hermes_create_header(packetType, headerPtr);
 
 	// Copy data after the header
 	if (dataLen > 0) {
 	    memcpy(payload + sizeof(packetHeaderStruct_t), pData, dataLen);
 	}
+	headerPtr->checksum = hermes_compute_checksum(payload, packetLen);
 
 	// Package and send the the respond
-	cobifyData(&payload, packetLen, packet);
+	cobifyData(&payload, packet, packetLen);
+
 	g_hermesHandle.com.write(packet, strlen(packet) + 1); // The packet must be zero terminated
 }

@@ -5,7 +5,7 @@
   *                      of all used GPIO pins.
   ******************************************************************************
   *
-  * Copyright (c) 2017 STMicroelectronics International N.V. 
+  * Copyright (c) 2018 STMicroelectronics International N.V. 
   * All rights reserved.
   *
   * Redistribution and use in source and binary forms, with or without 
@@ -79,7 +79,7 @@ void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOE, CS_I2C_SPI_Pin|MOTOR1_DIR_Pin|MOTOR2_DIR_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, OTG_FS_PowerSwitchOn_Pin|NRF_CE_Pin|GPIO1_Pin|EN_POWER_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, OTG_FS_PowerSwitchOn_Pin|NRF_CE_Pin|NRF_CEC6_Pin|EN_POWER_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, MOTOR3_DIR_Pin|NRF_CS_Pin|MOTOR4_DIR_Pin, GPIO_PIN_RESET);
@@ -102,11 +102,17 @@ void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PCPin PCPin PCPin PCPin */
-  GPIO_InitStruct.Pin = OTG_FS_PowerSwitchOn_Pin|NRF_CE_Pin|GPIO1_Pin|EN_POWER_Pin;
+  GPIO_InitStruct.Pin = OTG_FS_PowerSwitchOn_Pin|NRF_CE_Pin|NRF_CEC6_Pin|EN_POWER_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PtPin */
+  GPIO_InitStruct.Pin = NRF_IRQ_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(NRF_IRQ_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PBPin PBPin PBPin */
   GPIO_InitStruct.Pin = MOTOR3_DIR_Pin|NRF_CS_Pin|MOTOR4_DIR_Pin;
@@ -159,6 +165,10 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_EVT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(MEMS_INT2_GPIO_Port, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI3_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI3_IRQn);
 
 }
 
