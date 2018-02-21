@@ -5,7 +5,7 @@
 #include "mnrc.h"
 
 #define MAX_ACCELERATION 2.0f // In meters per second squared
-#define MAX_ACCELERATION_ROTATION 1.0f // in ? per second squared
+#define MAX_ACCELERATION_ROTATION 2.0f // in Rad per second squared
 
 
 typedef struct EncoderTimerAssociation_t{
@@ -56,6 +56,10 @@ void ctrl_taskEntryPoint(void) {
   	float max_speed_difference = MAX_ACCELERATION * CONTROL_LOOP_PERIOD_MS / 1000;
   	float max_rotation_speed_difference = MAX_ACCELERATION_ROTATION * CONTROL_LOOP_PERIOD_MS / 1000;
 
+	float vx = 0;
+	float vy = 0;
+	float vt = 0;
+
 	for(;;) {
 		// Delay the loop to a fix frequency
 		vTaskDelayUntil(&lastWakeTime, CONTROL_LOOP_PERIOD_MS / portTICK_PERIOD_MS);
@@ -67,15 +71,11 @@ void ctrl_taskEntryPoint(void) {
 
 		readQuadsSpeed(wheelSpeed);
 
-
-		float vx = 0;
-		float vy = 0;
-		float vt = 0;
 		float output[4];
 
-		float desired_vx;
-		float desired_vy;
-		float desired_vt;
+		volatile float desired_vx;
+		volatile float desired_vy;
+		volatile float desired_vt;
 		float difference_x;
 		float difference_y;
 		float difference_theta;

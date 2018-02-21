@@ -4,7 +4,7 @@ import time
 from .joystick_pygame.joystick import RobotJoystick
 from math import *
 
-SEND_FREQUENCY = 100	
+SEND_FREQUENCY = 20	
 
 def do_joystick(com, joy, robot_id):
 	global MAX_SPEED
@@ -39,10 +39,10 @@ def do_joystick(com, joy, robot_id):
 		com.turnOffDribbler(robot_id)
 	if joy.get_btn_value("L1"):
 		print("slow mode")
-		MAX_SPEED = 0.2
+		MAX_SPEED = 0.3
 	if joy.get_btn_value("R1"):
 		print("fast mode")
-		MAX_SPEED = 1
+		MAX_SPEED = 3
     
     # Don't send anything if the robot is immobile
 	if abs(x) + abs(y) + abs(t) > 0.001 or True:
