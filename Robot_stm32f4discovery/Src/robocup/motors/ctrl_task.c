@@ -7,6 +7,11 @@
 #define MAX_ACCELERATION 2.0f // In meters per second squared
 #define MAX_ACCELERATION_ROTATION 2.0f // in Rad per second squared
 
+#ifdef CLIENT_BIT // For joystick presentations, define this as a project configuration variable for launch
+#define BREAK_HISTERESIS 1
+#else
+#define BREAK_HISTERESIS 0
+#endif // CLIENT_BIT
 
 typedef struct EncoderTimerAssociation_t{
 	QuadEncoder_t identifier;
@@ -119,7 +124,8 @@ void ctrl_taskEntryPoint(void) {
 				difference_y = desired_vy-vy;
 				difference_theta = desired_vt-vt;
 				diff_vector_length = sqrt(difference_x*difference_x + difference_y*difference_y);
-				if (diff_vector_length <= max_speed_difference) {
+				if (diff_vector_length <= max_speed_difference || // next part checks if we want to break
+					(BREAK_HISTERESIS && (desired_vx == 0) && (desired_vy == 0) && (desired_vt == 0) )) {
 					vx = desired_vx;
 					vy = desired_vy;
 				} else {
