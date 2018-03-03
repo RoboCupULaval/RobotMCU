@@ -4,31 +4,37 @@ import time
 from .joystick_pygame.joystick import RobotJoystick
 from math import *
 
-SEND_FREQUENCY = 100	
+SEND_FREQUENCY = 100
 
-def do_joystick(com, joy, robot_id):
-	global MAX_SPEED
-	global current_dribbler_speed
+class Robot:
+	def __init__(self, id, speed):
+		self.id = id
+		self.speed = speed
+
+FAST_SPEED = 0.8
+SLOW_SPEED = 0.4
+
+def do_joystick(com, joy, robot):
 	x, y = joy.get_left_axis_vector()
 	_, t = joy.get_right_axis_vector()
 
-	x = x * MAX_SPEED
-	y = y * MAX_SPEED
-	t = t * 6
+	x = x * robot.speed
+	y = y * robot.speed
+	t = t * 6 * robot.speed
 
 
 	if joy.get_btn_value("X"):
 		print("kick")
-		com.kick(robot_id, 5)
+		com.kick(robot.id, 5)
 	if joy.get_btn_value("B"):
 		print("pass")
-		com.kick(robot_id, 2)
+		com.kick(robot.id, 2)
 	if joy.get_btn_value("A"):
 		print("charge")
-		com.charge(robot_id)
+		com.charge(robot.id)
 	if joy.get_btn_value("select"):
 		print("Dribbleur on")
-		com.turnOnDribbler(robot_id)
+		com.turnOnDribbler(robot.id)
 		#new_speed = 2
 		#print("Dribbleur set to ", new_speed)
 		#com.setRegister(robot_id, DRIBBLER_REGISTER, new_speed)
@@ -36,25 +42,21 @@ def do_joystick(com, joy, robot_id):
 	# 	sleep(0.05)
 	if joy.get_btn_value("Y"):
 		print("Dribbleur off")
-		com.turnOffDribbler(robot_id)
+		com.turnOffDribbler(robot.id)
 	if joy.get_btn_value("L1"):
 		print("slow mode")
-		MAX_SPEED = 0.2
+		robot.speed = SLOW_SPEED
 	if joy.get_btn_value("R1"):
 		print("fast mode")
-		MAX_SPEED = 1
+		robot.speed = FAST_SPEED
     
     # Don't send anything if the robot is immobile
 	if abs(x) + abs(y) + abs(t) > 0.001 or True:
-		com.sendSpeed(robot_id, x, y, t)
+		com.sendSpeed(robot.id, x, y, t)
 
-	print("id:{: 3.3f} x:{: 3.3f} y:{: 3.3f} t:{: 3.3f} ".format(robot_id, x, y, t), end='')
+	print("[{}] x:{: 3.3f} y:{: 3.3f} t:{: 3.3f} | ".format(robot.id, x, y, t), end='')
 
 def joystick_pygame_cli(robots_id):
-	global MAX_SPEED
-	MAX_SPEED = 0.2
-	global current_dribbler_speed
-	current_dribbler_speed = 0
 	import pygame
 
 	# Initialize
@@ -76,7 +78,7 @@ def joystick_pygame_cli(robots_id):
 	for i, robot_id in enumerate(robots_id):
 		joystick = pygame.joystick.Joystick(i)
 		joystick.init()
-		robotJoystick.append((RobotJoystick(joystick), robot_id))
+		robotJoystick.append((RobotJoystick(joystick), Robot(robot_id, SLOW_SPEED)))
 
 	com = McuCommunicator()
 	# TODO fix that
@@ -85,10 +87,10 @@ def joystick_pygame_cli(robots_id):
 	while True:
 		pygame.event.pump()
 		first_packet_no_wait = True
-		for joy, robot_id in robotJoystick:
+		for joy, robot in robotJoystick:
 			if first_packet_no_wait:
 				first_packet_no_wait = False
-			do_joystick(com, joy, robot_id)
+			do_joystick(com, joy, robot)
 		sleep(1.0/SEND_FREQUENCY)
 		print() # cariage return
 
