@@ -113,19 +113,12 @@ IRQ			Not used	Interrupt pin. Goes low when active. Pin functionality is active,
  */
 #include "stm32f4xx_hal.h"
 //#include "defines.h"
-#include "tm_stm32_spi.h"
-#include "tm_stm32_gpio.h"
 
 /**
  * @defgroup TM_NRF24L01P_Macros
  * @brief    Library defines
  * @{
  */
-
-/* Default SPI used */
-#ifndef NRF24L01_SPI
-#define NRF24L01_SPI				SPI2
-#endif
 
 /* SPI chip enable pin */
 #ifndef NRF24L01_CSN_PIN
@@ -140,10 +133,10 @@ IRQ			Not used	Interrupt pin. Goes low when active. Pin functionality is active,
 #endif
 
 /* Pins configuration */
-#define NRF24L01_CE_LOW				TM_GPIO_SetPinLow(NRF24L01_CE_PORT, NRF24L01_CE_PIN)
-#define NRF24L01_CE_HIGH			TM_GPIO_SetPinHigh(NRF24L01_CE_PORT, NRF24L01_CE_PIN)
-#define NRF24L01_CSN_LOW			TM_GPIO_SetPinLow(NRF24L01_CSN_PORT, NRF24L01_CSN_PIN)
-#define NRF24L01_CSN_HIGH			TM_GPIO_SetPinHigh(NRF24L01_CSN_PORT, NRF24L01_CSN_PIN)
+#define NRF24L01_CE_LOW				HAL_GPIO_WritePin(NRF24L01_CE_PORT, NRF24L01_CE_PIN, GPIO_PIN_RESET)
+#define NRF24L01_CE_HIGH			HAL_GPIO_WritePin(NRF24L01_CE_PORT, NRF24L01_CE_PIN, GPIO_PIN_SET)
+#define NRF24L01_CSN_LOW			HAL_GPIO_WritePin(NRF24L01_CSN_PORT, NRF24L01_CSN_PIN, GPIO_PIN_RESET)
+#define NRF24L01_CSN_HIGH			HAL_GPIO_WritePin(NRF24L01_CSN_PORT, NRF24L01_CSN_PIN, GPIO_PIN_SET)
 
 /* Interrupt masks */
 #define NRF24L01_IRQ_DATA_READY     0x40 /*!< Data ready for receive */
@@ -214,6 +207,27 @@ typedef enum _TM_NRF24L01_OutputPower_t {
  *
  * @{
  */
+
+void flushRX(void);
+
+void flushTX(void);
+
+/**
+ * @brief  Sends single byte over SPI
+ * @param  *SPIx: Pointer to SPIx peripheral you will use, where x is between 1 to 6
+ * @param  data: 8-bit data size to send over SPI
+ * @retval Received byte from slave device
+ */
+uint8_t TM_SPI_Send(SPI_TypeDef* SPIx, uint8_t data);
+
+/**
+ * @brief  Writes multiple bytes over SPI
+ * @param  *SPIx: Pointer to SPIx peripheral you will use, where x is between 1 to 6
+ * @param  *dataOut: Pointer to array with data to send over SPI
+ * @param  count: Number of elements to send over SPI
+ * @retval None
+ */
+void TM_SPI_WriteMulti(SPI_TypeDef* SPIx, uint8_t* dataOut, uint32_t count);
 
 /**
  * @brief  Initializes NRF24L01+ module
@@ -345,6 +359,8 @@ uint8_t TM_NRF24L01_Read_Interrupts(TM_NRF24L01_IRQ_t* IRQ);
  * @retval None
  */
 void TM_NRF24L01_Clear_Interrupts(void);
+
+uint8_t TM_NRF24L01_ReadRegister(uint8_t reg);
 
 /* Private */
 void TM_NRF24L01_WriteRegister(uint8_t reg, uint8_t value);
