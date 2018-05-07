@@ -11,12 +11,17 @@ class Robot:
 		self.id = id
 		self.speed = speed
 
-FAST_SPEED = 0.8
+FAST_SPEED = 1.5
 SLOW_SPEED = 0.4
+
 
 def do_joystick(com, joy, robot):
 	x, y = joy.get_left_axis_vector()
 	_, t = joy.get_right_axis_vector()
+
+	norm = sqrt(x**2 + y**2)
+	if norm > 1:
+		x, y = (x / norm, y / norm)
 
 	x = x * robot.speed
 	y = y * robot.speed
