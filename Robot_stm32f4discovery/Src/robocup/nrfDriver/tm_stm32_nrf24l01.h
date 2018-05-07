@@ -116,6 +116,9 @@ IRQ			Not used	Interrupt pin. Goes low when active. Pin functionality is active,
 #include "tm_stm32_spi.h"
 #include "tm_stm32_gpio.h"
 
+#include "../robocup_define.h" // Import robot's version
+#include "main.h" // Import pin name
+
 /**
  * @defgroup TM_NRF24L01P_Macros
  * @brief    Library defines
@@ -129,14 +132,20 @@ IRQ			Not used	Interrupt pin. Goes low when active. Pin functionality is active,
 
 /* SPI chip enable pin */
 #ifndef NRF24L01_CSN_PIN
-#define NRF24L01_CSN_PORT			GPIOB
-#define NRF24L01_CSN_PIN			GPIO_PIN_12
+#define NRF24L01_CSN_PORT			NRF_CS_GPIO_Port
+#define NRF24L01_CSN_PIN			NRF_CS_Pin
 #endif
 
 /* Chip enable for transmitting */
-#ifndef NRF24L01_CE_PIN
-#define NRF24L01_CE_PORT			GPIOC
-#define NRF24L01_CE_PIN				GPIO_PIN_6
+// DELTA
+#if !defined(NRF24L01_CE_PIN) && defined(DELTA)
+#define NRF24L01_CE_PORT			NRF_CE_DELTA_GPIO_Port
+#define NRF24L01_CE_PIN				NRF_CE_DELTA_Pin
+#endif
+// GAMMA
+#if !defined(NRF24L01_CE_PIN) && !defined(DELTA)
+#define NRF24L01_CE_PORT			NRF_CE_GAMMA_GPIO_Port
+#define NRF24L01_CE_PIN				NRF_CE_GAMMA_Pin
 #endif
 
 /* Pins configuration */

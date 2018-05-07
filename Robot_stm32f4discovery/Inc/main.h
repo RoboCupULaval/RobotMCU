@@ -66,8 +66,8 @@
 #define PH1_OSC_OUT_GPIO_Port GPIOH
 #define OTG_FS_PowerSwitchOn_Pin GPIO_PIN_0
 #define OTG_FS_PowerSwitchOn_GPIO_Port GPIOC
-#define NRF_CE_Pin GPIO_PIN_1
-#define NRF_CE_GPIO_Port GPIOC
+#define NRF_CE_DELTA_Pin GPIO_PIN_1
+#define NRF_CE_DELTA_GPIO_Port GPIOC
 #define NRF_MISO_Pin GPIO_PIN_2
 #define NRF_MISO_GPIO_Port GPIOC
 #define NRF_IRQ_Pin GPIO_PIN_3
@@ -129,8 +129,8 @@
 #define LD5_GPIO3_GPIO_Port GPIOD
 #define LD6_GPIO2_Pin GPIO_PIN_15
 #define LD6_GPIO2_GPIO_Port GPIOD
-#define NRF_CEC6_Pin GPIO_PIN_6
-#define NRF_CEC6_GPIO_Port GPIOC
+#define NRF_CE_GAMMA_Pin GPIO_PIN_6
+#define NRF_CE_GAMMA_GPIO_Port GPIOC
 #define EN_POWER_Pin GPIO_PIN_7
 #define EN_POWER_GPIO_Port GPIOC
 #define MOTOR2_PWM_Pin GPIO_PIN_8

@@ -42,7 +42,7 @@ def do_joystick(com, joy, robot_id):
 		MAX_SPEED = 0.3
 	if joy.get_btn_value("R1"):
 		print("fast mode")
-		MAX_SPEED = 3
+		MAX_SPEED = 2
     
     # Don't send anything if the robot is immobile
 	if abs(x) + abs(y) + abs(t) > 0.001 or True:

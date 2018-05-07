@@ -13,7 +13,11 @@ const uint8_t  APBPrescTable[] = {0, 0, 0, 0, 1, 2, 3, 4};
 
 //Return 1 when in debug mode (switch), else no
 bool robot_isDebug(void) {
-	return HAL_GPIO_ReadPin(DEBUG_SWITCH_GPIO_Port, DEBUG_SWITCH_Pin);
+#ifdef DELTA
+	return HAL_GPIO_ReadPin(DEBUG_SWITCH_GPIO_Port, DEBUG_SWITCH_Pin) == GPIO_PIN_RESET;
+#else
+	return HAL_GPIO_ReadPin(DEBUG_SWITCH_GPIO_Port, DEBUG_SWITCH_Pin) == GPIO_PIN_SET;
+#endif
 }
 
 //Return 1 when btn is pressed
