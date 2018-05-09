@@ -11,10 +11,12 @@
 #include "stm32f4xx.h"
 #include <stdbool.h>
 
+
+#define PACKET_SIZE 23
 #define NRF_DEFAULT_RF_CH	100
 #define NRF_REG_RF_CH		0x05
 
-void nrfInit(const size_t packetSize, const uint8_t);
+void nrfInit(const uint8_t robotId);
 void nrfSetRobotTX(uint8_t robotNumber);
 void nrfSend(uint8_t * dataOut);
 void nrfReceive(uint8_t * dataIn);

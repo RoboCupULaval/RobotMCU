@@ -117,7 +117,7 @@ Un seul packet est envoyé par robot. Si un appel bi est faite, un seul autre pa
 S'il y a trois call vers un autre robot entre deux transmitions, la deuxième transmition est perdu
 
 """
-def test_packet_lost(robots_id):
+def test_packet_lost_bug(robots_id):
 	com = McuCommunicator(timeout = 0.5)
 
 	DURATION_IN_S = 2
@@ -157,6 +157,58 @@ def test_packet_lost(robots_id):
 	print("It tooks {:5.2f}s expects {:5.2f}".format(timelapse, NUMBER_PACKET*REQUEST_PERIOD))
 
 	input("Press enter to check results")
+
+	total_failure_rate = 0
+	for index, id in enumerate(robots_id):
+		end_num_request = get_num_request(com, id)
+		num_request = end_num_request - start_num_request[index]
+		num_request &= 0xFFFFFFFF  # 32 bit mask for handling integer overflow
+
+		failure_ratio = 1.0 - float(num_request) / NUMBER_PACKET
+		total_failure_rate += failure_ratio / len(robots_id)
+		print("[ROBOT {}] {} request send, {:3} received, {:5.2f}% lost in {:5.2f}s.".format(id, NUMBER_PACKET, num_request, failure_ratio * 100.0, timelapse))
+		if num_request > NUMBER_PACKET:
+			print("Too much packet? start={}, end={} num_request={}".format(start_num_request[index], end_num_request, num_request))
+	print("Total failure rate={:5.2f}%".format(total_failure_rate * 100.0))
+
+
+
+def test_packet_lost(robots_id):
+	com = McuCommunicator(timeout = 0.5)
+
+	DURATION_IN_S = 2
+	REQUEST_FREQUENCY = 4
+	NUMBER_PACKET = DURATION_IN_S * REQUEST_FREQUENCY
+	REQUEST_PERIOD = 1.0/REQUEST_FREQUENCY
+
+	TIME_WAIT_BETWEEN_PACKET = 0.0  # 0.005s seem to make a different with more than 3 robots [fixed]
+	
+	print("Sending {} packet at {}hz@{}ms".format(NUMBER_PACKET, REQUEST_FREQUENCY, REQUEST_PERIOD*1000.0))
+
+	start_num_request = [get_num_request(com, id) for id in robots_id]
+	
+	# We wait for the fifo to clear...
+	input("Press enter after you check the fifo")
+
+	#start_num_request += 1 # Take into account the getNumRequest packet in the count
+	print("Starting test...")
+	def loop_send_packet(sc, nb_left):
+		if nb_left > 0:
+			sc.enter(REQUEST_PERIOD, 1, loop_send_packet, (sc, nb_left-1,))
+
+		#for idx, id in enumerate(robots_id):
+		for idx, id in enumerate(robots_id):
+			if idx != 0 and TIME_WAIT_BETWEEN_PACKET != 0.0:
+				time.sleep(TIME_WAIT_BETWEEN_PACKET)
+			com.sendSpeed(id, 0, 0, 0.5)  # Any unidirectionnal command could be use here to benchmark
+		
+
+	sc = sched.scheduler(time.time, time.sleep)
+	sc.enter(REQUEST_PERIOD, 1, loop_send_packet, (sc, (NUMBER_PACKET)-1,))
+	start = time.time()
+	sc.run()
+	timelapse = time.time() - start
+	print("It tooks {:5.2f}s expects {:5.2f}".format(timelapse, NUMBER_PACKET*REQUEST_PERIOD))
 
 	total_failure_rate = 0
 	for index, id in enumerate(robots_id):

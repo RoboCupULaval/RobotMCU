@@ -26,8 +26,8 @@ uint8_t TxAddress[] = {
 	0xEA
 };
 
-void nrfInit(const size_t packetSize, const uint8_t robot_id) {
-	TM_NRF24L01_Init((uint8_t)NRF_DEFAULT_RF_CH, (uint8_t)packetSize);
+void nrfInit(const uint8_t robot_id) {
+	TM_NRF24L01_Init((uint8_t)NRF_DEFAULT_RF_CH, (uint8_t)PACKET_SIZE);
 	TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_1M, TM_NRF24L01_OutputPower_0dBm);
 
 	MyAddress[4] = robot_id;
@@ -35,6 +35,10 @@ void nrfInit(const size_t packetSize, const uint8_t robot_id) {
 	TM_NRF24L01_SetMyAddress(MyAddress);
 	TM_NRF24L01_SetTxAddress(TxAddress);
 	TM_NRF24L01_PowerUpRx();
+
+	if (!nrfVerifySPI()) {
+		LOG_ERROR("NRF SPI IS FAILING\r\n");
+	}
 }
 
 void nrfSend(uint8_t * dataOut) {
@@ -67,8 +71,17 @@ void nrfSend(uint8_t * dataOut) {
 }
 
 void nrfReceive(uint8_t * dataIn) {
+	int i = 0;
 	while (!TM_NRF24L01_DataReady()) {
 		osDelay(1);// Prevent active wait
+		i++;
+		if (i > 500) {
+			if (!nrfVerifySPI()) {
+				LOG_ERROR("NRF has reset for some reason, reconfigurating nrf...\r\n");
+				nrf_init(MyAddress[4]);
+			}
+			i = 0;
+		}
 		//taskYIELD();
 	}
 	TM_NRF24L01_GetData(dataIn);
@@ -84,8 +97,5 @@ uint8_t nrfGetStatus(void) {
 
 bool nrfVerifySPI(void) {
 	int val = TM_NRF24L01_ReadRegister(NRF_REG_RF_CH);
-	if(val == NRF_DEFAULT_RF_CH)
-		return true;
-	else
-		return false;
+	return val == NRF_DEFAULT_RF_CH;
 }
