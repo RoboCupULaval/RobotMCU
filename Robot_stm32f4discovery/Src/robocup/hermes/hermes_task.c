@@ -76,6 +76,6 @@ void hermes_task_slave(void) {
 		}
 
 		// This is use to give back control to other task
-		taskYIELD();
+		//taskYIELD();
 	}
 }

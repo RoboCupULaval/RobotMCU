@@ -14,7 +14,7 @@ def do_joystick(com, joy, robot_id):
 
 	x = x * MAX_SPEED
 	y = y * MAX_SPEED
-	t = t * 6
+	t = t * 6 * MAX_SPEED / 2
 
 
 	if joy.get_btn_value("X"):

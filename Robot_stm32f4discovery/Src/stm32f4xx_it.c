@@ -38,6 +38,8 @@
 
 /* USER CODE BEGIN 0 */
 #include "robocup/kicker.h"
+
+extern osThreadId hermesTaskHandle;
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
@@ -100,6 +102,27 @@ void SPI2_IRQHandler(void)
   /* USER CODE BEGIN SPI2_IRQn 1 */
 
   /* USER CODE END SPI2_IRQn 1 */
+}
+
+/**
+* @brief This function handles EXTI line[15:10] interrupts.
+*/
+void EXTI15_10_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI15_10_IRQn 0 */
+
+	// Wake up the communication task
+	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+	if (hermesTaskHandle != NULL) {
+		vTaskNotifyGiveFromISR(hermesTaskHandle, &xHigherPriorityTaskWoken);
+	}
+
+  /* USER CODE END EXTI15_10_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
+  /* USER CODE BEGIN EXTI15_10_IRQn 1 */
+
+  portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+  /* USER CODE END EXTI15_10_IRQn 1 */
 }
 
 /**

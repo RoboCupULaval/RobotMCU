@@ -65,7 +65,7 @@ void ctrl_taskEntryPoint(void) {
 		vTaskDelayUntil(&lastWakeTime, CONTROL_LOOP_PERIOD_MS / portTICK_PERIOD_MS);
 
 		static int c = 0;
-		if(++c >= 100){
+		if(++c >= 1000/CONTROL_LOOP_PERIOD_MS){
 			c = 0; // every seconds
 		}
 

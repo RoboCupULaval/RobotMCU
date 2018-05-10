@@ -71,20 +71,43 @@ void nrfSend(uint8_t * dataOut) {
 }
 
 void nrfReceive(uint8_t * dataIn) {
+
+#ifdef DELTA
+	uint32_t ulNotificationValue;
+	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(1000);
+
+	while (!TM_NRF24L01_DataReady()) {
+		// Wait for the interrupt EXTI15_10_IRQHandler to wake us up
+
+		LOG_INFO("LOCK\r\n");
+		ulNotificationValue = ulTaskNotifyTake(pdTRUE, xMaxBlockTime);
+		// Timeout
+		if (ulNotificationValue != 1) {
+			if (!nrfVerifySPI()) {
+				LOG_ERROR("NRF has reset for some reason, reconf nrf...\r\n");
+			} else {
+				LOG_INFO("Reset nrf just in case...\r\n");
+			}
+			nrfInit(MyAddress[4]);
+		}
+	}
+#else
 	int i = 0;
 	while (!TM_NRF24L01_DataReady()) {
 		osDelay(1);// Prevent active wait
 		i++;
 		if (i > 500) {
 			if (!nrfVerifySPI()) {
-				LOG_ERROR("NRF has reset for some reason, reconfigurating nrf...\r\n");
-				nrf_init(MyAddress[4]);
+			LOG_ERROR("NRF has reset for some reason, reconfigurating nrf...\r\n");
+			nrfInit(MyAddress[4]);
 			}
 			i = 0;
 		}
-		//taskYIELD();
 	}
+
+#endif
 	TM_NRF24L01_GetData(dataIn);
+
 }
 
 uint8_t nrfRetransmitCount(void) {
