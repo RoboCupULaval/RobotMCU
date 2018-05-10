@@ -12,7 +12,7 @@
 
 extern volatile uint8_t g_kickMsTick;
 
-#define KICKER_WAIT_BALL_TIME_IN_TICK 15000    // 15 secondes
+#define KICKER_ARMED_TIME_IN_TICK 10000    // 15 secondes
 #define TIMEOUT_ON_CHARGE_IN_TICK (60 * 1000) // 1 minute
 
 
@@ -32,6 +32,7 @@ void kicker_chargeOff(void);
 void kicker_triggerKick(void);
 void kicker_kickOff(void);
 bool kicker_hasChargeTimeout(void);
+bool kicker_isArmed(void);
 bool kicker_isBankFull(void);
 
 #endif /* ROBOCUP_KICKER_H_ */

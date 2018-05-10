@@ -78,17 +78,16 @@ void nrfReceive(uint8_t * dataIn) {
 
 	while (!TM_NRF24L01_DataReady()) {
 		// Wait for the interrupt EXTI15_10_IRQHandler to wake us up
-
-		LOG_INFO("LOCK\r\n");
 		ulNotificationValue = ulTaskNotifyTake(pdTRUE, xMaxBlockTime);
 		// Timeout
 		if (ulNotificationValue != 1) {
 			if (!nrfVerifySPI()) {
 				LOG_ERROR("NRF has reset for some reason, reconf nrf...\r\n");
-			} else {
-				LOG_INFO("Reset nrf just in case...\r\n");
+				nrfInit(MyAddress[4]);
 			}
-			nrfInit(MyAddress[4]);
+			//else {
+			//	LOG_INFO("Reset nrf just in case...\r\n");
+			//}
 		}
 	}
 #else
