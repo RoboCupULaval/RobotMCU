@@ -31,7 +31,6 @@ void dribbler_setPWM(float speed) {
   	__HAL_TIM_SetCompare(&htim12, TIM_CHANNEL_1, pwmTimerValue);
 }
 
-
 void dribbler_handleDribbler(void) {
 	if (!dribbler_hasChargeTimeout()) {
 		dribbler_setPWM(s_speed);

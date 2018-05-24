@@ -43,26 +43,26 @@ void nrfInit(const uint8_t robot_id) {
 
 void nrfSend(uint8_t * dataOut) {
 	TM_NRF24L01_Transmit_Status_t transmissionStatus;
-	const TickType_t startTime = xTaskGetTickCount();
-	int retry = 100;
+	int retry = 10;
 	do {
+		const TickType_t startTime = xTaskGetTickCount();
 		TM_NRF24L01_Transmit(dataOut);
 		do {
 			/* Get transmission status */
 			transmissionStatus = TM_NRF24L01_GetTransmissionStatus();
 			//retry--;
-		} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Sending && xTaskGetTickCount()-startTime < 1);
+		} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Sending && xTaskGetTickCount()-startTime < 100);
 		//Get back into RX mode
 		TM_NRF24L01_PowerUpRx();
 
 		retry--;
-	} while (transmissionStatus == TM_NRF24L01_Transmit_Status_Lost && retry > 0);
+	} while (transmissionStatus != TM_NRF24L01_Transmit_Status_Ok && retry > 0);
 
-	if (retry == 0 || xTaskGetTickCount()-startTime >= 1) {
+	if (retry == 0 && transmissionStatus != TM_NRF24L01_Transmit_Status_Ok) {
 		LOG_ERROR("Transmission lost, fail to send\r\n");
 	}
-	if (retry > 0 && retry < 99 && xTaskGetTickCount()-startTime == 0) {
-		LOG_ERROR("Transmission save by a retry\r\n");
+	if (transmissionStatus == TM_NRF24L01_Transmit_Status_Ok) {
+		LOG_INFO("Transmission received\r\n");
 	}
 	taskYIELD();
 	//static char str_tmp[100] = {0};
@@ -83,11 +83,11 @@ void nrfReceive(uint8_t * dataIn) {
 		if (ulNotificationValue != 1) {
 			if (!nrfVerifySPI()) {
 				LOG_ERROR("NRF has reset for some reason, reconf nrf...\r\n");
-				nrfInit(MyAddress[4]);
 			}
-			//else {
-			//	LOG_INFO("Reset nrf just in case...\r\n");
-			//}
+			else {
+				LOG_INFO("Reset nrf just in case...\r\n");
+			}
+			nrfInit(MyAddress[4]);
 		}
 	}
 #else
@@ -97,8 +97,8 @@ void nrfReceive(uint8_t * dataIn) {
 		i++;
 		if (i > 500) {
 			if (!nrfVerifySPI()) {
-			LOG_ERROR("NRF has reset for some reason, reconfigurating nrf...\r\n");
-			nrfInit(MyAddress[4]);
+				LOG_ERROR("NRF has reset for some reason, reconfigurating nrf...\r\n");
+				nrfInit(MyAddress[4]);
 			}
 			i = 0;
 		}

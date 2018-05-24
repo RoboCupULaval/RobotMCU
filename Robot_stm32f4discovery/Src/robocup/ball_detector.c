@@ -5,6 +5,7 @@
  *      Author: Gagnon
  */
 
+#include "util.h"
 #include "ball_detector.h"
 #include "log.h"
 

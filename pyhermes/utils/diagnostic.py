@@ -176,8 +176,8 @@ def test_packet_lost_bug(robots_id):
 def test_packet_lost(robots_id):
 	com = McuCommunicator(timeout = 0.5)
 
-	DURATION_IN_S = 2
-	REQUEST_FREQUENCY = 4
+	DURATION_IN_S = 5
+	REQUEST_FREQUENCY = 20
 	NUMBER_PACKET = DURATION_IN_S * REQUEST_FREQUENCY
 	REQUEST_PERIOD = 1.0/REQUEST_FREQUENCY
 
@@ -185,10 +185,9 @@ def test_packet_lost(robots_id):
 	
 	print("Sending {} packet at {}hz@{}ms".format(NUMBER_PACKET, REQUEST_FREQUENCY, REQUEST_PERIOD*1000.0))
 
-	start_num_request = [get_num_request(com, id) for id in robots_id]
-	
-	# We wait for the fifo to clear...
-	input("Press enter after you check the fifo")
+	while True:
+		start_num_request = [get_num_request(com, id) for id in robots_id]
+		print("ok!!!")
 
 	#start_num_request += 1 # Take into account the getNumRequest packet in the count
 	print("Starting test...")

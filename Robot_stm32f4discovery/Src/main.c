@@ -143,12 +143,13 @@ int main(void)
   	//__HAL_TIM_ENABLE_IT(&htim7, TIM_IT_UPDATE);
 
   	// Init communication
+
+  	comHandle_t comBluetooth = bluetooth_init(robot_isDebug());
+  	log_init(comBluetooth);
+
   	comHandle_t comNrf = nrf_init();
   	hermes_init(comNrf);
 
-  	comHandle_t comBluetooth = bluetooth_init(robot_isDebug());
-
-  	log_init(comBluetooth);
   	if(robot_isDebug())
   		console_init(comBluetooth);
 
