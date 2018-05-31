@@ -11,7 +11,7 @@ Wheel_t g_wheels[] =
 #ifdef DELTA
 #define RADIUS 0.033f // m
 #define TICK_PER_TURN 5.f * 4096.0f // tick/turn
-#define DIST_FROM_CENTER 0.0785 // m
+#define DIST_FROM_CENTER 0.0785f // m
 		// angle of speed vector 60, 141
 		// Distance from center to wheel  78.5 mm
 {"wheel 1", {0}, EncoderTim1, &htim5, TIM_CHANNEL_1, MOTOR1_DIR_GPIO_Port, MOTOR1_DIR_Pin, ClockWise, (float)(+60.f / 180.0f * M_PI),  1.0f, cosf((60.f + 90.f) / 180.0f * M_PI),   sinf((60.f + 90.f) / 180.0f * M_PI),   RADIUS, DIST_FROM_CENTER, TICK_PER_TURN, 0.0f},

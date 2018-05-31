@@ -9,9 +9,15 @@
 #define ROBOCUP_BALL_DETECTOR_H_
 
 #include "adc.h"
+#include "led.h"
 
-#define BALL_DRIBBLING_THRESHOLD	800
-#define BALL_KICKING_THRESHOLD		(500 * 500) // Circle Radius
+#define BALL_MIN_ADC_VAL 300
+#define BALL_MAX_ADC_VAL 1200
+#define BALL_LED_STEP ((BALL_MAX_ADC_VAL - BALL_MIN_ADC_VAL) / LED_NUMBER)
+
+//#define BALL_NB_LED_THAT_WAS_LIGHT_UP 5
+//#define BALL_NB_LED_THAT_WAS_LIGHT_UP_DRIBBLE 4
+
 // Note PB-2018-01-14:
 // G01 400
 // G02 1000-500=500, dibler 1000
@@ -32,5 +38,8 @@ void ball_updateADC(void);
 BallState ball_getState(void);
 uint32_t ball_getSensorValue(uint32_t sensorId);
 uint32_t ball_getSensorsMeanValue(void);
+
+uint32_t ball_kicker_threshold(void);
+uint32_t ball_dribbling_threshold(void);
 
 #endif /* ROBOCUP_BALL_DETECTOR_H_ */
