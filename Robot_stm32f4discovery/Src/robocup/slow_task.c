@@ -6,6 +6,7 @@
 
 void slow_handleSensorCalibLed(void);
 powerState slow_handleBattProtection(void);
+void slow_secret_force_kick(void);
 
 void slow_taskEntryPoint(void) {
 	pmu_init();
@@ -43,6 +44,8 @@ void slow_taskEntryPoint(void) {
 				time_of_last_button_low = xTaskGetTickCount();
 			}
 		}
+
+		slow_secret_force_kick();
 
 		ball_updateADC();
 		kicker_update();
@@ -109,5 +112,14 @@ void slow_handleSensorCalibLed(void) {
 			led_turnOff(i > 4 ? i+1 : i);
 		}
 	}
+}
+
+void slow_secret_force_kick(void) {
+	static bool previous_value = false;
+
+	if (robot_getPlayerID() == 0 && previous_value && !robot_isBtnPressed() && robot_isDebug()) {
+		kicker_force_kick(10);
+	}
+	previous_value = robot_isBtnPressed();
 }
 

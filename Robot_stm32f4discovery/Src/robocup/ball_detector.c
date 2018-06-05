@@ -16,11 +16,12 @@ typedef struct {
 
 ball_detector_config_t ID_TO_CONFIG[] = {
 		[0] = {.nb_led_dribbler = 4, .nb_led_kick = 5}, // default config
-		[1] = {.nb_led_dribbler = 5, .nb_led_kick = 7},
+		[1] = {.nb_led_dribbler = 4, .nb_led_kick = 6},
+		[2] = {.nb_led_dribbler = 5, .nb_led_kick = 6},
 		[3] = {.nb_led_dribbler = 4, .nb_led_kick = 5},
-		[5] = {.nb_led_dribbler = 5, .nb_led_kick = 7}
-		//,
-		//[7] = {.nb_led_dribbler = 5, .nb_led_kick = 6}
+		[4] = {.nb_led_dribbler = 6, .nb_led_kick = 7},
+		[5] = {.nb_led_dribbler = 5, .nb_led_kick = 7},
+		[6] = {.nb_led_dribbler = 4, .nb_led_kick = 6}
 };
 const size_t ID_TO_CONFIG_LEN = sizeof(ID_TO_CONFIG) / sizeof(ball_detector_config_t);
 

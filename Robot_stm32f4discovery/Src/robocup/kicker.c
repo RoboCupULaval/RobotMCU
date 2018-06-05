@@ -16,12 +16,15 @@ volatile uint8_t g_kickMsTick = 0;
 static KickerState_t s_kickerState = KICKER_IDLE;
 static uint8_t s_kickerTimeInMs = 0;
 static TickType_t s_tickWhenWithKickerArmed = 0;
+static TickType_t s_tickWhenStartCharging = 0;
 static TickType_t s_tickWhenReceivedCharge = 0;
+static bool s_forceKick = false;
 
 void kicker_init(void) {
 	s_kickerState = KICKER_IDLE;
 	kicker_chargeOff();
 	kicker_kickOff();
+	s_forceKick = false;
 }
 
 void kicker_charge(void) {
@@ -35,6 +38,11 @@ void kicker_kick(uint8_t time) {
 	s_kickerTimeInMs = (uint8_t)time;
 }
 
+void kicker_force_kick(uint8_t time) {
+	kicker_kick(time);
+	s_forceKick = true;
+}
+
 
 void kicker_update(void) {
 	switch(s_kickerState) {
@@ -42,15 +50,16 @@ void kicker_update(void) {
 			kicker_chargeOff();
 			kicker_kickOff();
 
-			if (!kicker_hasChargeTimeout()) {
+			if (!kicker_hasAutoRechargeTimeout()) {
 				s_kickerState = KICKER_CHARGING;
+				kicker_resetChargeTimer();
 			}
 			break;
 		case KICKER_CHARGING:
-			if (!kicker_hasChargeTimeout()) {
+			if (!kicker_hasAutoRechargeTimeout()) {
 				kicker_chargeOn();
 				kicker_kickOff();
-				if (kicker_isBankFull()) {
+				if (kicker_hasChargeTimeout()) {
 					s_kickerState = KICKER_CHARGED;
 				}
 			} else {
@@ -58,7 +67,7 @@ void kicker_update(void) {
 			}
 			break;
 		case KICKER_CHARGED:
-			if (kicker_hasChargeTimeout()) {
+			if (kicker_hasAutoRechargeTimeout()) {
 				s_kickerState = KICKER_IDLE;
 			}
 			if (kicker_isArmed()) {
@@ -66,13 +75,15 @@ void kicker_update(void) {
 			}
 		break;
 		case KICKER_WAIT_FOR_BALL:
-			if (ball_getState() == BALL_READY_TO_KICK) {
+			if (ball_getState() == BALL_READY_TO_KICK || s_forceKick) {
 				kicker_chargeOff();
 				s_kickerState = KICKER_KICKING;
 				kicker_triggerKick();
+				s_forceKick = false;
+				//LOG_INFO("Kick triggered \r\n");
 				// If the ball is not detected after a while, we give up
 			} else if (!kicker_isArmed()) {
-				s_kickerState = KICKER_CHARGED;
+				s_kickerState = KICKER_IDLE;
 			}
 			break;
 		case KICKER_KICKING:
@@ -104,8 +115,16 @@ void kicker_kickOff(void) {
 	HAL_GPIO_WritePin(KICK_GPIO_Port, KICK_Pin, GPIO_PIN_RESET);
 }
 
+bool kicker_hasAutoRechargeTimeout(void) {
+	return s_tickWhenReceivedCharge == 0 || xTaskGetTickCount() - s_tickWhenReceivedCharge > TIMEOUT_ON_AUTO_RECHARGE_IN_TICK;
+}
+
+void kicker_resetChargeTimer(void) {
+	s_tickWhenStartCharging = xTaskGetTickCount();
+}
+
 bool kicker_hasChargeTimeout(void) {
-	return s_tickWhenReceivedCharge == 0 || xTaskGetTickCount() - s_tickWhenReceivedCharge > TIMEOUT_ON_CHARGE_IN_TICK;
+	return s_tickWhenStartCharging == 0 || xTaskGetTickCount() - s_tickWhenStartCharging > DURATION_CHARGE_IN_TICK;
 }
 
 bool kicker_isArmed(void) {
