@@ -11,8 +11,9 @@
 
 #include "i2c.h"
 
-#define LED_PWM				0xFF //100 %
+#define LED_NUMBER          9
 
+#define LED_PWM				0xFF //100 %
 
 #define LED_ADDRESS			200
 

@@ -83,7 +83,7 @@ void test_logWheelSpining(bool successful, const char *pWheelDebugName, int nbTi
 }
 
 int32_t test_spinAndStopWheel(Wheel_t* pWheel, float speed) {
-  	int32_t wheelSpeed[4];
+  	float wheelSpeed[4];
 	// Make it spins a little bit
 	wheel_setPWM(pWheel, speed);
 	osDelay(TIME_LEFT_SPINNING_MS);
@@ -95,5 +95,5 @@ int32_t test_spinAndStopWheel(Wheel_t* pWheel, float speed) {
 	osDelay(TIME_BREAKING_MS);
 
 	// We check the absolute value first
-	return wheelSpeed[pWheel->quad];
+	return (int32_t)wheelSpeed[pWheel->quad];
 }

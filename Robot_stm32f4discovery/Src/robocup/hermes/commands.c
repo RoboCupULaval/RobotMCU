@@ -12,6 +12,7 @@
 #include "../motors/ctrl_task.h"
 #include "hermes_task.h"
 #include "../kicker.h"
+#include "../dribbler.h"
 
 void command_heartbeatRequest(uint8_t origin_id, uint8_t* msg){
 	hermes_send(PING_RESPONSE, NULL, 0);
@@ -67,19 +68,18 @@ void command_setRegister(uint8_t origin_id, uint8_t* msg){
 			float newSpeed = 0.0f;
 			switch (registerMsg->value) {
 				case 1:
-					newSpeed = 0.3f;
+					newSpeed = 0.1f;
 					break;
 				case 2:
-					newSpeed = 0.5f;
+					newSpeed = 0.2f;
 					break;
 				case 3:
-					newSpeed = 0.7f;
+					newSpeed = 0.35f;
 					break;
 				default:
 					newSpeed = 0.0f;
 			}
-			dribbler_setSpeed(newSpeed);
-			dibbler_tmp_force_activation();
+			dibbler_tmp_force_activation(newSpeed);
 			break;
 		default:
 			LOG_ERROR("Unknown register");

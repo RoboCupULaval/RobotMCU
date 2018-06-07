@@ -15,8 +15,9 @@
 void dribbler_init(void);
 void dribbler_handleDribbler(void);
 void dribbler_setPWM(float speed);
-void dibbler_tmp_force_activation(void);
-bool dribbler_hasChargeTimeout(void);
+void dibbler_tmp_force_activation(float force_speed);
+bool dribbler_hasForceActivationTimeout(void);
+bool dribbler_hasTimeout(void);
 
 
 #endif /* ROBOCUP_DRIBBLER_H_ */
