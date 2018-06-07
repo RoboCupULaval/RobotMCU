@@ -6,14 +6,11 @@
 
 void slow_handleSensorCalibLed(void);
 powerState slow_handleBattProtection(void);
-<<<<<<< HEAD
 void slow_updatePowerIndicators(void);
 void slow_updatePowerWarning(uint16_t number_of_iterations);
 void slow_turnOnLeds(uint8_t number_of_leds_on);
 void slow_turnOffLeds(uint8_t first_led_off);
-=======
 void slow_secret_force_kick(void);
->>>>>>> delta
 
 void slow_taskEntryPoint(void) {
 	pmu_init();
@@ -91,20 +88,10 @@ powerState slow_handleBattProtection(void) {
 		slow_updatePowerWarning(SLOW_CRITICAL_LED_FLASH);
 		break;
 	case POWER_WARNING:
-<<<<<<< HEAD
 		slow_updatePowerWarning(SLOW_WARNING_LED_FLASH);
 		break;
 	case POWER_OK:
 		slow_updatePowerIndicators();
-=======
-		//led_turnOff(6);
-		//led_turnOn(7);
-		break;
-	case POWER_OK:
-	case POWER_OVERRIDE:
-		//led_turnOn(6);
-		//led_turnOff(7);
->>>>>>> delta
 		pmu_forceEnablePower();
 		break;
 	case POWER_OVERRIDE:
@@ -121,7 +108,7 @@ void slow_updatePowerIndicators(void) {
 	double batt_voltage 			   = pmu_getBattVoltage();
 	double batt_voltage_max_no_offset  = SLOW_BATT_MAX - PMU_BATT_WARNING_TRESHOLD;
 	double batt_voltage_no_offset      = batt_voltage - PMU_BATT_WARNING_TRESHOLD;
-	double batt_increment 		   	   = batt_voltage_max_no_offset / SLOW_TOTAL_NUMBER_OF_LEDS;
+	double batt_increment 		   	   = batt_voltage_max_no_offset / LED_NUMBER;
 
 	uint8_t nb_leds_on   			   = (uint8_t)(batt_voltage_no_offset / batt_increment);
 	uint8_t first_led_off          	   = (uint8_t)(nb_leds_on + 1);
@@ -162,14 +149,14 @@ void slow_turnOnLeds(uint8_t number_of_leds_on) {
 	}
 }
 
-<<<<<<< HEAD
+
 // first_led_off: the first led that is off
 void slow_turnOffLeds(uint8_t first_led_off) {
-	for (uint8_t i = first_led_off; i <= SLOW_TOTAL_NUMBER_OF_LEDS; ++i) {
+	for (uint8_t i = first_led_off; i <= LED_NUMBER; ++i) {
 		led_turnOff(i);
 	}
 }
-=======
+
 void slow_handleSensorCalibLed(void) {
 	uint32_t val = ball_getSensorsMeanValue();
 
@@ -194,5 +181,3 @@ void slow_secret_force_kick(void) {
 	}
 	previous_value = robot_isBtnPressed();
 }
-
->>>>>>> delta
