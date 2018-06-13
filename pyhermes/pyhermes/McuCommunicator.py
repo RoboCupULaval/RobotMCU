@@ -74,6 +74,29 @@ class McuCommunicator(McuCommunicatorBarebones):
         super()._send_packet(CONTROL_ADDR, robot_addr,
                              packet_id, payload)
 
+    def sendSpeedAdvance(self, robot_id, speed_x, speed_y, speed_rotation, charge=False, kick_force=0, dribbler_speed=0):
+        """Sets the desired speed for the robot.
+
+        Inputs:
+            speed_x -- The x speed as a float in meters per second.
+            speed_y -- The y speed as a float in meters per second.
+            speed_rotation -- The y speed as a float in radians per second.
+            kick_force -- Number of increment of 0.1ms of the kick pulse (max 25.5ms). Zero mean no kick
+            dribbler_speed -- Either 0, 1, 2, 3
+        """
+        assert 0 <= kick_force <= 255, "kick_force must be in range 0 to 255"
+        assert 0 <= dribbler_speed <= 127, "dribbler_speed must be in range 0 to 127"
+
+        packet_id = PacketID.SPEED_MOVE_ADVANCE
+        struct_string = PACKET_INFO[packet_id][0]
+        payload = struct.pack(struct_string,
+                              speed_x, speed_y, speed_rotation, dribbler_speed + 0x80 if charge else 0, kick_force)
+
+        robot_addr = robot_id
+
+        super()._send_packet(CONTROL_ADDR, robot_addr,
+                             packet_id, payload)
+
     def sendOpenLoopSpeed(self, robot_id, wheel_1_cmd,
                           wheel_2_cmd, wheel_3_cmd, wheel_4_cmd):
         """ Sends a speed command in open loop mode.

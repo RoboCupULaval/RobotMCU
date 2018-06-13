@@ -129,7 +129,7 @@ def test_packet_lost_bug(robots_id):
 	
 	print("Sending {} packet at {}hz@{}ms".format(NUMBER_PACKET, REQUEST_FREQUENCY, REQUEST_PERIOD*1000.0))
 
-	start_num_request = [get_num_request(com, id) for id in robots_id]
+	#start_num_request = [get_num_request(com, id) for id in robots_id]
 	
 	# We wait for the fifo to clear...
 	input("Press enter after you check the fifo")
@@ -141,7 +141,7 @@ def test_packet_lost_bug(robots_id):
 			sc.enter(REQUEST_PERIOD, 1, loop_send_packet, (sc, nb_left-1,))
 
 		#for idx, id in enumerate(robots_id):
-		for idx, id in enumerate([2,1,1,1,1,1,1,2]):
+		for idx, id in enumerate([1,2,4,6,1,2,4,6]):
 			if idx != 0 and TIME_WAIT_BETWEEN_PACKET != 0.0:
 				time.sleep(TIME_WAIT_BETWEEN_PACKET)
 			print("Send to robot {}".format(id))

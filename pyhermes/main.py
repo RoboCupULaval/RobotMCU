@@ -52,7 +52,7 @@ if __name__ == '__main__':
     elif args.command == 'find_robots':
         find_robots()
     elif args.command == 'test_packet_lost':
-        test_packet_lost(args.robot_id)
+        test_packet_lost_bug(args.robot_id)
     elif args.command == 'joystick':
         if args.pygame:
             joystick_pygame_cli(args.robot_id)

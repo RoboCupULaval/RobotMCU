@@ -178,6 +178,7 @@ void slow_secret_force_kick(void) {
 
 	if (robot_getPlayerID() == 0 && previous_value && !robot_isBtnPressed() && robot_isDebug()) {
 		kicker_force_kick(10);
+		dibbler_tmp_force_activation(0.35f);
 	}
 	previous_value = robot_isBtnPressed();
 }

@@ -30,7 +30,8 @@ enum packetTypes_t {
 	GET_BATTERIE,
 	BATTERIE_RESPONSE,
 	GET_NUM_REQUEST,
-	NUM_REQUEST_RESPONSE
+	NUM_REQUEST_RESPONSE,
+	SPEED_MOVE_ADVANCE
 };
 
 typedef struct {
@@ -51,7 +52,8 @@ static const packet_t g_packetsTable[] = {
 		{GET_BATTERIE,         true,  DEFAULT_NB_RETRY},
 		{BATTERIE_RESPONSE,    false, DEFAULT_NB_RETRY},
 		{GET_NUM_REQUEST,      true,  NO_RETRY},
-		{NUM_REQUEST_RESPONSE, false, DEFAULT_NB_RETRY}
+		{NUM_REQUEST_RESPONSE, false, DEFAULT_NB_RETRY},
+		{SPEED_MOVE_ADVANCE,   false, DEFAULT_NB_RETRY}
 };
 
 static const size_t g_packetsTableLen = sizeof(g_packetsTable) / sizeof(packet_t);

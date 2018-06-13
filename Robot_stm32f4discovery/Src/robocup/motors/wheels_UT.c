@@ -10,7 +10,7 @@ const uint32_t     TIME_LEFT_SPINNING_MS = 100;
 const uint32_t     TIME_BREAKING_MS      = 700;
 
 const float   NORMAL_SPEED          = 1.0;
-const int16_t MIN_TICK_FOR_MOVEMENT = 800;
+const int16_t MIN_TICK_FOR_MOVEMENT = 250;
 bool test_startUp(void) {
 	initPwmAndQuad();
 
