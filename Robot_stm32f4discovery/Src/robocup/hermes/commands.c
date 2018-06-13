@@ -29,7 +29,7 @@ void command_movementCommand(uint8_t origin_id, uint8_t* msg){
 }
 
 void command_movementAdvanceCommand(uint8_t origin_id, uint8_t* msg){
-    msg_set_speed_advance_t * moveAdvMsg = (msg_set_speed_advance_t *) msg;
+    volatile msg_set_speed_advance_t * moveAdvMsg = (msg_set_speed_advance_t *) msg;
 	command_movementCommand(origin_id, (uint8_t*)&moveAdvMsg->speed);
 
 	if (moveAdvMsg->kick_force > 0) {

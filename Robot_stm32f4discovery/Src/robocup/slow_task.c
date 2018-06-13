@@ -5,7 +5,7 @@
 #define NB_TICK_TO_ENABLE_SENSOR_CALIBRATION 5000
 
 void slow_handleSensorCalibLed(void);
-powerState slow_handleBattProtection(void);
+powerState slow_handleBattProtection(bool sensor_calib_enable);
 void slow_updatePowerIndicators(void);
 void slow_updatePowerWarning(uint16_t number_of_iterations);
 void slow_turnOnLeds(uint8_t number_of_leds_on);
@@ -57,7 +57,7 @@ void slow_taskEntryPoint(void) {
 		log_setBatteryVoltage(pmu_getBattVoltage());
 		log_setCurrent(pmu_getCurrent());
 
-		slow_handleBattProtection();
+		slow_handleBattProtection(sensor_calib_enable);
 
 		//LOG_INFO("Enter dribler test \r\n");
 		dribbler_handleDribbler();
@@ -79,24 +79,29 @@ void slow_taskEntryPoint(void) {
 
 //Automatically reads batt voltage and decides if the power should be disable
 //Returns the power state
-powerState slow_handleBattProtection(void) {
+powerState slow_handleBattProtection(bool sensor_calib_enable) {
 	powerState state = pmu_checkBattVoltage();
 
 	switch(state) {
 	case POWER_CRITICAL:
 		pmu_disablePower();
-		slow_updatePowerWarning(SLOW_CRITICAL_LED_FLASH);
+		if (!sensor_calib_enable)
+			slow_updatePowerWarning(SLOW_CRITICAL_LED_FLASH);
 		break;
 	case POWER_WARNING:
-		slow_updatePowerWarning(SLOW_WARNING_LED_FLASH);
+		if (!sensor_calib_enable)
+			slow_updatePowerWarning(SLOW_WARNING_LED_FLASH);
 		break;
 	case POWER_OK:
-		slow_updatePowerIndicators();
+		if (!sensor_calib_enable)
+			slow_updatePowerIndicators();
 		pmu_forceEnablePower();
 		break;
 	case POWER_OVERRIDE:
+		LOG_INFO("POWER_OVERRIDE \r\n");
+		break;
 	default:
-		while(1);
+		LOG_INFO("Invalid Power State \r\n");
 	};
 
 	return state;
