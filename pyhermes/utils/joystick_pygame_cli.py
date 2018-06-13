@@ -14,39 +14,41 @@ def do_joystick(com, joy, robot_id):
 
 	x = x * MAX_SPEED
 	y = y * MAX_SPEED
-	t = t * 6
+	t = t * 6 * MAX_SPEED / 2
 
-
+	KICK_FORCE = 0
+	DRIBBLE_SPEED = 0
+	CHARGING = False
 	if joy.get_btn_value("X"):
 		print("kick")
-		com.kick(robot_id, 5)
+		KICK_FORCE = 50
+		# com.kick(robot_id, KICK_FORCE)
 	if joy.get_btn_value("B"):
 		print("pass")
-		com.kick(robot_id, 2)
+		KICK_FORCE = 20
+		#com.kick(robot_id, 2)
 	if joy.get_btn_value("A"):
-		print("charge")
-		com.charge(robot_id)
-	if joy.get_btn_value("select"):
-		print("Dribbleur on")
-		com.turnOnDribbler(robot_id)
-		#new_speed = 2
-		#print("Dribbleur set to ", new_speed)
-		#com.setRegister(robot_id, DRIBBLER_REGISTER, new_speed)
-	# 	current_dribbler_speed = new_speed
-	# 	sleep(0.05)
+		print("Dribble on")
+		DRIBBLE_SPEED = 3
+
 	if joy.get_btn_value("Y"):
-		print("Dribbleur off")
-		com.turnOffDribbler(robot_id)
+		print("Charge")
+		CHARGING = True
+
+	# if joy.get_btn_value("Y"):
+	# 	print("Dribbleur off")
+	#	com.turnOffDribbler(robot_id)
 	if joy.get_btn_value("L1"):
 		print("slow mode")
 		MAX_SPEED = 0.3
 	if joy.get_btn_value("R1"):
 		print("fast mode")
-		MAX_SPEED = 3
+		MAX_SPEED = 2
     
     # Don't send anything if the robot is immobile
 	if abs(x) + abs(y) + abs(t) > 0.001 or True:
-		com.sendSpeed(robot_id, x, y, t)
+		#com.sendSpeed(robot_id, x, y, t)
+		com.sendSpeedAdvance(robot_id, x, y, t, CHARGING, KICK_FORCE, DRIBBLE_SPEED)
 
 	print("id:{: 3.3f} x:{: 3.3f} y:{: 3.3f} t:{: 3.3f} ".format(robot_id, x, y, t), end='')
 

@@ -10,7 +10,7 @@ const uint32_t     TIME_LEFT_SPINNING_MS = 100;
 const uint32_t     TIME_BREAKING_MS      = 700;
 
 const float   NORMAL_SPEED          = 1.0;
-const int16_t MIN_TICK_FOR_MOVEMENT = 800;
+const int16_t MIN_TICK_FOR_MOVEMENT = 250;
 bool test_startUp(void) {
 	initPwmAndQuad();
 
@@ -83,7 +83,7 @@ void test_logWheelSpining(bool successful, const char *pWheelDebugName, int nbTi
 }
 
 int32_t test_spinAndStopWheel(Wheel_t* pWheel, float speed) {
-  	int32_t wheelSpeed[4];
+  	float wheelSpeed[4];
 	// Make it spins a little bit
 	wheel_setPWM(pWheel, speed);
 	osDelay(TIME_LEFT_SPINNING_MS);
@@ -95,5 +95,5 @@ int32_t test_spinAndStopWheel(Wheel_t* pWheel, float speed) {
 	osDelay(TIME_BREAKING_MS);
 
 	// We check the absolute value first
-	return wheelSpeed[pWheel->quad];
+	return (int32_t)wheelSpeed[pWheel->quad];
 }

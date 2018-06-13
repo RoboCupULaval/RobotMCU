@@ -32,6 +32,12 @@ typedef struct __attribute__((__packed__)) {
 } msg_set_speed_t;
 
 typedef struct __attribute__((__packed__)) {
+	msg_set_speed_t   speed;
+	uint8_t dribbler_speed;
+	uint8_t kick_force;
+} msg_set_speed_advance_t;
+
+typedef struct __attribute__((__packed__)) {
 	float   cmd1; //pwm to wheel 1 between 0.0 and 1.0
 	float   cmd2;
 	float   cmd3;
@@ -67,7 +73,8 @@ enum packetTypes_t {
 	GET_BATTERIE,
 	BATTERIE_RESPONSE,
 	GET_NUM_REQUEST,
-	NUM_REQUEST_RESPONSE
+	NUM_REQUEST_RESPONSE,
+	SPEED_MOVE_ADVANCE
 };
 
 #endif /* ROBOCUP_PACKETS_TABLE_H_ */

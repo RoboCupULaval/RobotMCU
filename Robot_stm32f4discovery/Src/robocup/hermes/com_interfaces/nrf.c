@@ -4,10 +4,9 @@
 #include "../../util.h"
 #include "../../nrfDriver/nrfDriver.h"
 
-#define PACKET_SIZE 23
 comHandle_t nrf_init(void){
 
-	nrfInit(PACKET_SIZE, robot_getPlayerID());
+	nrfInit(robot_getPlayerID());
 
 	comHandle_t com;
 	com.read = nrf_read;

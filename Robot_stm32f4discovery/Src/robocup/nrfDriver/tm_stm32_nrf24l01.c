@@ -557,6 +557,7 @@ void TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_t DataRate, TM_NRF24L01_OutputPower_
 
 uint8_t TM_NRF24L01_Read_Interrupts(TM_NRF24L01_IRQ_t* IRQ) {
 	IRQ->Status = TM_NRF24L01_GetStatus();
+	return 0;
 }
 
 void TM_NRF24L01_Clear_Interrupts(void) {

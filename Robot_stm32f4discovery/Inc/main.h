@@ -1,8 +1,14 @@
 /**
   ******************************************************************************
-  * File Name          : main.h
-  * Description        : This file contains the common defines of the application
+  * @file           : main.h
+  * @brief          : Header for main.c file.
+  *                   This file contains the common defines of the application.
   ******************************************************************************
+  * This notice applies to any and all portions of this file
+  * that are not between comment pairs USER CODE BEGIN and
+  * USER CODE END. Other portions of this file, whether 
+  * inserted by the user or by software development tools
+  * are owned by their respective copyright owners.
   *
   * Copyright (c) 2018 STMicroelectronics International N.V. 
   * All rights reserved.
@@ -40,10 +46,12 @@
   *
   ******************************************************************************
   */
+
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MAIN_H
-#define __MAIN_H
-  /* Includes ------------------------------------------------------------------*/
+#ifndef __MAIN_H__
+#define __MAIN_H__
+
+/* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
 /* USER CODE BEGIN Includes */
@@ -66,8 +74,8 @@
 #define PH1_OSC_OUT_GPIO_Port GPIOH
 #define OTG_FS_PowerSwitchOn_Pin GPIO_PIN_0
 #define OTG_FS_PowerSwitchOn_GPIO_Port GPIOC
-#define NRF_CE_Pin GPIO_PIN_1
-#define NRF_CE_GPIO_Port GPIOC
+#define NRF_CE_DELTA_Pin GPIO_PIN_1
+#define NRF_CE_DELTA_GPIO_Port GPIOC
 #define NRF_MISO_Pin GPIO_PIN_2
 #define NRF_MISO_GPIO_Port GPIOC
 #define NRF_IRQ_Pin GPIO_PIN_3
@@ -129,8 +137,8 @@
 #define LD5_GPIO3_GPIO_Port GPIOD
 #define LD6_GPIO2_Pin GPIO_PIN_15
 #define LD6_GPIO2_GPIO_Port GPIOD
-#define NRF_CEC6_Pin GPIO_PIN_6
-#define NRF_CEC6_GPIO_Port GPIOC
+#define NRF_CE_GAMMA_Pin GPIO_PIN_6
+#define NRF_CE_GAMMA_GPIO_Port GPIOC
 #define EN_POWER_Pin GPIO_PIN_7
 #define EN_POWER_GPIO_Port GPIOC
 #define MOTOR2_PWM_Pin GPIO_PIN_8
@@ -147,6 +155,9 @@
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
 #define SWCLK_GPIO_Port GPIOA
+#define NRF_IRQC11_Pin GPIO_PIN_11
+#define NRF_IRQC11_GPIO_Port GPIOC
+#define NRF_IRQC11_EXTI_IRQn EXTI15_10_IRQn
 #define Audio_RST_Pin GPIO_PIN_4
 #define Audio_RST_GPIO_Port GPIOD
 #define OTG_FS_OverCurrent_Pin GPIO_PIN_5
@@ -160,17 +171,27 @@
 #define MEMS_INT2_Pin GPIO_PIN_1
 #define MEMS_INT2_GPIO_Port GPIOE
 
+/* ########################## Assert Selection ############################## */
+/**
+  * @brief Uncomment the line below to expanse the "assert_param" macro in the 
+  *        HAL drivers code
+  */
+/* #define USE_FULL_ASSERT    1U */
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
 
-/**
-  * @}
-  */ 
+#ifdef __cplusplus
+ extern "C" {
+#endif
+void _Error_Handler(char *, int);
 
-/**
-  * @}
-*/ 
+#define Error_Handler() _Error_Handler(__FILE__, __LINE__)
+#ifdef __cplusplus
+}
+#endif
 
-#endif /* __MAIN_H */
+#endif /* __MAIN_H__ */
+
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

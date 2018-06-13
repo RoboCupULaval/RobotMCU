@@ -30,21 +30,23 @@ typedef struct {
 
 void command_heartbeatRequest(uint8_t origin_id, uint8_t* msg);
 void command_movementCommand(uint8_t origin_id, uint8_t* msg);
+void command_movementAdvanceCommand(uint8_t origin_id, uint8_t* msg);
 void command_movementCommandOpen(uint8_t origin_id, uint8_t* msg);
 void command_setRegister(uint8_t origin_id, uint8_t* msg);
 void command_getBatterie(uint8_t origin_id, uint8_t* msg);
 void command_getNumRequest(uint8_t origin_id, uint8_t* msg);
 
 static const packet_t g_packetsTable[] = {
-		{PING_REQUEST,        command_heartbeatRequest,    sizeof(msg_no_arg_t)},
-		{PING_RESPONSE,       NULL,                        sizeof(msg_no_arg_t)},
-		{SPEED_MOVE,          command_movementCommand,     sizeof(msg_set_speed_t)},
-		{SET_REGISTER,        command_setRegister,         sizeof(msg_set_register_t)},
-		{OPEN_LOOP_COMMAND,   command_movementCommandOpen, sizeof(msg_set_speed_open_t)},
-		{GET_BATTERIE,        command_getBatterie,         sizeof(msg_no_arg_t)},
-		{BATTERIE_RESPONSE,   NULL,                        sizeof(msg_uint8_t)},
-		{GET_NUM_REQUEST,     command_getNumRequest,       sizeof(msg_no_arg_t)},
-		{NUM_REQUEST_RESPONSE,NULL,                        sizeof(msg_uint32_t)},
+		{PING_REQUEST,         command_heartbeatRequest,       sizeof(msg_no_arg_t)},
+		{PING_RESPONSE,        NULL,                           sizeof(msg_no_arg_t)},
+		{SPEED_MOVE,           command_movementCommand,        sizeof(msg_set_speed_t)},
+		{SET_REGISTER,         command_setRegister,            sizeof(msg_set_register_t)},
+		{OPEN_LOOP_COMMAND,    command_movementCommandOpen,    sizeof(msg_set_speed_open_t)},
+		{GET_BATTERIE,         command_getBatterie,            sizeof(msg_no_arg_t)},
+		{BATTERIE_RESPONSE,    NULL,                           sizeof(msg_uint8_t)},
+		{GET_NUM_REQUEST,      command_getNumRequest,          sizeof(msg_no_arg_t)},
+		{NUM_REQUEST_RESPONSE, NULL,                           sizeof(msg_uint32_t)},
+		{SPEED_MOVE_ADVANCE,   command_movementAdvanceCommand, sizeof(msg_set_speed_advance_t)}
 };
 
 static const size_t g_packetsTableLen = sizeof(g_packetsTable) / sizeof(packet_t);

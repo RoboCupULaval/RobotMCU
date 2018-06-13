@@ -59,7 +59,8 @@ def do_test(ctrl_loop_state_initially, ctrl_loop_state_for_test, commands, robot
     com.sendOpenLoopSpeed(robot_id,0,0,0,0) # break
     sleep(1)
 
-    com.setRegister(robot_id, RegisterID.CONTROL_LOOP_STATE, ctrl_loop_state_for_test)
+    for _ in range(0, 100):
+        com.setRegister(robot_id, RegisterID.CONTROL_LOOP_STATE, ctrl_loop_state_for_test)
 
 
     if ctrl_loop_state_for_test == 0:
