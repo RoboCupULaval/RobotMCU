@@ -28,6 +28,39 @@ void command_movementCommand(uint8_t origin_id, uint8_t* msg){
     g_speedCommand.tickSinceLastUpdate = xTaskGetTickCount();
 }
 
+void command_movementAdvanceCommand(uint8_t origin_id, uint8_t* msg){
+    msg_set_speed_advance_t * moveAdvMsg = (msg_set_speed_advance_t *) msg;
+	command_movementCommand(origin_id, (uint8_t*)&moveAdvMsg->speed);
+
+	if (moveAdvMsg->kick_force > 0) {
+		LOG_INFO("Kicking!!\r\n");
+		kicker_kick(moveAdvMsg->kick_force);
+	}
+
+	// Charge flag
+	if (moveAdvMsg->dribbler_speed & 0x80) {
+		kicker_charge();
+	}
+
+	uint8_t dribbler_speed = moveAdvMsg->dribbler_speed;
+	dribbler_speed &= ~0x80u; // Remove the MSB
+	float newSpeed = 0.0f;
+	switch (moveAdvMsg->dribbler_speed) {
+		case 1:
+			newSpeed = 0.1f;
+			break;
+		case 2:
+			newSpeed = 0.2f;
+			break;
+		case 3:
+			newSpeed = 0.35f;
+			break;
+		default:
+			newSpeed = 0.0f;
+	}
+	dibbler_tmp_force_activation(newSpeed);
+}
+
 void command_movementCommandOpen(uint8_t origin_id, uint8_t* msg){
 	// TODO: should add timing information, so if connection lost, we break
     msg_set_speed_open_t * movementMsg = (msg_set_speed_open_t *) msg;
@@ -48,7 +81,8 @@ void command_setRegister(uint8_t origin_id, uint8_t* msg){
 			break;
 		case KICK_COMMAND:
 			LOG_INFO("Kicking!!\r\n");
-			kicker_kick(registerMsg->value);
+			// Kick time is now in increment of 0.1ms, instead of 1ms. We need to stay retrocompatible
+			kicker_kick(registerMsg->value * 10);
 			break;
 		case CONTROL_LOOP_STATE:
 			switch (registerMsg->value) {

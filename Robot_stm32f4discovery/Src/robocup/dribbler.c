@@ -47,11 +47,11 @@ void dribbler_handleDribbler(void) {
 	else if (!dribbler_hasTimeout()) {
 		dribbler_setPWM(s_speed);
 	}
-	else if (ball_getState() >= BALL_READY_TO_DRIBBLE) {
-		dribbler_setPWM(s_speed);
-		s_time_to_stop = xTaskGetTickCount() + DRIBBLER_SPIN_TIME_IN_TICK;
-//		LOG_INFO("It's me ready dribble\r\n");
-	}
+//	else if (ball_getState() >= BALL_READY_TO_DRIBBLE) {
+//		dribbler_setPWM(s_speed);
+//		s_time_to_stop = xTaskGetTickCount() + DRIBBLER_SPIN_TIME_IN_TICK;
+////		LOG_INFO("It's me ready dribble\r\n");
+//	}
 	else {
 		dribbler_setPWM(0);
 	}

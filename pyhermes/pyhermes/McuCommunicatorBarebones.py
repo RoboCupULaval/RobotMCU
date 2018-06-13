@@ -94,10 +94,9 @@ class McuCommunicatorBarebones(object):
         my_packet.append(0x00)
 
         # send the packet
-        self.serial_lock.acquire()
-        self.serial_port.write(my_packet)
-        self.serial_lock.release()
-
+        with self.serial_lock:
+            self.serial_port.write(my_packet)
+        
     def _receive_packet(self, expected_size):
         start_time = time.time()
 

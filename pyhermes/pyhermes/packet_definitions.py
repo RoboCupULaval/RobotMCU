@@ -32,6 +32,7 @@ class PacketID(enum.IntEnum):
     BATTERIE_RESPONSE = 0x06
     GET_NUM_REQUEST = 0x07
     NUM_REQUEST_RESPONSE = 0x08
+    SPEED_MOVE_ADVANCE = 0x09
 
 # This data structure has the following information
 # packet_id :  (pack_string, return_packet_id)
@@ -49,7 +50,8 @@ PACKET_INFO = {
     PacketID.GET_BATTERIE: (None, PacketID.BATTERIE_RESPONSE),
     PacketID.BATTERIE_RESPONSE: ('B', None),
     PacketID.GET_NUM_REQUEST: (None, PacketID.NUM_REQUEST_RESPONSE),
-    PacketID.NUM_REQUEST_RESPONSE: ('I', None)
+    PacketID.NUM_REQUEST_RESPONSE: ('I', None),
+    PacketID.SPEED_MOVE_ADVANCE: ('fffBB', None)
     }
     
 def get_payload_size(wanted_id):
