@@ -90,8 +90,7 @@ class McuCommunicator(McuCommunicatorBarebones):
         packet_id = PacketID.SPEED_MOVE_ADVANCE
         struct_string = PACKET_INFO[packet_id][0]
         payload = struct.pack(struct_string,
-                              speed_x, speed_y, speed_rotation, dribbler_speed + 0x80 if charge else 0, kick_force)
-
+                              speed_x, speed_y, speed_rotation, dribbler_speed + 0x80 if charge else dribbler_speed, kick_force)
         robot_addr = robot_id
 
         super()._send_packet(CONTROL_ADDR, robot_addr,

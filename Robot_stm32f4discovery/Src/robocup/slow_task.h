@@ -8,6 +8,12 @@
 #include "kicker.h"
 #include "ball_detector.h"
 
+#define 	SLOW_BATT_MAX					16//V
+#define		SLOW_WARNING_LED_FLASH			20
+#define		SLOW_CRITICAL_LED_FLASH			10
+#define		SLOW_ZERO_LED_FLASH				40
+#define 	SLOW_HYSTERESIS_ITERATIONS		40
+
 void slow_taskEntryPoint(void);
 
 #endif /* ROBOCUP_SLOW_TASK_H_ */
