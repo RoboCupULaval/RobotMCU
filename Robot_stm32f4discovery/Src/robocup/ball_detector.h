@@ -11,8 +11,20 @@
 #include "adc.h"
 #include "led.h"
 
-#define BALL_MIN_ADC_VAL 300
-#define BALL_MAX_ADC_VAL 1200
+// With default position
+// LED pas fix
+#define BALL_MIN_ADC_VAL 700
+#define BALL_MAX_ADC_VAL 1300
+
+// Led bouger en diagonal
+//#define BALL_MIN_ADC_VAL 900
+//#define BALL_MAX_ADC_VAL 1800
+
+// LED fix
+//#define BALL_MIN_ADC_VAL 400
+//#define BALL_MAX_ADC_VAL 1000
+
+
 #define BALL_LED_STEP ((BALL_MAX_ADC_VAL - BALL_MIN_ADC_VAL) / LED_NUMBER)
 
 //#define BALL_NB_LED_THAT_WAS_LIGHT_UP 5

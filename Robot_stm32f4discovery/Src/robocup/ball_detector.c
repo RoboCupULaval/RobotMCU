@@ -10,18 +10,18 @@
 #include "log.h"
 
 typedef struct {
-	unsigned nb_led_dribbler;
-	unsigned nb_led_kick;
+	unsigned adc_lvl_left;
+	unsigned adc_lvl_right;
+	unsigned adc_lvl_avg;
 } ball_detector_config_t;
 
+
+ball_detector_config_t ball_getConfig(void);
+
 ball_detector_config_t ID_TO_CONFIG[] = {
-		[0] = {.nb_led_dribbler = 4, .nb_led_kick = 5}, // default config
-		[1] = {.nb_led_dribbler = 4, .nb_led_kick = 6},
-		[2] = {.nb_led_dribbler = 5, .nb_led_kick = 6},
-		[3] = {.nb_led_dribbler = 4, .nb_led_kick = 5},
-		[4] = {.nb_led_dribbler = 6, .nb_led_kick = 7},
-		[5] = {.nb_led_dribbler = 5, .nb_led_kick = 7},
-		[6] = {.nb_led_dribbler = 4, .nb_led_kick = 6}
+		[0] = {.adc_lvl_left = 600, .adc_lvl_right = 600, .adc_lvl_avg = 600},
+		[1] = {.adc_lvl_left = 900, .adc_lvl_right = 650, .adc_lvl_avg = 740},
+		[6] = {.adc_lvl_left = 1050, .adc_lvl_right = 1000, .adc_lvl_avg = 750}
 };
 const size_t ID_TO_CONFIG_LEN = sizeof(ID_TO_CONFIG) / sizeof(ball_detector_config_t);
 
@@ -41,31 +41,24 @@ uint32_t ball_getSensorsMeanValue(void) {
 	return (ball_getSensorValue(1) + ball_getSensorValue(2))/2;
 }
 
-uint32_t ball_kicker_threshold(void) {
+ball_detector_config_t ball_getConfig(void) {
 	uint8_t id = robot_getPlayerID();
 	if (id >= ID_TO_CONFIG_LEN) {
 		id = 0;
 	}
-	return (ID_TO_CONFIG[id].nb_led_kick     * BALL_LED_STEP + BALL_MIN_ADC_VAL);
-}
-uint32_t ball_dribbling_threshold(void) {
-	uint8_t id = robot_getPlayerID();
-	if (id >= ID_TO_CONFIG_LEN) {
-		id = 0;
-	}
-	return (ID_TO_CONFIG[id].nb_led_dribbler * BALL_LED_STEP + BALL_MIN_ADC_VAL);
+	return ID_TO_CONFIG[id];
 }
 
 BallState ball_getState(void) {
-	uint32_t adcValue1 = ball_getSensorValue(1);
-	uint32_t adcValue2 = ball_getSensorValue(2);
+	uint32_t adcValueLeft = ball_getSensorValue(1);
+	uint32_t adcValueRight = ball_getSensorValue(2);
 
-	uint32_t mean = (adcValue1 + adcValue2) /2;
-	if (mean >= ball_kicker_threshold()) {
+	uint32_t mean = (adcValueLeft + adcValueRight) /2;
+
+	ball_detector_config_t config = ball_getConfig();
+	if (mean >= config.adc_lvl_avg || adcValueLeft >= config.adc_lvl_left || adcValueRight >= config.adc_lvl_right) {
 		return BALL_READY_TO_KICK;
 		//LOG_INFO("Ball detector said Kick is ready\r\n");
-	} else if(mean >= ball_dribbling_threshold() || adcValue1 >= ball_kicker_threshold() || adcValue2 >= ball_kicker_threshold()) {
-		return BALL_READY_TO_DRIBBLE;
 	} else {
 		return BALL_NOBALL;
 	}
