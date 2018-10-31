@@ -45,6 +45,10 @@ consoleCmd_t console_getCommand(char* commandName);
 //Console commands
 void console_printUnknownCommand(consoleArgs_t args);
 void console_printHelp(consoleArgs_t args);
+void console_calibStart(consoleArgs_t args);
+void console_calibStop(consoleArgs_t args);
+void console_calibAddGoodSample(consoleArgs_t args);
+void console_calibAddBadSample(consoleArgs_t args);
 void console_ping(consoleArgs_t args);
 void console_testNRF(consoleArgs_t args);
 void console_dribble(consoleArgs_t args);
@@ -80,7 +84,11 @@ static const consoleCmd_t g_consoleTable[] = {
 	{"batt-protection-override", 	&console_battProtectionOverride, 	0},
 	{"batt-protection-reset", 		&console_battProtectionReset, 		0},
 	{"power-on", 					&console_powerOff, 					0},
-	{"power-off", 					&console_powerOn, 					0}
+	{"power-off", 					&console_powerOn, 					0},
+	{"calib-start", 				&console_calibStart, 				0},
+	{"calib-sample-good", 			&console_calibAddGoodSample, 		0},
+	{"calib-sample-bad", 			&console_calibAddBadSample, 		0},
+	{"calib-stop", 					&console_calibStop, 				0}
 };
 
 static const size_t g_consoleTableLen = sizeof(g_consoleTable) / sizeof(consoleCmd_t);
