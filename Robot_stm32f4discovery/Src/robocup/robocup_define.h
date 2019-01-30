@@ -41,8 +41,8 @@ typedef enum {
 #define DELTA
 
 
-#define MNRC_KP					14.0f
-#define MNRC_KI					12.5f
+#define MNRC_KP					20.0f
+#define MNRC_KI					30.5f
 #define MNRC_GAMMA				-10.0f
 
 #define CONTROL_LOOP_PERIOD_MS 	10

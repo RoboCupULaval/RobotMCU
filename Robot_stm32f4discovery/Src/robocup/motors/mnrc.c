@@ -33,7 +33,7 @@ const float ROBOT_MODEL_M2[4][4] = {
 	mnrc.K1 = (1.0f + CONTROL_LOOP_DELTA_T * lambda);
 	mnrc.K2 = lambda * CONTROL_LOOP_DELTA_T;
 
-	mnrc.has_anti_windup = true;
+	mnrc.has_anti_windup = false;
 
 	int i = 0, j = 0;
 	for (i = 0; i < 4; i++) {
