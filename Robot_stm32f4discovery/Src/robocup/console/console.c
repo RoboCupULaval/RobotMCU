@@ -1,11 +1,37 @@
 #include "console.h"
 
+#include <stdbool.h>
+
+#define MAX_SAMPLE 60
+
+enum {
+	CALIB_OFF= 0,
+	CALIB_ON
+} calibState_t;
+
+typedef struct {
+	uint32_t left, right;
+	bool good;
+} sample_t;
+
+typedef struct {
+	int state;
+	int nbSamples;
+	sample_t samples[MAX_SAMPLE];
+} calibHandle_t;
+
+
 comHandle_t g_consoleHandle;
 static char buffer[255];
+static calibHandle_t calibHandle;
 
 void console_init(comHandle_t com){
 	g_consoleHandle = com;
+
+	calibHandle.nbSamples = 0;
+	calibHandle.state = CALIB_OFF;
 }
+
 
 //Returns the number of args (without the command name)
 int console_parseCommand(char pCmd[CONSOLE_MAX_CMD_LEN], consoleArgs_t parsedCmd){
@@ -56,6 +82,9 @@ void console_printHelp(consoleArgs_t args) {
 			"-------------------------------\r\n"
 			"-- Util --\r\n"
 			"ping\r\n"
+			"calib-start\r\n"
+			"calib-add-sample\r\n"
+			"calib-stop\r\n"
 			"test-nrf\r\n"
 			"-- Ball --\r\n"
 			"dribble                     speed\r\n"
@@ -77,6 +106,62 @@ void console_printHelp(consoleArgs_t args) {
 			"-------------------------------\r\n"
 			"\r\n");
 }
+
+
+void console_calibStart(consoleArgs_t args){
+
+	LOG_INFO("The calibration has started, use 'calib-sample-good/-bad' to add a sample and 'calib-stop' to stop it.\r\n");
+	calibHandle.state = CALIB_ON;
+	calibHandle.nbSamples = 0;
+}
+void console_calibStop(consoleArgs_t args){
+	if (calibHandle.state == CALIB_OFF) {
+		LOG_INFO("The calibration is not started, use 'calib-start'\r\n");
+	}
+	else {
+		LOG_INFO("The calibration completed! Copy the following in a .csv:\r\n");
+		calibHandle.state = CALIB_OFF;
+		LOG_INFO("id,left,right,good\r\n");
+		for (int i = 0; i < calibHandle.nbSamples; ++i) {
+			sample_t* sample = &calibHandle.samples[i];
+			sprintf(buffer, "%d,%d,%d,%d\r\n", i, sample->left, sample->right, sample->good ? 1: -1);
+			LOG_INFO(buffer);
+		}
+	}
+
+}
+
+void console_calibAddSample(bool is_good){
+	if (calibHandle.state == CALIB_OFF) {
+		LOG_INFO("The calibration is not started, use 'calib-start'\r\n");
+		return;
+	}
+	sample_t sample = {
+			.left=ball_getSensorValue(1),
+			.right=ball_getSensorValue(2),
+			.good=is_good
+	};
+	calibHandle.samples[calibHandle.nbSamples] = sample;
+	calibHandle.nbSamples++;
+	sprintf(buffer, "%d/%d samples used\r\n", calibHandle.nbSamples, MAX_SAMPLE);
+	LOG_INFO(buffer);
+
+
+	if (calibHandle.nbSamples >= MAX_SAMPLE) {
+		LOG_INFO("You have reached the maximum number of samples.\r\n");
+		consoleArgs_t arg;
+		console_calibStop(arg);
+	}
+}
+
+void console_calibAddGoodSample(consoleArgs_t args){
+	console_calibAddSample(true);
+}
+
+void console_calibAddBadSample(consoleArgs_t args){
+	console_calibAddSample(false);
+}
+
 void console_ping(consoleArgs_t args) {
 	sprintf(buffer, "Hello from Robot %d :)\r\n", robot_getPlayerID());
 	LOG_INFO(buffer);
@@ -107,10 +192,11 @@ void console_kick(consoleArgs_t args) {
 void console_printBallSensors(consoleArgs_t args) {
 	TickType_t start = xTaskGetTickCount();
 	while(xTaskGetTickCount() - start < atoi(args[1])) {
-		sprintf(buffer, "Sensors : %lu and %lu, moy : %lu\r\n",
-				ball_getSensorValue(1), ball_getSensorValue(2), ball_getSensorsMeanValue());
+		char * ball_detected = ball_getState() == BALL_READY_TO_KICK ? "XXX" : "   ";
+		sprintf(buffer, "Sensors [%s]: %lu and %lu, moy : %lu\r\n",
+				ball_detected, ball_getSensorValue(1), ball_getSensorValue(2), ball_getSensorsMeanValue());
 		LOG_INFO(buffer);
-		osDelay(50);
+		osDelay(300);
 	}
 }
 
