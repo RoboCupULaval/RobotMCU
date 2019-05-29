@@ -10,7 +10,7 @@ Wheel_t g_wheels[] =
 {// diameter 66 mm
 #ifdef DELTA
 #define RADIUS 0.033f // m
-#define TICK_PER_TURN 5.f * 4096.0f // tick/turn
+#define TICK_PER_TURN 3.57f * 4096.0f // tick/turn
 #define DIST_FROM_CENTER 0.0785f // m
 		// angle of speed vector 60, 141
 		// Distance from center to wheel  78.5 mm

@@ -111,31 +111,6 @@ void ctrl_taskEntryPoint(void) {
 				vx = g_speedCommand.vx;
 				vy = g_speedCommand.vy;
 				vt = g_speedCommand.vtheta;
-				// The actual command is set as a linear pursuit of the desired command.
-//				desired_vx = g_speedCommand.vx;
-//				desired_vy = g_speedCommand.vy;
-//				desired_vt = g_speedCommand.vtheta;
-//				difference_x = desired_vx-vx;
-//				difference_y = desired_vy-vy;
-//				difference_theta = desired_vt-vt;
-//				diff_vector_length = sqrt(difference_x*difference_x + difference_y*difference_y);
-//				if (diff_vector_length <= max_speed_difference) {
-//					vx = desired_vx;
-//					vy = desired_vy;
-//				} else {
-//					// We add the components of max_speed_difference * each vector component.
-//					vx += max_speed_difference * difference_x/diff_vector_length;
-//					vy += max_speed_difference * difference_y/diff_vector_length;
-//				}
-//				if (abs(difference_theta) <= max_rotation_speed_difference) {
-//					vt = desired_vt;
-//				} else {
-//					vt += max_rotation_speed_difference * difference_theta/abs(difference_theta);
-//				}
-
-
-				// end of linear pursuit computation
-
 
 				const bool lastSpeedCommandTimeout = speedCommandTimeout;
 				speedCommandTimeout = hasSpeedCommandTimeout();
