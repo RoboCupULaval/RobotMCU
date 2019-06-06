@@ -46,7 +46,7 @@ void ctrl_taskEntryPoint(void) {
 	}
   	LOG_INFO("Starting!!!\r\n");
 	initPwmAndQuad();
-	MNRC_t mnrc = MNRC_init(MNRC_KP, MNRC_KI, MNRC_GAMMA);
+	MNRC_t mnrc = MNRC_init(MNRC_KP, MNRC_KI, MNRC_KD, MNRC_GAMMA);
 
 	float wheelSpeed[4];
   	TickType_t lastWakeTime = xTaskGetTickCount();
