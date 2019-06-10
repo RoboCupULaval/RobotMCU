@@ -50,7 +50,8 @@ void kicker_update(void) {
 			kicker_chargeOff();
 			kicker_kickOff();
 
-			if (!kicker_hasAutoRechargeTimeout()) {
+			//if (!kicker_hasAutoRechargeTimeout()) {
+			if (true) {
 				s_kickerState = KICKER_CHARGING;
 				kicker_resetChargeTimer();
 			}
@@ -63,7 +64,7 @@ void kicker_update(void) {
 					s_kickerState = KICKER_CHARGED;
 				}
 			} else {
-				s_kickerState = KICKER_IDLE;
+				//s_kickerState = KICKER_IDLE;
 			}
 			break;
 		case KICKER_CHARGED:

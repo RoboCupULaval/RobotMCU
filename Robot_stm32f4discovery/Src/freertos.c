@@ -1,3 +1,4 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * File Name          : freertos.c
@@ -45,27 +46,48 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "FreeRTOS.h"
 #include "task.h"
+#include "main.h"
 #include "cmsis_os.h"
 
+/* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */     
 #include "robocup/robocup_define.h"
 /* USER CODE END Includes */
 
-/* Variables -----------------------------------------------------------------*/
+/* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN PTD */
+
+/* USER CODE END PTD */
+
+/* Private define ------------------------------------------------------------*/
+/* USER CODE BEGIN PD */
+
+/* USER CODE END PD */
+
+/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
+/* Private variables ---------------------------------------------------------*/
+/* USER CODE BEGIN Variables */
+/* USER CODE END Variables */
 osThreadId defaultTaskHandle;
 osThreadId wheelsTaskHandle;
 osThreadId hermesTaskHandle;
 osThreadId slowTaskHandle;
 osThreadId consoleTaskHandle;
 
-/* USER CODE BEGIN Variables */
-/* USER CODE END Variables */
+/* Private function prototypes -----------------------------------------------*/
+/* USER CODE BEGIN FunctionPrototypes */
 
-/* Function prototypes -------------------------------------------------------*/
+/* USER CODE END FunctionPrototypes */
+
 void StartDefaultTask(void const * argument);
 void wheelsTaskLoopFunction(void const * argument);
 void hermesTaskLoopFunction(void const * argument);
@@ -75,14 +97,11 @@ void consoleTaskLoopFunction(void const * argument);
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
-/* USER CODE BEGIN FunctionPrototypes */
-
-/* USER CODE END FunctionPrototypes */
-
-/* Hook prototypes */
-
-/* Init FreeRTOS */
-
+/**
+  * @brief  FreeRTOS initialization
+  * @param  None
+  * @retval None
+  */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
 
@@ -130,7 +149,13 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_QUEUES */
 }
 
-/* StartDefaultTask function */
+/* USER CODE BEGIN Header_StartDefaultTask */
+/**
+  * @brief  Function implementing the defaultTask thread.
+  * @param  argument: Not used 
+  * @retval None
+  */
+/* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void const * argument)
 {
   /* init code for USB_DEVICE */
@@ -146,7 +171,13 @@ void StartDefaultTask(void const * argument)
   /* USER CODE END StartDefaultTask */
 }
 
-/* wheelsTaskLoopFunction function */
+/* USER CODE BEGIN Header_wheelsTaskLoopFunction */
+/**
+* @brief Function implementing the wheelsTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_wheelsTaskLoopFunction */
 void wheelsTaskLoopFunction(void const * argument)
 {
   /* USER CODE BEGIN wheelsTaskLoopFunction */
@@ -159,7 +190,13 @@ void wheelsTaskLoopFunction(void const * argument)
   /* USER CODE END wheelsTaskLoopFunction */
 }
 
-/* hermesTaskLoopFunction function */
+/* USER CODE BEGIN Header_hermesTaskLoopFunction */
+/**
+* @brief Function implementing the hermesTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_hermesTaskLoopFunction */
 void hermesTaskLoopFunction(void const * argument)
 {
   /* USER CODE BEGIN hermesTaskLoopFunction */
@@ -170,7 +207,13 @@ void hermesTaskLoopFunction(void const * argument)
   /* USER CODE END hermesTaskLoopFunction */
 }
 
-/* slowTaskFunction function */
+/* USER CODE BEGIN Header_slowTaskFunction */
+/**
+* @brief Function implementing the slowTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_slowTaskFunction */
 void slowTaskFunction(void const * argument)
 {
   /* USER CODE BEGIN slowTaskFunction */
@@ -183,7 +226,13 @@ void slowTaskFunction(void const * argument)
   /* USER CODE END slowTaskFunction */
 }
 
-/* consoleTaskLoopFunction function */
+/* USER CODE BEGIN Header_consoleTaskLoopFunction */
+/**
+* @brief Function implementing the consoleTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_consoleTaskLoopFunction */
 void consoleTaskLoopFunction(void const * argument)
 {
   /* USER CODE BEGIN consoleTaskLoopFunction */
@@ -196,6 +245,7 @@ void consoleTaskLoopFunction(void const * argument)
   /* USER CODE END consoleTaskLoopFunction */
 }
 
+/* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
 
 /* USER CODE END Application */
