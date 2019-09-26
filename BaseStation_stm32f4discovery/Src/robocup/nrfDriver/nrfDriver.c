@@ -9,6 +9,7 @@
 #include "tm_stm32_nrf24l01.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "main.h"
 #include "stdbool.h"
 
 
