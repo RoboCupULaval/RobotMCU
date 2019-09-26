@@ -27,6 +27,7 @@ uint8_t TxAddress[] = {
 };
 
 void nrfInit(const uint8_t robot_id) {
+	// Frequency: 2400 + RF_CH  Mhz
 	TM_NRF24L01_Init((uint8_t)NRF_DEFAULT_RF_CH, (uint8_t)PACKET_SIZE);
 	TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_1M, TM_NRF24L01_OutputPower_0dBm);
 
