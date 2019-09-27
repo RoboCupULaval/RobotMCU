@@ -12,6 +12,19 @@
 - *.ioc : fichier pour CubeMX
 
 
+## Mode du robot
+Le robot a divers modes pour facilité la détection de disfonctionnement.
+
+#### Test senseurs de balles
+Les senseurs de balles du robot peuvent être testé mettant la switch debug→ à OFF, en appuyant sur le bouton user pendant plus de 5 secondes. Les led sur l'avant du robot vont allumé en fonction à quel point quelque chose est proche des senseurs de balles.
+
+#### Test le kick
+Normalement, une commande de kick nécessite qu'une balle soit détecté pour des raisons de sécurité. Pour forcer un kick, il faut mettre le robot à l'id 0 et mettre la switch debug→ à ON.
+Lorsque le bouton user est appuyé, le robot va kicker.
+
+#### Test les moteurs et encodeurs
+Pour testé si tout les moteurs et encodeurs marchent: mettez la switch debug→ à ON, ensuite fermez le robot complétement et réouvrez le (attention il faut utiliser la power switch, pas le bouton reset!). **Attention le robot va tourner sur lui-même, ne pas faire cela sur une table à moins qu'aucune des roues ne touchent le sol.** Si tous les tests réussissent le robot va arrêter de tourné sur lui-même. Si le robot continue de touné sur lui-même veuillez regarder avec le module bluetooth quel moteur ou encodeur est disfonctionelle.
+
 ## Procédure d'installation pour flasher un robot
 
 1 - Installez l'IDE System Workbench (Linux et Windows) : voir section System Workbench (plus bas)
@@ -28,7 +41,7 @@
 
 6 - Compiler le programme en appuyant sur le marteau 🔨. Si vous avez des messages d'erreur relié a des fichiers dupliqué. Supprimé le fichier `Src/syscall.c`.
 
-7 - Une fois que le programme compile sans erreur, pour flasher le MCU, il créer une configuration de débug. L'icone de débug est un insect 🐞. Allez dans Debug -> Debug Configurations... . Dans la nouveau fenêtre qui ouvre créez un nouvelle configuration de debug de type 'Ac6 STM32 Debugging'. Ensuite, selectionné le C/C++ Application en appuyant sur le bouton 'Seach Project..' et selectionné `Debug/Robot_stm32f4discovery_protoboard.elf`. Ensuite, aller dans l'onglet 'Startup' pour mettre décoché l'option 'Set breakpoint at: `main`'.
+7 - Une fois que le programme compile sans erreur, pour flasher le MCU, il faut créer une configuration de débug. L'icone de débug est un insect 🐞. Allez dans Debug -> Debug Configurations... . Dans la nouveau fenêtre qui ouvre, créez un nouvelle configuration de debug de type 'Ac6 STM32 Debugging'. Ensuite, selectionné le C/C++ Application en appuyant sur le bouton 'Seach Project..' et selectionné `Debug/Robot_stm32f4discovery_protoboard.elf`. Ensuite, aller dans l'onglet 'Startup' pour mettre décoché l'option 'Set breakpoint at: `main`'.
 
 
 ![system workbench debug conf](https://github.com/RoboCupULaval/RobotMCU/raw/master/imgs/system_workbench_debug_conf.png)
@@ -142,7 +155,7 @@ python3 -m pip install install matplotlib numpy
 python3 is_this_ai.py chemin/vers/ce/fichier/robot_6.csv
 ``` 
 
-9 - Vous devriez voir ce graphique, les points oranges sont les samples où la balle n'était pas visible et les points bleues où la balle était visible.
+9 - Vous devriez voir ce graphique, les points oranges sont les samples où la balle n'était pas visible et les points bleues où la balle était visible. L'axe des x est la valeur du senseur de balle gauche, tandis que l'axe des y est la valeur du senseur droit.
 
 ![calibration no line](https://github.com/RoboCupULaval/RobotMCU/raw/master/imgs/calibration_no_line.png)
 
@@ -176,12 +189,14 @@ ball_detector_config_t ID_TO_CONFIG[] = {
 };
 ```
 
-14 - Pour changer la configuration du robot 4, il faut changer ligne `[4] = {{...}, {...}},`. Notre calibration nous a donnez 3 paramètres, alors pourquoi il y a 6 paramètres sur une ligne? Chaque peux avoir jusqu'à deux lignes pour la calibration, la plupart des robots en utilisent d'une seule. Si une seule ligne suffit alors il faut écrire deux fois les paramètres. Si on utilise les  paramètres calculé à l'étape 12, alors la ligne du robot 4 est changé pour:
+14 - Pour changer la configuration du robot 4, il faut changer ligne `[4] = {{...}, {...}},`. Notre calibration nous a donnez 3 paramètres, alors pourquoi il y a 6 paramètres sur une ligne? Chaque robot peut avoir jusqu'à deux lignes pour la calibration, la plupart des robots en utilisent d'une seule. Si une seule ligne suffit alors il faut écrire deux fois les paramètres. Si on utilise les paramètres calculé à l'étape 12, alors la ligne du robot 4 est changé pour:
 ```
 [4] = {{1.0207495564366167, 1, -953.4778380748176}, {1.0207495564366167, 1, -953.4778380748176}},
 ```
 
 15 - Maintenant, la dernière étape est flasher le robot et tester la nouveau configuration. Utilisez la commandes `kick 15` pour tester le kick du robot. Une autre commande utile pour tester la detection de balle est `print-ball-sensors -1`. Attention, cette commande nécessite le redémarrage du robot pour pouvoir envoyer d'autres commandes.
+
+
 
 ## Ressources
 ### STM32Cube
