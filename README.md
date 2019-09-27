@@ -65,11 +65,11 @@ Le robot de team ULtron utiliser deux senseurs infrarouges pour détecter la bal
 
 1 - Branché un module bluetooth HC-05 dans le port bluetooth du robot. Attention, des fois le module bluetooth doit être branché dans le sense opposé de celui sur l'image. Si le module ne clignote pas et il se met à chauffer il est dans le mauvais sense.
 
-![module bluetooth](https://github.com/RoboCupULaval/RobotMCU/raw/develop/imgs/bluetooth_module.jpg)
+![module bluetooth](https://github.com/RoboCupULaval/RobotMCU/raw/develop/imgs/bluetooth_module.jpg?v=4&s=200)
 
 2 - Installé l'application [Bluetooth Terminal](https://play.google.com/store/apps/details?id=de.kai_morich.serial_bluetooth_terminal&hl=en_CA). Il y a beaucoup d'application similaire qui font la même chose. Pairez le module bluetooth avec votre cellulaire et rajoutez le à l'application Bluetooth Terminal. Après avoir rajouté device module connectez vous, vous devriez voir les messages ci-dessous.
 
-![android bluetooth terminal](https://github.com/RoboCupULaval/RobotMCU/raw/develop/imgs/android_1.png)
+![android bluetooth terminal](https://github.com/RoboCupULaval/RobotMCU/raw/develop/imgs/android_1.png?v=4&s=200)
 
 
 3 - Pour procédé à la calibration, il faut que le robot soit en mode débug, pour ce faire, mettez la switch debug→ sur robot à on et appuyez une fois sur le bouton reset. Si le robot ce met à tourné sur lui-même, appuyez une fois sur le bouton reset pour l'arrêter.
@@ -77,7 +77,7 @@ Le robot de team ULtron utiliser deux senseurs infrarouges pour détecter la bal
 4 - Maintenant pour tester si le robot est en bien en mode debug, envoyé la commande `help` en utilisant l'application Android. Vous devriez voir défilez une liste des commandes supporté par le robot. Note: pour envoyez des commandes vous pouvez les entrer manuellement, cela peut être un peu fatiguant. Pour vous facilité la vie, l'application Android supporte la mémorization de commandes en créant des macros.
 
 
-![android macro](https://github.com/RoboCupULaval/RobotMCU/raw/develop/imgs/android_2.png)
+![android macro](https://github.com/RoboCupULaval/RobotMCU/raw/develop/imgs/android_2.png?v=4&s=200)
 
 5 - Pour commencer la calibration tapez la commande `calib-start`. Ensuite, placé la balle en avant du robot. Si la balle est à un endroit où le kicker peut frapper la balle tapez la commande `calib-sample-good`, si au contraire le robot ne devrait pas être capable de détecté la balle à cette position envoyez la commande `calib-sample-bad`. Prenez votre temps pour bien échantionner toutes les positions possibles.
 
@@ -157,11 +157,11 @@ python3 is_this_ai.py chemin/vers/ce/fichier/robot_6.csv
 
 9 - Vous devriez voir ce graphique, les points oranges sont les samples où la balle n'était pas visible et les points bleues où la balle était visible. L'axe des x est la valeur du senseur de balle gauche, tandis que l'axe des y est la valeur du senseur droit.
 
-![calibration no line](https://github.com/RoboCupULaval/RobotMCU/raw/develop/imgs/calibration_no_line.png)
+![calibration no line](https://github.com/RoboCupULaval/RobotMCU/raw/develop/imgs/calibration_no_line.png?v=4&s=200)
 
 10 - Pour calibré vous devez dessinez une ligne qui sépare le mieux possible les points bleues des points oranges. Pour ce faire cliquez à deux endroits dans l'image pour dessinez une ligne:
 
-![calibration no line](https://github.com/RoboCupULaval/RobotMCU/raw/develop/imgs/calibration_line.png)
+![calibration no line](https://github.com/RoboCupULaval/RobotMCU/raw/develop/imgs/calibration_line.png?v=4&s=200)
 
 11 - Lorsque vous dessinez une ligne les paramètres de cette lignes sont affichées dans la console:
 ```
