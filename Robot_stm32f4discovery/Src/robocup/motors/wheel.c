@@ -6,9 +6,9 @@
 #define RADIUS 0
 
 //Acceleration limitation
-const float MAX_LIN_ACC	= 1.0f / CONTROL_LOOP_FREQ; //1m/s^2 * control_loop_period s
+const float MAX_LIN_ACC	= 10.0f / CONTROL_LOOP_FREQ; //1m/s^2 * control_loop_period s
 
-#define MAX_ROTATION_RPM  100.0
+#define MAX_ROTATION_RPM  1000.0
 #define MAX_ROTATION_RAD_PER_S  (MAX_ROTATION_RPM * 2.0 * M_PI / 60.0)
 
 #define max(a,b) \

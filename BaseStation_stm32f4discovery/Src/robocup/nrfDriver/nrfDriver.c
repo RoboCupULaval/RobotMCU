@@ -9,10 +9,11 @@
 #include "tm_stm32_nrf24l01.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "main.h"
 #include "stdbool.h"
 
 
-#define NRF_DEFAULT_RF_CH	100
+#define NRF_DEFAULT_RF_CH	100  // 2400 + RF_CH Mhz
 #define NRF_REG_RF_CH		0x05
 
 uint8_t MyAddress[] = {

@@ -37,6 +37,7 @@ void command_movementAdvanceCommand(uint8_t origin_id, uint8_t* msg){
 		kicker_kick(moveAdvMsg->kick_force);
 	}
 
+
 	// Charge flag
 	if (moveAdvMsg->dribbler_speed & 0x80) {
 		kicker_charge();

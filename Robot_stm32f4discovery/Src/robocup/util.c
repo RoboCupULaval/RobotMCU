@@ -5,7 +5,9 @@
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx.h"
 
+#include "main.h"
 #include "util.h"
+
 
 // TODO this fix a linking error, please remove when CubeMX fix there shit
 const uint8_t  APBPrescTable[] = {0, 0, 0, 0, 1, 2, 3, 4};

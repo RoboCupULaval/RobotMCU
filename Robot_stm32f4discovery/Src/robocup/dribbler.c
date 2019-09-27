@@ -9,7 +9,7 @@
 
 #define DEFAULT_SPEED 0.35f
 #define DRIBBLER_SPIN_TIME_IN_TICK 2000u
-#define DRIBBLER_SPIN_FORCE_ACTIVATE_IN_TICK 10000u
+#define DRIBBLER_SPIN_FORCE_ACTIVATE_IN_TICK 2000u
 
 static volatile float s_speed = 0, s_force_speed = 0;
 static volatile TickType_t s_time_to_stop = 0;
