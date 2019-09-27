@@ -65,7 +65,7 @@ Le robot de team ULtron utiliser deux senseurs infrarouges pour détecter la bal
 
 1 - Branché un module bluetooth HC-05 dans le port bluetooth du robot. Attention, des fois le module bluetooth doit être branché dans le sense opposé de celui sur l'image. Si le module ne clignote pas et il se met à chauffer il est dans le mauvais sense.
 
-![module bluetooth](https://github.com/RoboCupULaval/RobotMCU/raw/develop/imgs/bluetooth_module.jpg | width=200)
+<img alt="module bluetooth" src="https://github.com/RoboCupULaval/RobotMCU/raw/develop/imgs/bluetooth_module.jpg" width="400" />
 
 2 - Installé l'application [Bluetooth Terminal](https://play.google.com/store/apps/details?id=de.kai_morich.serial_bluetooth_terminal&hl=en_CA). Il y a beaucoup d'application similaire qui font la même chose. Pairez le module bluetooth avec votre cellulaire et rajoutez le à l'application Bluetooth Terminal. Après avoir rajouté device module connectez vous, vous devriez voir les messages ci-dessous.
 
